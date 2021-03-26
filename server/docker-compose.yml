@@ -1,0 +1,16 @@
+version: '3.1'
+services:
+  db:
+    image: mysql
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - ./docker-data/db-data:/var/lib/mysql
+    environment:
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_ROOT_PASSWORD: example
+    ports:
+      - 3306:3306
+# use volumes ./:/usr/src/app make DockerFile with that as pwd
