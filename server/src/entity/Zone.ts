@@ -8,6 +8,12 @@ export const schema = Joi.object({
   Description: Joi.string().min(3).max(30).required(),
 })
 
+export interface inputZone {
+    Name: string,
+    Description: string,
+    Image: string,
+}
+
 @Entity()
 export class Zone extends BaseEntity {
 

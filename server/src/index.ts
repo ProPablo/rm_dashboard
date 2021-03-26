@@ -5,6 +5,8 @@ import morgan from "morgan";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
 import { artefactRouter } from "./routes/artefacts";
+import { beaconRouter } from "./routes/beacon";
+import { zoneRouter } from "./routes/zone";
 
 //this will be called by default without try catch or if next(error);
 function errorMiddleware(error: any, request: Request, response: Response, next: NextFunction) {
@@ -35,6 +37,8 @@ createConnection().then(async connection => {
   // })
 
   app.use('/artefacts', artefactRouter);
+  app.use('/zones', zoneRouter);
+  app.use('/beacons', beaconRouter);
 
   app.use(errorMiddleware);
 

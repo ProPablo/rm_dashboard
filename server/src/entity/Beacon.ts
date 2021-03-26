@@ -5,8 +5,19 @@ import { Zone } from "./Zone";
 
 export const schema = Joi.object({
   Name: Joi.string().alphanum().min(3).max(30).required(),
-  Description: Joi.string().min(3).max(30).required(),
+  CoordX: Joi.number(),
+  CoordY: Joi.number(),
+  MACAddress: Joi.string().pattern(/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/).required(),
 })
+
+export interface inputBeacon {
+    Name: string,
+    Visits: number,
+    MACAddress: string,
+    CoordX: number,
+    CoordY: number,
+    Activation: boolean
+  }
 
 @Entity()
 export class Beacon extends BaseEntity {
@@ -15,19 +26,19 @@ export class Beacon extends BaseEntity {
   id: number;
 
   @Column()
-  Visits: string;
-
-  @Column()
   Name: string;
+
+  @Column({ default: () => "0" })
+  Visits: number;
 
   @Column()
   MACAddress: string;
 
-  @CreateDateColumn()
-  CoordX: Date
+  @Column()
+  CoordX: number;
 
-  @UpdateDateColumn()
-  CoordY: Date
+  @Column()
+  CoordY: number;
 
   @OneToMany(() => Artefact, Artefact => Artefact.Beacon)
   Artefacts: Artefact[]

@@ -4,10 +4,10 @@ import Joi from 'joi';
 const artefactRouter = Router();
 
 artefactRouter.get('/', async (req, res) => {
-  const courses = await Artefact.find();
+  const artefacts = await Artefact.find();
   res.header('Access-Control-Expose-Headers', 'X-Total-Count');
-  res.header('X-Total-Count', courses.length.toString());
-  res.json(courses);
+  res.header('X-Total-Count', artefacts.length.toString());
+  res.json(artefacts);
 })
 
 artefactRouter.get('/:id', async (req, res) => {
@@ -16,6 +16,7 @@ artefactRouter.get('/:id', async (req, res) => {
 })
 
 artefactRouter.post('/', async (req, res) => {
+  console.log("logging new artefact", req.body);
   const value: Object = await schema.validateAsync(req.body);
   res.json(await Artefact.create(value).save());
 })
@@ -23,7 +24,7 @@ artefactRouter.post('/', async (req, res) => {
 artefactRouter.put('/:id', async (req, res) => {
   const { id } = req.params;
   // res.json(await Artefact.update({ id: Number.parseInt(id) }, { ...req.body }));
-  res.json(await Artefact.save({ id: Number.parseInt(id), ...req.body } ));
+  res.json(await Artefact.save({ id: Number.parseInt(id), ...req.body }));
 })
 
 artefactRouter.delete('/:id', async (req, res) => {

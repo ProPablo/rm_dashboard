@@ -8,7 +8,7 @@ import { Beacon } from './Beacon';
 export const schema = Joi.object({
   Name: Joi.string().min(3).max(30).required(),
   Description: Joi.string(),
-  Image: Joi.string().base64(),
+  Image: Joi.binary(),
   CoordX: Joi.number(),
   CoordY: Joi.number(),
   Activation: Joi.boolean().required(),
@@ -21,7 +21,6 @@ export interface inputArtefact {
   CoordX: number,
   CoordY: number,
   Activation: boolean
-
 }
 
 @Entity()
@@ -57,7 +56,12 @@ export class Artefact extends BaseEntity {
   @UpdateDateColumn()
   UpdatedAt: Date;
 
-  @ManyToOne(() => Zone, zone => zone.Artefacts)
+  @Column({ nullable: true })
+  zoneId: number;
+  @ManyToOne(() => Zone, zone => zone.Artefacts, {
+    nullable: true
+  })
+  @JoinColumn({ name: "zoneId" })
   Zone: Zone;
 
   @ManyToOne(() => Beacon, beacon => beacon.Artefacts)
