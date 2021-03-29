@@ -35,8 +35,11 @@ export class Artefact extends BaseEntity {
   @Column()
   Description: string;
 
-  @Column({ nullable: true })
-  Image: string;
+  @Column({
+    type: 'longblob',
+    nullable: true
+  })
+  Image: Buffer;
 
   @Column({ default: () => "CURRENT_TIMESTAMP" })
   AcquisitionDate: Date;

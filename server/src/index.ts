@@ -1,16 +1,17 @@
 require('dotenv').config();
 import cors from "cors";
-import express, { NextFunction, Request, Response } from "express";
+import express, { NextFunction, Request, Response, Router } from "express";
 import morgan from "morgan";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
+import { loginRouter, isLoggedIn } from './routes/login';
 import { artefactRouter } from "./routes/artefacts";
 import { beaconRouter } from "./routes/beacon";
-import { zoneRouter } from "./routes/zone";
+import { zoneRouter } from "./routes/zones";
 
 //this will be called by default without try catch or if next(error);
 function errorMiddleware(error: any, request: Request, response: Response, next: NextFunction) {
-  const status = error.status || 500;
+  const status = error.status || response.status || 500;
   const message = error.message || 'Something went wrong';
   response
     .status(status)
@@ -30,15 +31,18 @@ createConnection().then(async connection => {
   app.use(morgan('tiny'));
   app.use(express.json());
   app.use(cors());
+  const route = Router();
 
   // app.get('/test', async (req, res, next) => {
   //   const user = await User.findOneOrFail(1);
   //   res.json(user);
   // })
+  app.use('/login', loginRouter);
+  route.use(isLoggedIn);
 
-  app.use('/artefacts', artefactRouter);
-  app.use('/zones', zoneRouter);
-  app.use('/beacons', beaconRouter);
+  route.use('/artefacts', artefactRouter);
+  route.use('/zones', zoneRouter);
+  route.use('/beacons', beaconRouter);
 
   app.use(errorMiddleware);
 
