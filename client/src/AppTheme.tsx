@@ -19,15 +19,11 @@ export const redlandTheme: any = ({
         fontFamily: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Arial', 'sans-serif'].join(','),
     },
     overrides: {
-        MuiButton: { // override the styles of all instances of this component
-            root: { // Name of the rule
-                color: 'white', // Some CSS
-            },
-        },
-        RaSidebar: {
-            drawerPaper: {
-              backgroundColor: '#D9B981dd',
-              color: '#790901dd',
+        RaSidebar: { // override the styles of all instances of this component
+            drawerPaper: { // Name of the rule
+              backgroundColor: '#E2CAA2dd', // Some CSS
+              textColor: "#ff",
+              color: '#ff',
               height: "100%",
               boxShadow:
                 "2px 0px 1px -1px rgba(0,0,0,0.2), 1px 0px 3px 0px rgba(0,0,0,0.1)",
@@ -36,14 +32,29 @@ export const redlandTheme: any = ({
         RaMenuItemLink: {
             active: {
                 borderRight: '5px solid #790901',
+                color: "#790901"
             },
+        },
+        RaMenu: {
+            root: {
+                color: "#790901"
+            }
         },
         RaList: {
             content: {
                 backgroundColor: '#D9B981dd',
-                color: '#D9B981dd',
+            },
+            headerCell: {
+                backgroundColor: '#D9B981dd !important'
             }
-            
+        },
+        RaLayout: {
+            content: {
+              height: "auto",
+              backgroundColor: '#f3e1c7',
+              display: "flex",
+              flexDirection: "column",
+            },
         },
     },
 });
