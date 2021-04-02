@@ -7,7 +7,6 @@ const loginRouter = Router();
 
 const JWT_EXPIRY = "10 days";
 
-
 loginRouter.post('/login', async (req, res, next) => {
   let admin: User;
   try {
