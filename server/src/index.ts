@@ -8,10 +8,12 @@ import { loginRouter, isLoggedIn } from './routes/login';
 import { artefactRouter } from "./routes/artefacts";
 import { beaconRouter } from "./routes/beacon";
 import { zoneRouter } from "./routes/zones";
+import { zoneMediaRouter } from "./routes/zoneMedias";
 
 //this will be called by default without try catch or if next(error);
 function errorMiddleware(error: any, request: Request, response: Response, next: NextFunction) {
-  const status = error.status || response.status || 500;
+  const resStatus = (response.statusCode != 200) ? response.statusCode : null;
+  let status = error.status || resStatus || 500;
   const message = error.message || 'Something went wrong';
   response
     .status(status)
@@ -23,7 +25,7 @@ function errorMiddleware(error: any, request: Request, response: Response, next:
 
 createConnection().then(async connection => {
   // await initDatabase();
-  // connection.runMigrations();
+  connection.runMigrations();
   // console.log("Loading users from the database...");
   // const users = await User.find();
   // console.log("Loaded users: ", users);
@@ -31,18 +33,27 @@ createConnection().then(async connection => {
   app.use(morgan('tiny'));
   app.use(express.json());
   app.use(cors());
-  const route = Router();
+  const router = Router();
 
   // app.get('/test', async (req, res, next) => {
   //   const user = await User.findOneOrFail(1);
   //   res.json(user);
   // })
-  app.use('/login', loginRouter);
-  route.use(isLoggedIn);
+  app.use('/', loginRouter);
 
-  route.use('/artefacts', artefactRouter);
-  route.use('/zones', zoneRouter);
-  route.use('/beacons', beaconRouter);
+  if (process.env.NODE_ENV === "development") {
+    console.log("Using development environment");
+  }
+  else {
+    router.use(isLoggedIn);
+  }
+
+  router.use('/artefacts', artefactRouter);
+  router.use('/zones', zoneRouter);
+  router.use('/beacons', beaconRouter);
+  router.use('/zonemedia', zoneMediaRouter);
+
+  app.use(router);
 
   app.use(errorMiddleware);
 
