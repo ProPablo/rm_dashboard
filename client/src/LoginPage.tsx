@@ -2,15 +2,46 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { useLogin, useNotify, Notification, defaultTheme } from 'react-admin';
+import { TextField, CardActions, Button, Card } from '@material-ui/core';
+
 import { ThemeProvider } from '@material-ui/styles';
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createMuiTheme, makeStyles } from '@material-ui/core/styles';
 
 interface props {
   theme?: string
 }
+const useStyles = makeStyles(theme => ({
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: '100vh',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    background: '#f3e1c7',
 
+  },
+  input: {
+    marginTop: '1em',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+
+  },
+  button: {
+    width: '100%',
+    length: '20%',
+    color: 'black',
+  },
+  icon: {
+    marginRight: theme.spacing(1),
+  },
+  card: {
+    minWidth: 400,
+    marginTop: '6em',
+  },
+}));
 
 export const LoginPage = ({ theme }: any) => {
+  const classes: any = useStyles();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const login = useLogin();
@@ -25,21 +56,49 @@ export const LoginPage = ({ theme }: any) => {
   return (
     <ThemeProvider theme={createMuiTheme(defaultTheme)}>
       <form onSubmit={submit}>
-        <input
-          name="email"
-          type="email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-        />
-        <input
-          name="password"
-          type="password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-        />
+        <div className={classes.form}>
+          <div className={classes.card}>
 
-        <button type="submit">Submit</button>
+
+            <div className={classes.input}>
+              <TextField
+                variant="filled"
+                name="email"
+                label={'Email'}
+                size="small"
+                fullWidth={true}
+
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className={classes.input}>
+              <TextField
+                name="password"
+                label={'Password'}
+                type="password"
+                variant="filled"
+                size="small"
+                fullWidth={true}
+                onChange={(e) => setPassword(e.target.value)}
+
+              />
+            </div>
+
+            <CardActions>
+              <Button
+                variant="contained"
+                type="submit"
+                color="inherit"
+                className={classes.button}
+              >
+                Login
+          </Button>
+            </CardActions>
+          </div>
+        </div>
       </form>
+
+
       <Notification />
     </ThemeProvider>
   );

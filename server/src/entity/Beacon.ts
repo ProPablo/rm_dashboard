@@ -35,6 +35,9 @@ export class Beacon extends BaseEntity {
   MACAddress: string;
 
   @Column()
+  Activation: boolean;
+
+  @Column()
   CoordX: number;
 
   @Column()

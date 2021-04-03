@@ -10,6 +10,8 @@ export const BeaconCreate = (props: CreateProps) => (
       <TextInput source="MACAddress" />
       <NumberInput source="CoordX" />
       <NumberInput source="CoordY" />
+      <BooleanInput source="Activation" />
+
     </SimpleForm>
   </Create>
 )

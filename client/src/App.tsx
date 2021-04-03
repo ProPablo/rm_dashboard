@@ -1,6 +1,6 @@
 import jsonServerProvider from 'ra-data-json-server';
 import React from 'react';
-import { Admin, EditGuesser, fetchUtils, MenuItemLink, ListGuesser, Resource } from 'react-admin';
+import { Admin, EditGuesser, fetchUtils, MenuItemLink, ListGuesser, Resource, LoginComponent } from 'react-admin';
 import { redlandTheme } from './AppTheme';
 import { ArtefactCreate, ArtefactList } from './Artefact';
 import { BeaconCreate } from './Beacon';
