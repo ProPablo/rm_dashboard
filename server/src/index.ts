@@ -33,6 +33,9 @@ createConnection().then(async connection => {
   app.use(morgan('tiny'));
   app.use(express.json());
   app.use(cors());
+
+  app.use(express.static(__dirname + '/public'));
+
   const router = Router();
 
   // app.get('/test', async (req, res, next) => {

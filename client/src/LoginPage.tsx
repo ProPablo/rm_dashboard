@@ -5,10 +5,6 @@ import { useLogin, useNotify, Notification, defaultTheme } from 'react-admin';
 import { ThemeProvider } from '@material-ui/styles';
 import { createMuiTheme } from '@material-ui/core/styles';
 
-interface props {
-  theme?: string
-}
-
 
 export const LoginPage = ({ theme }: any) => {
   const [email, setEmail] = useState('');
@@ -37,7 +33,6 @@ export const LoginPage = ({ theme }: any) => {
           value={password}
           onChange={e => setPassword(e.target.value)}
         />
-
         <button type="submit">Submit</button>
       </form>
       <Notification />

@@ -32,6 +32,8 @@
    },
    "scripts": {
       "start": "ts-node src/index.ts",
+      "build": "rm -rf build && tsc",
+      "pm2": "NODE_ENV=production pm2 start build/src/index.js --name rm_server",
       "dev": "nodemon --exec ts-node src/index.ts",
       "migrate_down": "npx ts-node ./node_modules/.bin/typeorm migrations:revert"
    }
