@@ -23,7 +23,23 @@ function errorMiddleware(error: any, request: Request, response: Response, next:
     })
 }
 
-createConnection().then(async connection => {
+console.log(__dirname + "/entity")
+createConnection({
+  "type": "mysql",
+  "host": "localhost",
+  "port": 3306,
+  "username": process.env.DB_USER,
+  "password": process.env.DB_PASSWORD,
+  "database": process.env.DB_NAME,
+  "synchronize": true,
+  "logging": true,
+  "entities": [
+    __dirname + "/entity/**.{ts,js}"
+  ],
+  "migrations": [
+    "./migration/**.{ts,js}"
+  ]
+}).then(async connection => {
   // await initDatabase();
   connection.runMigrations();
   // console.log("Loading users from the database...");
