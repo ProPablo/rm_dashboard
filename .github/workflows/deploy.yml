@@ -33,7 +33,7 @@ jobs:
           SOURCE: "client/build/"
           REMOTE_HOST: kongroo.xyz
           REMOTE_USER: root
-          TARGET: test
+          TARGET: /var/www/rm.kongroo.xyz
 
   run_server:
     runs-on: ubuntu-latest
