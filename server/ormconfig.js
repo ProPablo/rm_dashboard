@@ -1,4 +1,5 @@
-module.exports =  {
+//this now only exists for migrations
+module.exports = {
    "type": "mysql",
    "host": "localhost",
    "port": 3306,

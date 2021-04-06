@@ -1,0 +1,42 @@
+name: deploy_website
+
+on:
+  push:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12'
+    - name: Install npm dependencies
+      run: npm install
+      working-directory: client
+    - name: Run build task
+      run: npm run build --if-present
+      working-directory: client
+    - name: Deploy to Server
+      uses: easingthemes/ssh-deploy@v2.1.5
+      env:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          ARGS: "-rltgoDzvO --delete"
+          SOURCE: "build/"
+          REMOTE_HOST: kongroo.xyz
+          REMOTE_USER: root
+          TARGET: /var/www/rm.kongroo.xyz
+
+    - name: start server pm2 command 
+      uses: garygrossgarten/github-action-ssh@release
+      with:
+        command: cd /root/rm_dashboard/server && git pull && npm run build && npm run pm2 && date > ~/lastrun
+        host: kongroo.xyz
+        username: root
+        privateKey: ${{ secrets.SERVER_SSH_KEY}} 

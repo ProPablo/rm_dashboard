@@ -1,6 +1,16 @@
 import { genSalt, hash } from "bcrypt";
+import Joi from "joi";
 import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, BeforeInsert, OneToOne, JoinColumn } from "typeorm";
 import { Zone } from "./Zone";
+
+export enum MediaType {
+  image,
+  video,
+}
+
+// export const schema = Joi.object({
+
+// });
 
 @Entity()
 export class ZoneMedia extends BaseEntity {
@@ -16,8 +26,12 @@ export class ZoneMedia extends BaseEntity {
   @Column()
   title: string;
 
-  @Column()
-  ext: string;
+  @Column({
+    type: "enum",
+    enum: MediaType,
+    default: MediaType.video
+  })
+  type: MediaType;
 
   @Column()
   zoneId: number;
