@@ -7,10 +7,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build_client:
 
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v1
     - name: Install Node.js
@@ -33,6 +32,7 @@ jobs:
           REMOTE_USER: root
           TARGET: /var/www/rm.kongroo.xyz
 
+  run_server:
     - name: start server pm2 command 
       uses: garygrossgarten/github-action-ssh@release
       with:
@@ -40,3 +40,4 @@ jobs:
         host: kongroo.xyz
         username: root
         privateKey: ${{ secrets.SERVER_SSH_KEY}} 
+        debug: true
