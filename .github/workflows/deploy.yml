@@ -33,6 +33,7 @@ jobs:
           TARGET: /var/www/rm.kongroo.xyz
 
   run_server:
+    steps:
     - name: start server pm2 command 
       uses: garygrossgarten/github-action-ssh@release
       with:
