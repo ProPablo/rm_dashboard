@@ -21,7 +21,7 @@ jobs:
       run: npm install
       working-directory: client
     - name: Run build task
-      run: npm run build --if-present
+      run: CI=false npm run build --if-present
       working-directory: client
     - name: Deploy to Server
       uses: easingthemes/ssh-deploy@v2.1.5
