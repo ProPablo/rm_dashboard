@@ -37,7 +37,7 @@ createConnection({
     __dirname + "/entity/**.{ts,js}"
   ],
   "migrations": [
-    "./migration/**.{ts,js}"
+    __dirname + "/migration/**.{ts,js}"
   ]
 }).then(async connection => {
   // await initDatabase();
