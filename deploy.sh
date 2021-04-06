@@ -2,10 +2,10 @@
 git pull
 cd server
 npm i
-pm2 restart rm_server
+npm run pm2
 cd ..
 cd client
 npm i
 npm run build
-rm -rf /var/www/html/rm.kongroo.xyz/
-cp -Rf build /var/www/html/rm.kongroo.xyz
+rm -rf /var/www/rm.kongroo.xyz/
+cp -Rf build /var/www/rm.kongroo.xyz
