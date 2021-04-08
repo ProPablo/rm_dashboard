@@ -29,7 +29,6 @@ const dataProvider = jsonServerProvider(SERVER_URL, httpClient);
 function App() {
   return (
     <div className="App">
-      {SERVER_URL}
       <Admin theme={redlandTheme} dataProvider={dataProvider} authProvider={authProvider} loginPage={LoginPage}>
         <Resource name="artefacts" list={ArtefactList} edit={EditGuesser} create={ArtefactCreate} icon={ArtefactIcon} />
         <Resource name="zones" list={ListGuesser} edit={EditGuesser} create={ZoneCreate} icon={ZoneIcon} />
