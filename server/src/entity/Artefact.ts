@@ -11,7 +11,7 @@ export const schema = Joi.object({
   Image: Joi.binary(),
   CoordX: Joi.number(),
   CoordY: Joi.number(),
-  Activation: Joi.boolean().required(),
+  zoneId: Joi.number().required(), 
 })
 
 export interface inputArtefact {
@@ -20,7 +20,6 @@ export interface inputArtefact {
   Image: string,
   CoordX: number,
   CoordY: number,
-  Activation: boolean
 }
 
 @Entity()
@@ -49,9 +48,6 @@ export class Artefact extends BaseEntity {
 
   @Column({ type: "double" })
   CoordY: number;
-
-  @Column()
-  Activation: boolean;
 
   @CreateDateColumn()
   CreatedAt: Date

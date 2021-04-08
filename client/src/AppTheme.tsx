@@ -66,6 +66,7 @@ export const redlandTheme: any = ({
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
+              padding: "100px 100px 100px 100px"
             },
         },
         MuiPaper: {

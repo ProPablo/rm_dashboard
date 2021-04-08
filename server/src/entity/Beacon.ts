@@ -8,16 +8,17 @@ export const schema = Joi.object({
   CoordX: Joi.number(),
   CoordY: Joi.number(),
   MACAddress: Joi.string().pattern(/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/).required(),
+  Activation: Joi.boolean().required(),
 })
 
 export interface inputBeacon {
-    Name: string,
-    Visits: number,
-    MACAddress: string,
-    CoordX: number,
-    CoordY: number,
-    Activation: boolean
-  }
+  Name: string,
+  Visits: number,
+  MACAddress: string,
+  CoordX: number,
+  CoordY: number,
+  Activation: boolean
+}
 
 @Entity()
 export class Beacon extends BaseEntity {

@@ -1,8 +1,7 @@
-import jsonServerProvider from 'ra-data-json-server';
-import React from 'react';
-import { Admin, BooleanField, BooleanInput, Create, CreateProps, Datagrid, DateField, EditGuesser, ImageField, ImageInput, List, ListGuesser, NumberField, NumberInput, ReferenceField, ReferenceInput, Resource, SelectInput, SimpleForm, TextField, TextInput } from 'react-admin';
-import './App.css';
 import { makeStyles } from '@material-ui/core/styles';
+import React from 'react';
+import { BooleanField, BooleanInput, Create, CreateProps, Datagrid, DateField, DateInput, Edit, EditProps, ImageField, ImageInput, List, NumberField, NumberInput, ReferenceField, ReferenceInput, SelectInput, SimpleForm, TextField, TextInput } from 'react-admin';
+import './App.css';
 
 
 export const ArtefactCreate = (props: CreateProps) => (
@@ -16,9 +15,26 @@ export const ArtefactCreate = (props: CreateProps) => (
       </ImageInput>
       <NumberInput source="CoordX" />
       <NumberInput source="CoordY" />
-      <BooleanInput source="Activation" />
+      <ReferenceInput source="zoneId" reference="zones"><SelectInput optionText="Name" /></ReferenceInput>
     </SimpleForm>
   </Create>
+);
+
+export const ArtefactEdit = (props: EditProps) => (
+  <Edit {...props}>
+      <SimpleForm>
+          <TextInput source="id" />
+          <TextInput source="Name" />
+          <TextInput source="Description" />
+          <TextInput source="Image" />
+          <DateInput source="AcquisitionDate" />
+          <NumberInput source="CoordX" />
+          <NumberInput source="CoordY" />
+          <DateInput source="CreatedAt" />
+          <DateInput source="UpdatedAt" />
+          <ReferenceInput source="zoneId" reference="zones"><SelectInput optionText="Name" /></ReferenceInput>
+      </SimpleForm>
+  </Edit>
 );
 
 const useListStyles = makeStyles({
@@ -45,7 +61,6 @@ export const ArtefactList = (props: CreateProps) =>  {
               <TextField source="id" />
               <TextField source="Name" />
               <TextField source="Description" />
-              <BooleanField source="Activation" />
               <NumberField source="CoordX" />
               <NumberField source="CoordY" />
               <ReferenceField source="zoneId" reference="zones"><TextField source="id" /></ReferenceField>

@@ -2,9 +2,9 @@ import jsonServerProvider from 'ra-data-json-server';
 import React from 'react';
 import { Admin, EditGuesser, fetchUtils, MenuItemLink, ListGuesser, Resource, LoginComponent } from 'react-admin';
 import { redlandTheme } from './AppTheme';
-import { ArtefactCreate, ArtefactList } from './Artefact';
-import { BeaconCreate } from './Beacon';
-import { ZoneCreate } from './Zone';
+import { ArtefactCreate, ArtefactEdit, ArtefactList } from './Artefact';
+import { BeaconCreate, BeaconEdit, BeaconList } from './Beacon';
+import { ZoneCreate, ZoneEdit, ZoneList } from './Zone';
 import ArtefactIcon from '@material-ui/icons/AccountBalance';
 import ZoneIcon from '@material-ui/icons/Room';
 import BeaconIcon from '@material-ui/icons/Looks';
@@ -30,9 +30,9 @@ function App() {
   return (
     <div className="App">
       <Admin theme={redlandTheme} dataProvider={dataProvider} authProvider={authProvider} loginPage={LoginPage}>
-        <Resource name="artefacts" list={ArtefactList} edit={EditGuesser} create={ArtefactCreate} icon={ArtefactIcon} />
-        <Resource name="zones" list={ListGuesser} edit={EditGuesser} create={ZoneCreate} icon={ZoneIcon} />
-        <Resource name="beacons" list={ListGuesser} edit={EditGuesser} create={BeaconCreate} icon={BeaconIcon} />
+        <Resource name="artefacts" list={ArtefactList} edit={ArtefactEdit} create={ArtefactCreate} icon={ArtefactIcon} />
+        <Resource name="zones" list={ZoneList} edit={ZoneEdit} create={ZoneCreate} icon={ZoneIcon} />
+        <Resource name="beacons" list={BeaconList} edit={BeaconEdit} create={BeaconCreate} icon={BeaconIcon} />
       </Admin>
     </div>
   );

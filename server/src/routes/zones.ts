@@ -4,10 +4,10 @@ import Joi from 'joi';
 const zoneRouter = Router();
 
 zoneRouter.get('/', async (req, res) => {
-  const courses = await Zone.find();
+  const zones = await Zone.find();
   res.header('Access-Control-Expose-Headers', 'X-Total-Count');
-  res.header('X-Total-Count', courses.length.toString());
-  res.json(courses);
+  res.header('X-Total-Count', zones.length.toString());
+  res.json(zones);
 })
 
 zoneRouter.get('/:id', async (req, res) => {

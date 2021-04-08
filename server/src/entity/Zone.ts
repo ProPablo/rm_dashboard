@@ -27,7 +27,7 @@ export class Zone extends BaseEntity {
   Description: string;
 
   @CreateDateColumn()
-  createdAt: Date
+  CreatedAt: Date
 
   @UpdateDateColumn()
   UpdatedAt: Date
