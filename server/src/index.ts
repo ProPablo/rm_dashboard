@@ -9,6 +9,7 @@ import { artefactRouter } from "./routes/artefacts";
 import { beaconRouter } from "./routes/beacon";
 import { zoneRouter } from "./routes/zones";
 import { zoneMediaRouter } from "./routes/zoneMedias";
+import { resolve } from "path";
 
 //this will be called by default without try catch or if next(error);
 function errorMiddleware(error: any, request: Request, response: Response, next: NextFunction) {
@@ -50,7 +51,6 @@ createConnection({
   app.use(express.json());
   app.use(cors());
 
-  app.use(express.static(__dirname + '/public'));
 
   const router = Router();
 
@@ -62,6 +62,9 @@ createConnection({
 
   if (process.env.NODE_ENV === "development") {
     console.log("Using development environment");
+    const publicDir = resolve(__dirname + '/../public');
+    console.log("Serving static files from: " + publicDir);
+    app.use('/public', express.static('public'));
   }
   else {
     router.use(isLoggedIn);
