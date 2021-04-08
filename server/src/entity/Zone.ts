@@ -4,10 +4,14 @@ import { Artefact } from "./Artefact"
 import { Beacon } from "./Beacon";
 import { ZoneMedia } from "./ZoneMedia";
 
-export const schema = Joi.object({
-  Name: Joi.string().alphanum().min(3).max(30).required(),
-  Description: Joi.string().min(3).max(30).required(),
+export const editSchema = Joi.object({
+  Name: Joi.string().alphanum().min(3).max(30),
+  Description: Joi.string().min(3).max(30),
 })
+
+export const createSchema = editSchema.concat(Joi.object({
+  Name: Joi.required(),
+}));
 
 export interface inputZone {
   Name: string,
@@ -35,7 +39,7 @@ export class Zone extends BaseEntity {
   @OneToMany(() => Artefact, Artefact => Artefact.Zone)
   Artefacts: Artefact[]
 
-  @OneToMany(() => Beacon, Beacon => Beacon.Zones)
+  @OneToMany(() => Beacon, Beacon => Beacon.Zone)
   Beacons: Beacon[]
 
   @OneToOne(() => ZoneMedia, ZoneMedia => ZoneMedia.Zone, { nullable: true })

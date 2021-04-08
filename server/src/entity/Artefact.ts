@@ -5,14 +5,17 @@ import { Beacon } from './Beacon';
 
 
 
-export const schema = Joi.object({
-  Name: Joi.string().min(3).max(30).required(),
+export const editSchema = Joi.object({
+  Name: Joi.string().min(3).max(30),
   Description: Joi.string(),
-  Image: Joi.binary(),
   CoordX: Joi.number(),
   CoordY: Joi.number(),
-  zoneId: Joi.number().required(), 
+  zoneId: Joi.number(), 
 })
+
+export const createSchema = editSchema.concat(Joi.object({
+  Name: Joi.required(),
+}));
 
 export interface inputArtefact {
   Name: string,

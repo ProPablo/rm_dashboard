@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import { Artefact, inputArtefact, schema } from '../entity/Artefact'
+import { Artefact, createSchema, editSchema, inputArtefact } from '../entity/Artefact'
 import Joi from 'joi';
 const artefactRouter = Router();
 
@@ -17,12 +17,13 @@ artefactRouter.get('/:id', async (req, res) => {
 
 artefactRouter.post('/', async (req, res) => {
   console.log("logging new artefact", req.body);
-  const value: Object = await schema.validateAsync(req.body);
+  const value: Object = await createSchema.validateAsync(req.body);
   res.json(await Artefact.create(value).save());
 })
 
 artefactRouter.put('/:id', async (req, res) => {
   const { id } = req.params;
+  const value = await editSchema.validateAsync(req.body); // .optional()
   // res.json(await Artefact.update({ id: Number.parseInt(id) }, { ...req.body }));
   res.json(await Artefact.save({ id: Number.parseInt(id), ...req.body }));
 })
