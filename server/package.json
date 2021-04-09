@@ -27,7 +27,6 @@
       "mysql": "^2.18.1",
       "reflect-metadata": "^0.1.10",
       "swagger-ui-express": "^4.1.6",
-      "tsoa": "^3.6.1",
       "typeorm": "0.2.30"
    },
    "scripts": {
