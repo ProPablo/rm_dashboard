@@ -4,17 +4,20 @@ import { Artefact } from "./Artefact"
 import { Zone } from "./Zone";
 
 export const editSchema = Joi.object({
-  Name: Joi.string().alphanum().min(3).max(30),
+  id: Joi.number().strip(),
+  Name: Joi.string().min(3).max(30),
   CoordX: Joi.number(),
   CoordY: Joi.number(),
   MACAddress: Joi.string().pattern(/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/),
   Activation: Joi.boolean(),
   zoneId: Joi.number(),
+  visits: Joi.number(),
 })
 
 export const createSchema = editSchema.concat(Joi.object({
   Name: Joi.required(),
   MACAddress: Joi.required(),
+  visits: Joi.forbidden(),
 }));
 
 export interface inputBeacon {
