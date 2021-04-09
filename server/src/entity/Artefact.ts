@@ -3,9 +3,10 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, BaseEntity, CreateDa
 import { Zone } from './Zone';
 import { Beacon } from './Beacon';
 
-
-
 export const editSchema = Joi.object({
+  id: Joi.number().strip(),
+  CreatedAt: Joi.date().strip(),
+  UpdatedAt: Joi.date().strip(),
   Name: Joi.string().min(3).max(30),
   Description: Joi.string(),
   CoordX: Joi.number(),
@@ -65,9 +66,6 @@ export class Artefact extends BaseEntity {
   })
   @JoinColumn({ name: "zoneId" })
   Zone: Zone;
-
-  @ManyToOne(() => Beacon, beacon => beacon.Artefacts)
-  Beacon: Beacon;
 
 
 

@@ -1,27 +1,16 @@
 require('dotenv').config();
 import cors from "cors";
-import express, { NextFunction, Request, Response, Router } from "express";
+import express, { Router } from "express";
 import morgan from "morgan";
 import "reflect-metadata";
 import { createConnection } from "typeorm";
-import { loginRouter, isLoggedIn } from './routes/login';
+import { errorMiddleware } from "./helperFunctions";
 import { artefactRouter } from "./routes/artefacts";
 import { beaconRouter } from "./routes/beacon";
-import { zoneRouter } from "./routes/zones";
+import { isLoggedIn, loginRouter } from './routes/login';
 import { zoneMediaRouter } from "./routes/zoneMedias";
+import { zoneRouter } from "./routes/zones";
 
-//this will be called by default without try catch or if next(error);
-function errorMiddleware(error: any, request: Request, response: Response, next: NextFunction) {
-  const resStatus = (response.statusCode != 200) ? response.statusCode : null;
-  let status = error.status || resStatus || 500;
-  const message = error.message || 'Something went wrong';
-  response
-    .status(status)
-    .json({
-      status,
-      message,
-    })
-}
 
 console.log(__dirname + "/entity")
 createConnection({

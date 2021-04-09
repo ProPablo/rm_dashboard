@@ -2,29 +2,15 @@ import { Request, Response, Router } from 'express';
 import { Beacon, inputBeacon, editSchema, createSchema } from '../entity/Beacon'
 import Joi, { optional } from 'joi';
 import { getConnection } from 'typeorm';
+import { HTTPException } from '../Errors';
+import { createListQuery } from '../helperFunctions'
 
 const beaconRouter = Router();
-const beaconProps = [
-  'id',
-  'Name',
-  'Visits',
-  'MACAddress',
-  'Activation',
-  'CoordX',
-  'CoordY',
-  'zoneId'
-];
-
 
 beaconRouter.get('/', async (req, res) => {
-  const query = Beacon.getRepository().createQueryBuilder('b');
-  if (req.query._sort && typeof req.query._sort == 'string') query.orderBy(req.query._sort, req.query._order as any);
-
-  // const beaconProps = getConnection().getMetadata(Beacon).ownColumns.map(column => column.propertyName);
-  let listOfParams = Object.keys(req.query).filter(x => !x.startsWith('_'));
-  if (listOfParams && listOfParams.every(x => beaconProps.includes(x))) {
-    listOfParams.forEach(param => query.andWhere(`b.${param} = :pVal`, { pVal: req.query[param] }));
-  }
+  const query = Beacon.getRepository().createQueryBuilder('E');
+  const beaconProps = getConnection().getMetadata(Beacon).ownColumns.map(column => column.propertyName);
+  createListQuery<Beacon>(query, req, beaconProps);
 
   const beacons = await query.getMany();
   res.header('Access-Control-Expose-Headers', 'X-Total-Count');

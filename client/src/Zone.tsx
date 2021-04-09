@@ -20,8 +20,8 @@ export const ZoneEdit = (props: EditProps) => (
         <TextInput disabled source="id" />
         <TextInput source="Name" />
         <TextInput source="Description" />
-        <DateInput source="CreatedAt" />
-        <DateInput source="UpdatedAt" />
+        <DateInput disabled source="CreatedAt" />
+        <DateInput disabled source="UpdatedAt" />
 
         <ReferenceManyField label="Beacons" reference="beacons" target="zoneId">
           <SingleFieldList>
@@ -30,12 +30,11 @@ export const ZoneEdit = (props: EditProps) => (
         </ReferenceManyField>
       </FormTab>
       <FormTab label="Artefacts">
-        <ReferenceArrayField label="" reference="artefacts" source="Artefacts">
-          <Datagrid rowClick="edit">
-            <TextField source="Name" />
-            <TextField source="Description" />
-          </Datagrid>
-        </ReferenceArrayField>
+        <ReferenceManyField label="Artefacts" reference="artefacts" target="zoneId" source="id">
+          <SingleFieldList>
+            <ChipField source="Name" />
+          </SingleFieldList>
+        </ReferenceManyField>
       </FormTab>
 
     </TabbedForm>

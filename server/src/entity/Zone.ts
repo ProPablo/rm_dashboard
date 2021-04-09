@@ -5,6 +5,9 @@ import { Beacon } from "./Beacon";
 import { ZoneMedia } from "./ZoneMedia";
 
 export const editSchema = Joi.object({
+  id: Joi.number().strip(),
+  CreatedAt: Joi.date().strip(),
+  UpdatedAt: Joi.date().strip(),
   Name: Joi.string().min(3).max(30),
   Description: Joi.string().min(3).max(30),
 })

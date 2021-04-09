@@ -21,7 +21,7 @@ export const redlandTheme: any = ({
     overrides: {
         RaSidebar: { // override the styles of all instances of this component
             drawerPaper: { // Name of the rule
-                backgroundColor: '#fdf3bfdd', // Some CSS
+                backgroundColor: '#e5d0addd', // Some CSS
                 height: "100%",
                 boxShadow:
                     "2px 0px 1px -1px rgba(0,0,0,0.2), 1px 0px 3px 0px rgba(0,0,0,0.1)",

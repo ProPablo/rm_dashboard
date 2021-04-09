@@ -17,27 +17,16 @@ export const BeaconCreate = (props: CreateProps) => (
 
 export const BeaconEdit = (props: EditProps) => (
   <Edit undoable={false} {...props}>
-    <TabbedForm>
-      <FormTab label="Beacon">
-        {/* <TextField source="id" /> */}
-        {/* <TextInput disabled source="id" /> */}
-        <TextInput source="Name" />
-        <NumberInput source="Visits" />
-        <TextInput source="MACAddress" />
-        <BooleanInput source="Activation" />
-        <NumberInput source="CoordX" />
-        <NumberInput source="CoordY" />
-        <ReferenceInput source="zoneId" reference="zones"><SelectInput optionText="Name" /></ReferenceInput>
-      </FormTab>
-
-      <FormTab label="Zones">
-        <ReferenceManyField label="Artefacts" reference="artefacts" target="zoneId" source="id">
-          <SingleFieldList>
-            <ChipField source="Name" />
-          </SingleFieldList>
-        </ReferenceManyField>
-      </FormTab>
-    </TabbedForm>
+    <SimpleForm>
+      <TextInput disabled source="id" />
+      <TextInput source="Name" />
+      <NumberInput disabled source="Visits" />
+      <TextInput source="MACAddress" />
+      <BooleanInput source="Activation" />
+      <NumberInput source="CoordX" />
+      <NumberInput source="CoordY" />
+      <ReferenceInput source="zoneId" reference="zones"><SelectInput optionText="Name" /></ReferenceInput>
+    </SimpleForm>
   </Edit>
 );
 

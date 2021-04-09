@@ -1,28 +1,34 @@
-import { Request, Response, Router } from 'express';
-import { Zone, inputZone, createSchema, editSchema } from '../entity/Zone'
-import Joi from 'joi';
-import { getRepository } from 'typeorm';
-import { Artefact } from '../entity/Artefact';
+import { Request, Router } from 'express';
+import { BaseEntity, getConnection, SelectQueryBuilder } from 'typeorm';
+import { createSchema, editSchema, Zone } from '../entity/Zone';
+import { HTTPException } from '../Errors';
+import { createListQuery } from '../helperFunctions'
 const zoneRouter = Router();
 
+
 zoneRouter.get('/', async (req, res) => {
-  const zones = await Zone.find();
+  const query = Zone.getRepository().createQueryBuilder('E');
+  const zoneProps = getConnection().getMetadata(Zone).ownColumns.map(column => column.propertyName);
+  createListQuery<Zone>(query, req, zoneProps);
+
+  const zones = await query.getMany();
+  // const zones = await Zone.find();
   res.header('Access-Control-Expose-Headers', 'X-Total-Count');
   res.header('X-Total-Count', zones.length.toString());
   res.json(zones);
 })
 
 zoneRouter.get('/:id', async (req, res) => {
+  // let zone: any | Zone = await Zone.findOneOrFail({ id: Number.parseInt(id) },);
+  // const artefacts = (await getRepository(Artefact)
+  //   .createQueryBuilder("a")
+  //   .select("a.id")
+  //   .leftJoin(Zone, "z", "z.id = a.zoneId")
+  //   .where("z.id = :id", { id })
+  //   .getMany()).map(x => x.id)
   const { id } = req.params;
-  let zone: any | Zone = await Zone.findOneOrFail({ id: Number.parseInt(id) },);
-  const artefacts = (await getRepository(Artefact)
-    .createQueryBuilder("a")
-    .select("a.id")
-    .leftJoin(Zone, "z", "z.id = a.zoneId")
-    .where("z.id = :id", { id })
-    .getMany()).map(x => x.id)
-  zone.Artefacts = artefacts;
-  res.json(zone);
+  console.log("reading in parameter get")
+  res.json(await Zone.findOneOrFail({ id: Number.parseInt(id) },));
 })
 
 zoneRouter.post('/', async (req, res) => {

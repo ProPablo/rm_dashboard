@@ -5,19 +5,21 @@ import { Zone } from "./Zone";
 
 export const editSchema = Joi.object({
   id: Joi.number().strip(),
+  CreatedAt: Joi.date().strip(),
+  UpdatedAt: Joi.date().strip(),
   Name: Joi.string().min(3).max(30),
   CoordX: Joi.number(),
   CoordY: Joi.number(),
   MACAddress: Joi.string().pattern(/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/),
-  Activation: Joi.boolean(),
+  Activation: Joi.boolean().default(false),
   zoneId: Joi.number(),
-  visits: Joi.number(),
+  Visits: Joi.number(),
 })
 
 export const createSchema = editSchema.concat(Joi.object({
   Name: Joi.required(),
   MACAddress: Joi.required(),
-  visits: Joi.forbidden(),
+  Visits: Joi.forbidden(),
 }));
 
 export interface inputBeacon {
@@ -53,9 +55,6 @@ export class Beacon extends BaseEntity {
 
   @Column()
   CoordY: number;
-
-  @OneToMany(() => Artefact, Artefact => Artefact.Beacon)
-  Artefacts: Artefact[]
 
   @Column({ nullable: true })
   zoneId: number;
