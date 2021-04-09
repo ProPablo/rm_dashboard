@@ -11,7 +11,7 @@ export const redlandTheme: any = ({
     ...defaultTheme,
     palette: {
         primary: { main: '#A20C02' },
-        secondary: { main: '#790901' },
+        secondary: { main: '#fdf3bf' },
         error: { main: '#790901' }
     },
     typography: {
@@ -21,9 +21,7 @@ export const redlandTheme: any = ({
     overrides: {
         RaSidebar: { // override the styles of all instances of this component
             drawerPaper: { // Name of the rule
-                backgroundColor: '#E2CAA2dd', // Some CSS
-                textColor: "#ff",
-                color: '#E2CAA2dd',
+                backgroundColor: '#fdf3bfdd', // Some CSS
                 height: "100%",
                 boxShadow:
                     "2px 0px 1px -1px rgba(0,0,0,0.2), 1px 0px 3px 0px rgba(0,0,0,0.1)",
@@ -62,7 +60,7 @@ export const redlandTheme: any = ({
         RaLayout: {
             content: {
                 height: "auto",
-                backgroundColor: '#f3e1c7',
+                backgroundColor: '#F3E1C7',
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
@@ -96,7 +94,5 @@ export const redlandTheme: any = ({
                 flexDirection: "column",
             }
         },
-
-        
     },
 });
