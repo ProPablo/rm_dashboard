@@ -19,7 +19,8 @@ export const BeaconEdit = (props: EditProps) => (
   <Edit undoable={false} {...props}>
     <TabbedForm>
       <FormTab label="Beacon">
-        <TextInput disabled source="id" />
+        {/* <TextField source="id" /> */}
+        {/* <TextInput disabled source="id" /> */}
         <TextInput source="Name" />
         <NumberInput source="Visits" />
         <TextInput source="MACAddress" />

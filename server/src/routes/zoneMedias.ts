@@ -1,5 +1,4 @@
 import { json, Request, Response, Router } from 'express';
-import { Zone, inputZone, schema } from '../entity/Zone'
 import Joi from 'joi';
 import multer from 'multer';
 import { HTTPException } from '../Errors';
