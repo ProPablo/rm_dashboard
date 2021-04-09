@@ -67,7 +67,10 @@ createConnection({
     app.use('/public', express.static('public'));
   }
   else {
-    router.use(isLoggedIn);
+    // router.use(isLoggedIn);
+    router.post("*", isLoggedIn);
+    router.put("*", isLoggedIn);
+    router.delete("*", isLoggedIn);
   }
 
   router.use('/artefacts', artefactRouter);

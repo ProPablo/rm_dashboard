@@ -1,6 +1,4 @@
 import { json, Request, Response, Router } from 'express';
-import { Zone, inputZone, schema } from '../entity/Zone'
-import Joi from 'joi';
 import multer from 'multer';
 import { HTTPException } from '../Errors';
 import { MediaType, ZoneMedia } from '../entity/ZoneMedia';
@@ -12,12 +10,12 @@ const storage = multer.diskStorage({
     // THE DATA IN FORMDATA HAS TO BE ARRANGED SO FILE IS SENT LAST
     console.log(`logging multer req ${JSON.stringify(req.body)}`);
     const ext = file.mimetype.split('/')[1];
-    if (req.body?.title) {
-      cb(null, req.body.title + `.${ext}`);
-    }
-    else {
-      cb(null, file.originalname + '-' + Date.now());
-    }
+    // if (req.body.title) {
+    cb(null, `${req.body.title}-${Date.now()}.${ext}`);
+    // }
+    // else {
+    //   cb(null, file.originalname + '-' + Date.now());
+    // }
   }
 })
 
@@ -40,10 +38,6 @@ zoneMediaRouter.get('/:id', async (req, res) => {
 zoneMediaRouter.post('/', upload.single('file'), async (req, res, next) => {
   if (req.file) {
     req.body.src = req.file.path;
-
-    if (!req.body.title) {
-      req.body.title = req.file.originalname;
-    }
 
     if (isNaN(req.body.type)) {
       req.body.type = MediaType[req.body.type];
@@ -68,12 +62,16 @@ zoneMediaRouter.put('/:id', upload.single('file'), async (req, res, next) => {
   // Fix logic, get title from db 
   const { id } = req.params;
   if (req.file) {
-
     req.body.src = req.file.path;
-    if (!req.body.title) {
-      req.body.title = req.file.originalname;
+
+    // if (!req.body.title) {
+    //   req.body.title = req.file.originalname;
+    // }
+
+    if (isNaN(req.body.type)) {
+      req.body.type = MediaType[req.body.type];
     }
-    req.body.type = MediaType[req.body.type];
+
     try {
       res.json(await ZoneMedia.save({ id: Number.parseInt(id), ...req.body }));
     }
