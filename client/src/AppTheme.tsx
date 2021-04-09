@@ -10,9 +10,9 @@ import { createMuiTheme } from '@material-ui/core/styles';
 export const redlandTheme: any = ({
     ...defaultTheme,
     palette: {
-        primary: {main: '#A20C02'},
-        secondary: {main: '#790901'},
-        error: {main: '#790901'}
+        primary: { main: '#A20C02' },
+        secondary: { main: '#fdf3bf' },
+        error: { main: '#790901' }
     },
     typography: {
         // Use the system font instead of the default Roboto font.
@@ -21,12 +21,10 @@ export const redlandTheme: any = ({
     overrides: {
         RaSidebar: { // override the styles of all instances of this component
             drawerPaper: { // Name of the rule
-              backgroundColor: '#E2CAA2dd', // Some CSS
-              textColor: "#ff",
-              color: '#E2CAA2dd',
-              height: "100%",
-              boxShadow:
-                "2px 0px 1px -1px rgba(0,0,0,0.2), 1px 0px 3px 0px rgba(0,0,0,0.1)",
+                backgroundColor: '#e5d0addd', // Some CSS
+                height: "100%",
+                boxShadow:
+                    "2px 0px 1px -1px rgba(0,0,0,0.2), 1px 0px 3px 0px rgba(0,0,0,0.1)",
             },
         },
         // Sidemenu 
@@ -61,18 +59,21 @@ export const redlandTheme: any = ({
         },
         RaLayout: {
             content: {
-              height: "auto",
-              backgroundColor: '#f3e1c7',
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              padding: "100px 100px 100px 100px"
+                height: "auto",
+                backgroundColor: '#F3E1C7',
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                padding: "100px 100px 100px 100px",
+                textAlign: 'center',
+
             },
         },
         MuiPaper: {
             root: {
                 backgroundColor: '#F2F3F8',
                 textAlign: 'center',
+
             }
         },
         RaToolbar: {
@@ -84,6 +85,13 @@ export const redlandTheme: any = ({
         MuiListItemIcon: {
             root: {
                 color: '#790901'
+            }
+        },
+
+        MuiFormGroup: {
+            root: {
+                alignItems: "center",
+                flexDirection: "column",
             }
         },
     },
