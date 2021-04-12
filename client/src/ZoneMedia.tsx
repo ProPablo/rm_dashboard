@@ -81,7 +81,9 @@ export const ZoneMediaEdit = (props: EditProps) => {
           )}
         </FormDataConsumer>
 
-        <ReferenceInput source="zoneId" reference="zones"><SelectInput optionText="id" /></ReferenceInput>
+        <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined} >
+          <SelectInput optionText="Name" />
+        </ReferenceInput>
       </SimpleForm>
     </Edit>
   )
@@ -104,7 +106,9 @@ export const ZoneMediaCreate = (props: CreateProps) => (
         )}
       </FormDataConsumer>
 
-      <ReferenceInput source="zoneId" reference="zones"><SelectInput optionText="id" /></ReferenceInput>
+      <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined} >
+        <SelectInput optionText="Name" />
+      </ReferenceInput>
     </SimpleForm>
   </Create>
 );

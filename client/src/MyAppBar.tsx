@@ -64,7 +64,7 @@ const MyAppBar = (props: any) => {
 
                     className={classes.title}
                 >
-                    Display Information and Guidance System Management Portal
+                    Display Information and Guidance System - Management Portal
 
                 </Typography>
             </AppBar>

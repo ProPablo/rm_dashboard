@@ -19,10 +19,10 @@ function App() {
   return (
     <div className="App">
       <Admin layout={AppLayout} theme={redlandTheme} dataProvider={builtDataProvider} authProvider={authProvider} loginPage={LoginPage}>
-        <Resource name="artefacts" list={ArtefactList} edit={EditGuesser} create={ArtefactCreate} icon={ArtefactIcon} />
-        <Resource name="zones" list={ListGuesser} edit={EditGuesser} create={ZoneCreate} icon={ZoneIcon} />
+        <Resource name="artefacts" list={ArtefactList} edit={ArtefactEdit} create={ArtefactCreate} icon={ArtefactIcon} />
+        <Resource name="zones" list={ZoneList} edit={ZoneEdit} create={ZoneCreate} icon={ZoneIcon} />
         <Resource name="zonemedia" list={ListGuesser} edit={ZoneMediaEdit} create={ZoneMediaCreate}/>
-        <Resource name="beacons" list={ListGuesser} edit={EditGuesser} create={BeaconCreate} icon={BeaconIcon} />
+        <Resource name="beacons" list={BeaconList} edit={BeaconEdit} create={BeaconCreate} icon={BeaconIcon} />
       </Admin>
     </div>
   );

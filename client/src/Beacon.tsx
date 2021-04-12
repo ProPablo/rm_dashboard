@@ -6,11 +6,13 @@ export const BeaconCreate = (props: CreateProps) => (
   <Create {...props}>
     <SimpleForm>
       <TextInput source="Name" />
-      <TextInput source="MACAddress" />
+      <TextInput label="MAC Address" source="MACAddress" />
       <NumberInput source="CoordX" />
       <NumberInput source="CoordY" />
       <BooleanInput source="Activation" />
-      <ReferenceInput source="zoneId" reference="zones"><SelectInput optionText="Name" /></ReferenceInput>
+      <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined} >
+        <SelectInput optionText="Name" />
+      </ReferenceInput>
     </SimpleForm>
   </Create>
 )
@@ -21,11 +23,13 @@ export const BeaconEdit = (props: EditProps) => (
       <TextInput disabled source="id" />
       <TextInput source="Name" />
       <NumberInput disabled source="Visits" />
-      <TextInput source="MACAddress" />
+      <TextInput label="MAC Address" source="MACAddress" />
       <BooleanInput source="Activation" />
       <NumberInput source="CoordX" />
       <NumberInput source="CoordY" />
-      <ReferenceInput source="zoneId" reference="zones"><SelectInput optionText="Name" /></ReferenceInput>
+      <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined} >
+        <SelectInput optionText="Name" />
+      </ReferenceInput>
     </SimpleForm>
   </Edit>
 );
@@ -36,7 +40,7 @@ export const BeaconList = (props: ListProps) => (
       <TextField source="id" />
       <TextField source="Name" />
       <NumberField source="Visits" />
-      <TextField source="MACAddress" />
+      <TextField label="MAC Address" source="MACAddress" />
       <BooleanField source="Activation" />
       <ReferenceField source="zoneId" reference="zones"><TextField source="id" /></ReferenceField>
       <NumberField source="CoordX" />

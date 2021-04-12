@@ -20,13 +20,15 @@ export const ArtefactCreate = (props: CreateProps) => (
     <SimpleForm>
       <TextInput source="Name" />
       <TextInput source="Description" />
-      {/* <ImageInput> */}
+      <NumberInput source="CoordX" />
+      <NumberInput source="CoordY" />
+      <DateInput source="AcquisitionDate" />
+      <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined}>
+        <SelectInput optionText="Name" />
+      </ReferenceInput>
       <ImageInput source="Image" label="Related pictures" accept="image/*">
         <ImageField source="src" title="title" />
       </ImageInput>
-      <NumberInput source="CoordX" />
-      <NumberInput source="CoordY" />
-      <ReferenceInput source="zoneId" reference="zones"><SelectInput optionText="Name" /></ReferenceInput>
     </SimpleForm>
   </Create>
 );
@@ -37,17 +39,17 @@ export const ArtefactEdit = (props: EditProps) => (
       <TextInput disabled source="id" />
       <TextInput source="Name" />
       <TextInput source="Description" />
-      <ImageInput source="Image" label="Related pictures" accept="image/*">
-        <ImageField source="src" title="title" />
-      </ImageInput>
-      <DateInput source="AcquisitionDate" />
       <NumberInput source="CoordX" />
       <NumberInput source="CoordY" />
-      <DateInput source="CreatedAt" />
-      <DateInput source="UpdatedAt" />
+      <DateInput source="AcquisitionDate" />
+      <DateInput disabled source="CreatedAt" />
+      <DateInput disabled source="UpdatedAt" />
       <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined}>
         <SelectInput optionText="Name" />
       </ReferenceInput>
+      <ImageInput source="Image" label="Related pictures" accept="image/*">
+        <ImageField source="src" title="title" />
+      </ImageInput>
     </SimpleForm>
   </Edit>
 );

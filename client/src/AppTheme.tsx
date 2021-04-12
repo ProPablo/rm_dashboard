@@ -94,5 +94,13 @@ export const redlandTheme: any = ({
                 flexDirection: "column",
             }
         },
+
+        MuiFormLabel: {
+            root: {
+                alignItems: "center",
+                justifyContent: 'center',
+
+            }
+        }
     },
 });
