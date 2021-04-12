@@ -1,6 +1,5 @@
-import jsonServerProvider from 'ra-data-json-server';
 import React from 'react';
-import { Admin, BooleanInput, Create, CreateProps, EditGuesser, ListGuesser, NumberInput, ReferenceInput, Resource, SelectInput, SimpleForm, TextInput } from 'react-admin';
+import { BooleanField, BooleanInput, ChipField, Create, CreateProps, Datagrid, Edit, EditProps, FormTab, List, ListProps, NumberField, NumberInput, ReferenceField, ReferenceInput, ReferenceManyField, SelectInput, SimpleForm, SingleFieldList, TabbedForm, TextField, TextInput } from 'react-admin';
 import './App.css';
 
 export const BeaconCreate = (props: CreateProps) => (
@@ -11,7 +10,38 @@ export const BeaconCreate = (props: CreateProps) => (
       <NumberInput source="CoordX" />
       <NumberInput source="CoordY" />
       <BooleanInput source="Activation" />
-
+      <ReferenceInput source="zoneId" reference="zones"><SelectInput optionText="Name" /></ReferenceInput>
     </SimpleForm>
   </Create>
 )
+
+export const BeaconEdit = (props: EditProps) => (
+  <Edit undoable={false} {...props}>
+    <SimpleForm>
+      <TextInput disabled source="id" />
+      <TextInput source="Name" />
+      <NumberInput disabled source="Visits" />
+      <TextInput source="MACAddress" />
+      <BooleanInput source="Activation" />
+      <NumberInput source="CoordX" />
+      <NumberInput source="CoordY" />
+      <ReferenceInput source="zoneId" reference="zones"><SelectInput optionText="Name" /></ReferenceInput>
+    </SimpleForm>
+  </Edit>
+);
+
+export const BeaconList = (props: ListProps) => (
+  <List {...props}>
+    <Datagrid rowClick="edit">
+      <TextField source="id" />
+      <TextField source="Name" />
+      <NumberField source="Visits" />
+      <TextField source="MACAddress" />
+      <BooleanField source="Activation" />
+      <ReferenceField source="zoneId" reference="zones"><TextField source="id" /></ReferenceField>
+      <NumberField source="CoordX" />
+      <NumberField source="CoordY" />
+    </Datagrid>
+  </List>
+);
+

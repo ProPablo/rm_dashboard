@@ -92,7 +92,7 @@ export const LoginPage = ({ theme }: any) => {
                 className={classes.button}
               >
                 Login
-          </Button>
+              </Button>
             </CardActions>
           </div>
         </div>

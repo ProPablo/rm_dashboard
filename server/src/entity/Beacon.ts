@@ -3,21 +3,34 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, BaseEntity, CreateDa
 import { Artefact } from "./Artefact"
 import { Zone } from "./Zone";
 
-export const schema = Joi.object({
-  Name: Joi.string().alphanum().min(3).max(30).required(),
+export const editSchema = Joi.object({
+  id: Joi.number().strip(),
+  CreatedAt: Joi.date().strip(),
+  UpdatedAt: Joi.date().strip(),
+  Name: Joi.string().min(3).max(30),
   CoordX: Joi.number(),
   CoordY: Joi.number(),
-  MACAddress: Joi.string().pattern(/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/).required(),
+  MACAddress: Joi.string().pattern(/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/),
+  Activation: Joi.boolean().default(false),
+  zoneId: Joi.number(),
+  Visits: Joi.number(),
 })
 
+export const createSchema = editSchema.concat(Joi.object({
+  Name: Joi.required(),
+  MACAddress: Joi.required(),
+  Visits: Joi.forbidden(),
+}));
+
 export interface inputBeacon {
-    Name: string,
-    Visits: number,
-    MACAddress: string,
-    CoordX: number,
-    CoordY: number,
-    Activation: boolean
-  }
+  Name: string,
+  Visits: number,
+  MACAddress: string,
+  CoordX: number,
+  CoordY: number,
+  Activation: boolean
+  
+}
 
 @Entity()
 export class Beacon extends BaseEntity {
@@ -43,10 +56,12 @@ export class Beacon extends BaseEntity {
   @Column()
   CoordY: number;
 
-  @OneToMany(() => Artefact, Artefact => Artefact.Beacon)
-  Artefacts: Artefact[]
-
-  @ManyToOne(() => Zone, Zone => Zone.Beacons)
-  Zones: Zone[]
+  @Column({ nullable: true })
+  zoneId: number;
+  @ManyToOne(() => Zone, zone => zone.Beacons, {
+    nullable: true
+  })
+  @JoinColumn({ name: "zoneId" })
+  Zone: Zone;
 
 }

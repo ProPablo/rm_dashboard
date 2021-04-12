@@ -3,16 +3,20 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, BaseEntity, CreateDa
 import { Zone } from './Zone';
 import { Beacon } from './Beacon';
 
-
-
-export const schema = Joi.object({
-  Name: Joi.string().min(3).max(30).required(),
+export const editSchema = Joi.object({
+  id: Joi.number().strip(),
+  CreatedAt: Joi.date().strip(),
+  UpdatedAt: Joi.date().strip(),
+  Name: Joi.string().min(3).max(30),
   Description: Joi.string(),
-  Image: Joi.binary(),
   CoordX: Joi.number(),
   CoordY: Joi.number(),
-  Activation: Joi.boolean().required(),
+  zoneId: Joi.number(), 
 })
+
+export const createSchema = editSchema.concat(Joi.object({
+  Name: Joi.required(),
+}));
 
 export interface inputArtefact {
   Name: string,
@@ -20,7 +24,6 @@ export interface inputArtefact {
   Image: string,
   CoordX: number,
   CoordY: number,
-  Activation: boolean
 }
 
 @Entity()
@@ -50,9 +53,6 @@ export class Artefact extends BaseEntity {
   @Column({ type: "double" })
   CoordY: number;
 
-  @Column()
-  Activation: boolean;
-
   @CreateDateColumn()
   CreatedAt: Date
 
@@ -66,9 +66,6 @@ export class Artefact extends BaseEntity {
   })
   @JoinColumn({ name: "zoneId" })
   Zone: Zone;
-
-  @ManyToOne(() => Beacon, beacon => beacon.Artefacts)
-  Beacon: Beacon;
 
 
 
