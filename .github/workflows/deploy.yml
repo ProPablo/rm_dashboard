@@ -33,7 +33,7 @@ jobs:
           SOURCE: "client/build/"
           REMOTE_HOST: kongroo.xyz
           REMOTE_USER: root
-          TARGET: /var/www/rm.kongroo.xyz
+          TARGET: '${{ secrets.TARGET }}/client/build'
 
   run_server:
     runs-on: ubuntu-latest
@@ -41,8 +41,7 @@ jobs:
     - name: start server pm2 command 
       uses: garygrossgarten/github-action-ssh@release
       with:
-        command: cd /root/rm_dashboard/server && git pull && npm run build && npm run pm2 && date > ~/lastrun
+        command: cd '${{ secrets.TARGET }}/server' && git pull && npm run build && npm run pm2 && date > ~/lastrun
         host: kongroo.xyz
         username: root
-        privateKey: ${{ secrets.SERVER_SSH_KEY}} 
-        debug: true
+        privateKey: ${{ secrets.SERVER_SSH_KEY}}

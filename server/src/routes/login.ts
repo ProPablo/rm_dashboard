@@ -7,7 +7,7 @@ const loginRouter = Router();
 
 const JWT_EXPIRY = "10 days";
 
-loginRouter.post('/login', async (req, res, next) => {
+loginRouter.post('/', async (req, res, next) => {
   let admin: User;
   try {
     admin = await User.findOneOrFail({ email: req.body.email });
