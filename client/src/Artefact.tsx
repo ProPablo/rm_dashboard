@@ -1,7 +1,10 @@
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
-import { BooleanField, BooleanInput, Create, CreateProps, Datagrid, DateField, DateInput, Edit, EditProps, ImageField, ImageInput, List, NumberField, NumberInput, ReferenceField, ReferenceInput, SelectInput, SimpleForm, TextField, TextInput } from 'react-admin';
+import { BooleanField, BooleanInput, Create, CreateProps, Datagrid, DateField, DateInput, Edit, EditActionsProps, EditProps, ImageField, ImageInput, List, ListButton, NumberField, NumberInput, ReferenceField, ReferenceInput, SelectInput, ShowButton, SimpleForm, TextField, TextInput, TopToolbar } from 'react-admin';
 import './App.css';
+import ChevronLeft from '@material-ui/icons/ChevronLeft';
+import { ResourceActions } from './helper';
+
 
 const useListStyles = makeStyles({
   content: {
@@ -16,7 +19,7 @@ const useListStyles = makeStyles({
 })
 
 export const ArtefactCreate = (props: CreateProps) => (
-  <Create {...props}>
+  <Create actions={<ResourceActions/>} {...props}>
     <SimpleForm>
       <TextInput source="Name" />
       <TextInput source="Description" />
@@ -34,7 +37,7 @@ export const ArtefactCreate = (props: CreateProps) => (
 );
 
 export const ArtefactEdit = (props: EditProps) => (
-  <Edit {...props}>
+  <Edit actions={<ResourceActions />} {...props}>
     <SimpleForm>
       <TextInput disabled source="id" />
       <TextInput source="Name" />

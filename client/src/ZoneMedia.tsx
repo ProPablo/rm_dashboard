@@ -1,6 +1,7 @@
 import React, { FC } from "react";
 import { Edit, SimpleForm, TextInput, NumberInput, ReferenceInput, SelectInput, EditProps, ImageField, ImageInput, Create, FunctionField, FormDataConsumer, FileInput, FileField, FileFieldProps, CreateProps } from "react-admin";
 import { MEDIA_URL } from "./constants";
+import { ResourceActions } from "./helper";
 
 const choices = [
   { id: 123, first_name: 'Leo', last_name: 'Tolstoi' },
@@ -63,8 +64,7 @@ const conditionalMediaInput = (formData: any) => {
 
 export const ZoneMediaEdit = (props: EditProps) => {
   return (
-
-    <Edit {...props}>
+    <Edit actions={<ResourceActions />} {...props}>
       <SimpleForm>
         <TextInput source="id" />
         <TextInput disabled source="src" />
@@ -90,7 +90,7 @@ export const ZoneMediaEdit = (props: EditProps) => {
 };
 
 export const ZoneMediaCreate = (props: CreateProps) => (
-  <Create {...props}>
+  <Create actions={<ResourceActions />} {...props}>
     <SimpleForm>
       <TextInput disabled source="src" />
       <TextInput source="title" />

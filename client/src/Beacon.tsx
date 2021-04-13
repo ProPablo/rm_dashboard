@@ -1,9 +1,10 @@
 import React from 'react';
 import { BooleanField, BooleanInput, ChipField, Create, CreateProps, Datagrid, Edit, EditProps, FormTab, List, ListProps, NumberField, NumberInput, ReferenceField, ReferenceInput, ReferenceManyField, SelectInput, SimpleForm, SingleFieldList, TabbedForm, TextField, TextInput } from 'react-admin';
 import './App.css';
+import { ResourceActions } from './helper';
 
 export const BeaconCreate = (props: CreateProps) => (
-  <Create {...props}>
+  <Create actions={<ResourceActions />} {...props}>
     <SimpleForm>
       <TextInput source="Name" />
       <TextInput label="MAC Address" source="MACAddress" />
@@ -18,7 +19,7 @@ export const BeaconCreate = (props: CreateProps) => (
 )
 
 export const BeaconEdit = (props: EditProps) => (
-  <Edit undoable={false} {...props}>
+  <Edit actions={<ResourceActions />} undoable={false} {...props}>
     <SimpleForm>
       <TextInput disabled source="id" />
       <TextInput source="Name" />
