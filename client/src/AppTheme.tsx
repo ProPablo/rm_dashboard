@@ -1,11 +1,24 @@
+import { makeStyles } from '@material-ui/core/styles';
 import { defaultTheme } from 'react-admin';
-import indigo from '@material-ui/core/colors/indigo';
-import pink from '@material-ui/core/colors/pink';
-import red from '@material-ui/core/colors/red';
-import { SymbolDisplayPartKind } from 'typescript';
-import { createMuiTheme } from '@material-ui/core/styles';
 
+export const useListStyles = makeStyles({
+  content: {
+    backgroundColor: '#F2F3F8',
+  },
+  headerCell: {
+    root: {
+      backgroundColor: '#F2F3F8'
+    },
+    backgroundColor: '#F2F3F8',
+  },
+  thumbnailImage: {
+    height: '6vh',
+    width: '6vh'
+  }
+});
 
+// export const useCreateStyles = 
+// export const useGlobalStyles = 
 
 export const redlandTheme: any = ({
     ...defaultTheme,

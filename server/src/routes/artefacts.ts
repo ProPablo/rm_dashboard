@@ -34,6 +34,8 @@ artefactRouter.get('/', async (req, res) => {
   createListQuery<Artefact>(query, req, artefactProps);
 
   const artefacts = await query.getMany();
+  // Change Buffer to base64 string
+  artefacts.forEach(a => a.Image = a.Image?.toString() as any);
   res.header('Access-Control-Expose-Headers', 'X-Total-Count');
   res.header('X-Total-Count', artefacts.length.toString());
   res.json(artefacts);
@@ -41,7 +43,10 @@ artefactRouter.get('/', async (req, res) => {
 
 artefactRouter.get('/:id', async (req, res) => {
   const { id } = req.params;
-  res.json(await Artefact.findOneOrFail({ id: Number.parseInt(id) },));
+  const artefact = await Artefact.findOneOrFail({ id: Number.parseInt(id) });
+  // Change Buffer to base64 string
+  artefact.Image = artefact.Image?.toString() as any;
+  res.json(artefact);
 })
 
 artefactRouter.post('/', async (req, res) => {

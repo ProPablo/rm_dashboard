@@ -1,7 +1,7 @@
 import React from 'react';
-import { BooleanField, BooleanInput, ChipField, Create, CreateProps, Datagrid, Edit, EditProps, FormTab, List, ListProps, NumberField, NumberInput, ReferenceField, ReferenceInput, ReferenceManyField, SelectInput, SimpleForm, SingleFieldList, TabbedForm, TextField, TextInput } from 'react-admin';
-import './App.css';
-import { ResourceActions } from './helper';
+import { BooleanField, BooleanInput, Create, CreateProps, Datagrid, Edit, EditProps, List, ListProps, NumberField, NumberInput, ReferenceField, ReferenceInput, SelectInput, SimpleForm, TextField, TextInput } from 'react-admin';
+import '../App.css';
+import { ResourceActions } from '../helper';
 
 export const BeaconCreate = (props: CreateProps) => (
   <Create actions={<ResourceActions />} {...props}>

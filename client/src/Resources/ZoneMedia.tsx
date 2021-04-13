@@ -1,7 +1,7 @@
-import React, { FC } from "react";
-import { Edit, SimpleForm, TextInput, NumberInput, ReferenceInput, SelectInput, EditProps, ImageField, ImageInput, Create, FunctionField, FormDataConsumer, FileInput, FileField, FileFieldProps, CreateProps } from "react-admin";
-import { MEDIA_URL } from "./constants";
-import { ResourceActions } from "./helper";
+import React from "react";
+import { Create, CreateProps, Edit, EditProps, FileFieldProps, FileInput, FormDataConsumer, ImageField, ImageInput, ReferenceInput, SelectInput, SimpleForm, TextInput } from "react-admin";
+import { MEDIA_URL } from "../constants";
+import { ResourceActions } from "../helper";
 
 const choices = [
   { id: 123, first_name: 'Leo', last_name: 'Tolstoi' },
@@ -11,18 +11,7 @@ const choices = [
 const FullNameField = ({ record }: any) => <span>{record.first_name} {record.last_name}</span>;
 {/* <SelectInput source="gender" choices={choices} optionText={<FullNameField />}/> */ }
 
-const ConditionalMediaRender: FC<any> = (props) => {
-  console.log({ props });
-  return (
-    <div className="gayretard">
-      {/* {props ? */}
-      <ImageField source="src" title="title" record={props.record} />
-      {/* //     :
-    //     <p>Ooops youre gay now</p>
-      // } */}
-    </div>
-  )
-}
+
 const VideoField = (filefield: FileFieldProps) => {
   console.log(filefield.record);
   if (filefield.record?.undefined) {

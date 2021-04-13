@@ -1,8 +1,7 @@
-import jsonServerProvider from 'ra-data-json-server';
 import React from 'react';
-import { Admin, BooleanField, BooleanInput, ChipField, Create, CreateProps, Datagrid, DateField, DateInput, Edit, EditButton, EditGuesser, EditProps, FormTab, List, ListGuesser, ListProps, NumberInput, ReferenceArrayField, ReferenceInput, ReferenceManyField, Resource, SelectInput, SimpleForm, SingleFieldList, TabbedForm, TextField, TextInput } from 'react-admin';
-import './App.css';
-import { ResourceActions } from './helper';
+import { Create, CreateProps, Datagrid, DateField, DateInput, Edit, EditProps, FormTab, List, ListProps, ReferenceManyField, SimpleForm, TabbedForm, TextField, TextInput } from 'react-admin';
+import '../App.css';
+import { ResourceActions } from '../helper';
 
 export const ZoneCreate = (props: CreateProps) => (
   <Create actions={<ResourceActions />} {...props}>

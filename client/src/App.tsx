@@ -1,17 +1,22 @@
-import React from 'react';
-import { Admin, EditGuesser, fetchUtils, MenuItemLink, ListGuesser, Resource, LoginComponent } from 'react-admin';
-import { redlandTheme } from './AppTheme';
-import { AppLayout } from './AppLayout';
-import { ArtefactCreate, ArtefactEdit, ArtefactList } from './Artefact';
-import { BeaconCreate, BeaconEdit, BeaconList } from './Beacon';
-import { ZoneCreate, ZoneEdit, ZoneList } from './Zone';
 import ArtefactIcon from '@material-ui/icons/AccountBalance';
-import ZoneIcon from '@material-ui/icons/Room';
 import BeaconIcon from '@material-ui/icons/Looks';
-import { LoginPage } from './LoginPage';
+import ExhibitionsIcon from '@material-ui/icons/PermDeviceInformation';
+import ZoneMediaIcon from '@material-ui/icons/PermMedia';
+import ZoneIcon from '@material-ui/icons/Room';
+import StoreItemIcon from '@material-ui/icons/ShoppingCart';
+import React from 'react';
+import { Admin, EditGuesser, ListGuesser, Resource } from 'react-admin';
+import { AppLayout } from './AppLayout';
+import { redlandTheme } from './AppTheme';
 import { authProvider } from './authprovider';
 import { builtDataProvider } from './dataprovider';
-import { ZoneMediaCreate, ZoneMediaEdit } from './ZoneMedia';
+import { LoginPage } from './LoginPage';
+import { ArtefactCreate, ArtefactEdit, ArtefactList } from './Resources/Artefact';
+import { BeaconCreate, BeaconEdit, BeaconList } from './Resources/Beacon';
+import { ExhibitionCreate } from './Resources/Exhibition';
+import { StoreItemCreate } from './Resources/StoreItem';
+import { ZoneCreate, ZoneEdit, ZoneList } from './Resources/Zone';
+import { ZoneMediaCreate, ZoneMediaEdit } from './Resources/ZoneMedia';
 
 
 
@@ -21,8 +26,10 @@ function App() {
       <Admin layout={AppLayout} theme={redlandTheme} dataProvider={builtDataProvider} authProvider={authProvider} loginPage={LoginPage}>
         <Resource name="artefacts" list={ArtefactList} edit={ArtefactEdit} create={ArtefactCreate} icon={ArtefactIcon} />
         <Resource name="zones" list={ZoneList} edit={ZoneEdit} create={ZoneCreate} icon={ZoneIcon} />
-        <Resource name="zonemedia" list={ListGuesser} edit={ZoneMediaEdit} create={ZoneMediaCreate}/>
+        <Resource name="zonemedia" list={ListGuesser} edit={ZoneMediaEdit} create={ZoneMediaCreate} icon={ZoneMediaIcon} />
         <Resource name="beacons" list={BeaconList} edit={BeaconEdit} create={BeaconCreate} icon={BeaconIcon} />
+        <Resource name="exhibitions" list={ListGuesser} edit={EditGuesser} create={ExhibitionCreate} icon={ExhibitionsIcon}/>
+        <Resource name="storeItems" list={ListGuesser} edit={EditGuesser} create={StoreItemCreate} icon={StoreItemIcon} />
       </Admin>
     </div>
   );

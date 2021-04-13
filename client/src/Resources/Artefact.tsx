@@ -1,25 +1,14 @@
-import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
-import { BooleanField, BooleanInput, Create, CreateProps, Datagrid, DateField, DateInput, Edit, EditActionsProps, EditProps, ImageField, ImageInput, List, ListButton, NumberField, NumberInput, ReferenceField, ReferenceInput, SelectInput, ShowButton, SimpleForm, TextField, TextInput, TopToolbar } from 'react-admin';
-import './App.css';
-import ChevronLeft from '@material-ui/icons/ChevronLeft';
-import { ResourceActions } from './helper';
+import { Create, CreateProps, Datagrid, DateField, DateInput, Edit, EditProps, FormDataConsumer, FunctionField, ImageField, ImageInput, List, NumberField, NumberInput, ReferenceField, ReferenceInput, SelectInput, SimpleForm, TextField, TextInput } from 'react-admin';
+import '../App.css';
+import { useListStyles } from '../AppTheme';
+import { ResourceActions } from '../helper';
 
 
-const useListStyles = makeStyles({
-  content: {
-    backgroundColor: '#F2F3F8',
-  },
-  headerCell: {
-    root: {
-      backgroundColor: '#F2F3F8'
-    },
-    backgroundColor: '#F2F3F8',
-  },
-})
+
 
 export const ArtefactCreate = (props: CreateProps) => (
-  <Create actions={<ResourceActions/>} {...props}>
+  <Create actions={<ResourceActions />} {...props}>
     <SimpleForm>
       <TextInput source="Name" />
       <TextInput source="Description" />
@@ -29,7 +18,7 @@ export const ArtefactCreate = (props: CreateProps) => (
       <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined}>
         <SelectInput optionText="Name" />
       </ReferenceInput>
-      <ImageInput source="Image" label="Related pictures" accept="image/*">
+      <ImageInput source="Media" label="Related pictures" accept="image/*">
         <ImageField source="src" title="title" />
       </ImageInput>
     </SimpleForm>
@@ -50,7 +39,14 @@ export const ArtefactEdit = (props: EditProps) => (
       <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined}>
         <SelectInput optionText="Name" />
       </ReferenceInput>
-      <ImageInput source="Image" label="Related pictures" accept="image/*">
+      {/* Display for Thumbnail image */}
+      <FormDataConsumer>
+        {({ formData, ...rest }) => (
+          <img src={formData.Image} />
+        )}
+      </FormDataConsumer>
+      {/* Image input */}
+      <ImageInput source="Media" label="Thumbnail" accept="image/*">
         <ImageField source="src" title="title" />
       </ImageInput>
     </SimpleForm>
@@ -58,20 +54,23 @@ export const ArtefactEdit = (props: EditProps) => (
 );
 
 export const ArtefactList = (props: CreateProps) => {
-  const classes: any = useListStyles();
+  const classes = useListStyles();
   return (
     <List
       classes={classes}
       {...props}
     >
       <Datagrid classes={classes} rowClick="edit">
+        {/* Thumbnail view on List*/}
+        <FunctionField
+          label="Thumbnail"
+          render={(artefact: any) => <img className={classes.thumbnailImage} src={artefact.Image} />} />
         <TextField source="id" />
         <TextField source="Name" />
         <TextField source="Description" />
         <NumberField source="CoordX" />
         <NumberField source="CoordY" />
         <ReferenceField source="zoneId" reference="zones"><TextField source="id" /></ReferenceField>
-        <TextField source="Image" />
         <DateField source="AcquisitionDate" />
         <DateField source="CreatedAt" />
         <DateField source="UpdatedAt" />

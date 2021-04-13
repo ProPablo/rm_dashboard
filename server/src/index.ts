@@ -2,16 +2,18 @@ require('dotenv').config();
 import cors from "cors";
 import express, { Router } from "express";
 import morgan from "morgan";
+import { resolve } from "path";
 import "reflect-metadata";
+import swagggerUI from 'swagger-ui-express';
 import { createConnection } from "typeorm";
 import { errorMiddleware } from "./helperFunctions";
 import { artefactRouter } from "./routes/artefacts";
 import { beaconRouter } from "./routes/beacon";
+import { exhibitionRouter } from "./routes/exhibition";
 import { isLoggedIn, loginRouter } from './routes/login';
+import { storeItemRouter } from "./routes/storeItem";
 import { zoneMediaRouter } from "./routes/zoneMedias";
-import { resolve } from "path";
 import { zoneRouter } from "./routes/zones";
-import swagggerUI from 'swagger-ui-express';
 import swaggerDoc from './swagger.json';
 
 createConnection({
@@ -24,7 +26,7 @@ createConnection({
   "synchronize": true,
   "logging": true,
   "entities": [
-    __dirname + "/entity/**.{ts,js}"
+    __dirname + "/entity/**.{ts,js}" // TODO: clarity change import each entity
   ],
   "migrations": [
     __dirname + "/migration/**.{ts,js}"
@@ -38,7 +40,8 @@ createConnection({
   // console.log("Loaded users: ", users);
   const app = express();
   app.use(morgan('tiny'));
-  app.use(express.json());
+  // app.use(express.json());
+  app.use(express.json({ limit: '5mb' })); //accomodates for 500 x 500
   app.use(cors());
 
   app.use('/login', loginRouter);
@@ -71,8 +74,10 @@ createConnection({
   router.use('/zones', zoneRouter);
   router.use('/beacons', beaconRouter);
   router.use('/zonemedia', zoneMediaRouter);
+  router.use('/exhibitions', exhibitionRouter);
+  router.use('/storeItems', storeItemRouter);
 
-  router.get('/about', (req, res)=> {
+  router.get('/about', (req, res) => {
     res.json({
       companyName: "Redland Museum",
       streetName: "60 Smith Street",

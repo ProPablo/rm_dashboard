@@ -9,6 +9,7 @@ export const editSchema = Joi.object({
   CreatedAt: Joi.date().strip(),
   UpdatedAt: Joi.date().strip(),
   Name: Joi.string().min(3).max(30),
+  Image: Joi.binary(),
   Description: Joi.string(),
   CoordX: Joi.number(),
   CoordY: Joi.number(),
