@@ -2,23 +2,24 @@ import { makeStyles } from '@material-ui/core/styles';
 import { defaultTheme } from 'react-admin';
 
 export const useListStyles = makeStyles({
-  content: {
-    backgroundColor: '#F2F3F8',
-  },
-  headerCell: {
-    root: {
-      backgroundColor: '#F2F3F8'
+    content: {
+        backgroundColor: '#F2F3F8',
     },
-    backgroundColor: '#F2F3F8',
-  },
-  thumbnailImage: {
-    height: '6vh',
-    width: '6vh'
-  }
+    headerCell: {
+        root: {
+            backgroundColor: '#F2F3F8'
+        },
+        backgroundColor: '#F2F3F8',
+    },
+    thumbnailImage: {
+        height: '6vh',
+        width: '6vh'
+    },
+    editImage: {
+        height: '30vh',
+        width: '30vh'
+    }
 });
-
-// export const useCreateStyles = 
-// export const useGlobalStyles = 
 
 export const redlandTheme: any = ({
     ...defaultTheme,

@@ -13,7 +13,7 @@ export const editSchema = Joi.object({
   Description: Joi.string(),
   CoordX: Joi.number(),
   CoordY: Joi.number(),
-  zoneId: Joi.number(), 
+  zoneId: Joi.number().allow(null),
 })
 
 export const createSchema = editSchema.concat(Joi.object({
@@ -64,7 +64,8 @@ export class Artefact extends BaseEntity {
   @Column({ nullable: true })
   zoneId: number;
   @ManyToOne(() => Zone, zone => zone.Artefacts, {
-    nullable: true
+    nullable: true,
+    onDelete: "SET NULL",
   })
   @JoinColumn({ name: "zoneId" })
   Zone: Zone;

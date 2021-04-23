@@ -35,7 +35,10 @@ export class ZoneMedia extends BaseEntity {
 
   @Column()
   zoneId: number;
-  @OneToOne(() => Zone, Zone => Zone.media)
+
+  @OneToOne(() => Zone, Zone => Zone.media, {
+    onDelete: "CASCADE"
+  })
   @JoinColumn({ name: "zoneId" })
   Zone: Zone;
 
