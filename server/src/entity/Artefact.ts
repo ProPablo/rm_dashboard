@@ -14,6 +14,7 @@ export const editSchema = Joi.object({
   CoordX: Joi.number(),
   CoordY: Joi.number(),
   zoneId: Joi.number().allow(null),
+  Priority: Joi.number(),
 })
 
 export const createSchema = editSchema.concat(Joi.object({
@@ -49,10 +50,10 @@ export class Artefact extends BaseEntity {
   @Column({ default: () => "CURRENT_TIMESTAMP" })
   AcquisitionDate: Date;
 
-  @Column({ type: "double" })
+  @Column({ type: "double", default: "0.0" })
   CoordX: number;
 
-  @Column({ type: "double" })
+  @Column({ type: "double", default: "0.0" })
   CoordY: number;
 
   @CreateDateColumn()
@@ -70,7 +71,8 @@ export class Artefact extends BaseEntity {
   @JoinColumn({ name: "zoneId" })
   Zone: Zone;
 
-
+  @Column({ default: () => '-1' })
+  Priority: number;
 
   //   @Column({ nullable: true })
   //   sourceId: number

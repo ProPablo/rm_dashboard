@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { BaseEntity, SelectQueryBuilder } from "typeorm";
 import { HTTPException } from "./Errors";
 
+export type IDLookup = Map<number, number>;
+
 //this will be called by default without try catch or if next(error);
 export function errorMiddleware(error: any, request: Request, response: Response, next: NextFunction) {
   const resStatus = (response.statusCode != 200) ? response.statusCode : null;

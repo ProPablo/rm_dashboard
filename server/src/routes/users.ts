@@ -29,7 +29,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   let { id }: any = req.params;
   id = Number.parseInt(id);
-  const user = await getRepository(User)
+  const user = await User.getRepository()
     .createQueryBuilder("u")
     .select(["u.id", "u.name", "u.email"])
     .where("u.id = :id", { id })

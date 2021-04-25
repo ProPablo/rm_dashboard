@@ -28,7 +28,7 @@ export const ArtefactCreate = (props: CreateProps) => (
 export const ArtefactEdit = (props: EditProps) => {
   const classes = useListStyles();
   return (
-    <Edit actions={<ResourceActions />} {...props}>
+    <Edit actions={<ResourceActions />} undoable={false} {...props}>
       <SimpleForm>
         <TextInput disabled source="id" />
         <TextInput source="Name" />

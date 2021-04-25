@@ -1,8 +1,9 @@
 import { Request, Router } from 'express';
 import { BaseEntity, getConnection, SelectQueryBuilder } from 'typeorm';
+import { Artefact } from '../entity/Artefact';
 import { createSchema, editSchema, Zone } from '../entity/Zone';
 import { HTTPException } from '../Errors';
-import { createListQuery } from '../helperFunctions'
+import { createListQuery, IDLookup } from '../helperFunctions'
 const zoneRouter = Router();
 
 
@@ -42,6 +43,32 @@ zoneRouter.put('/:id', async (req, res) => {
   const value = await editSchema.validateAsync(req.body); // .optional()
   // res.json(await Zone.update({ id: Number.parseInt(id) }, { ...req.body }));
   res.json(await Zone.save({ id: Number.parseInt(id), ...value }));
+})
+
+zoneRouter.post('/:id/reorder', async (req, res) => {
+  let { id }: any = req.params;
+  id = parseInt(id);
+  const { ordering } = req.body;
+  if (!ordering) throw new HTTPException(400, "Please include an ordering list for reordering artefacts");
+
+  let increment = 0;
+  const orderingLookup: IDLookup = ordering.reduce((acc: IDLookup, val: number) => {
+    acc.set(val, increment++);
+  }, new Map<number, number>());
+
+  const artefacts = await Artefact.getRepository()
+    .createQueryBuilder('a')
+    .select("id")
+    .where("zoneId = :id", { id })
+    .getMany();
+  console.log(artefacts);
+
+  artefacts.forEach(a => {
+    const Priority = orderingLookup.get(a.id);
+    if (Priority) {
+      Artefact.update({ id: a.id }, { Priority })
+    }
+  })
 })
 
 zoneRouter.delete('/:id', async (req, res) => {
