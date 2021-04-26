@@ -56,6 +56,12 @@ export class Beacon extends BaseEntity {
   @Column()
   CoordY: number;
 
+  @CreateDateColumn()
+  CreatedAt: Date
+
+  @UpdateDateColumn()
+  UpdatedAt: Date;
+
   @Column({ nullable: true })
   zoneId: number;
   @ManyToOne(() => Zone, zone => zone.Beacons, {

@@ -1,5 +1,5 @@
 import React from "react";
-import { Create, CreateProps, Edit, EditProps, FileFieldProps, FileInput, FormDataConsumer, ImageField, ImageInput, ReferenceInput, SelectInput, SimpleForm, TextInput } from "react-admin";
+import { Create, CreateProps, DateInput, Edit, EditProps, FileFieldProps, FileInput, FormDataConsumer, ImageField, ImageInput, ReferenceInput, SelectInput, SimpleForm, TextInput } from "react-admin";
 import { MEDIA_URL } from "../constants";
 import { ResourceActions } from "../helper";
 
@@ -70,6 +70,8 @@ export const ZoneMediaEdit = (props: EditProps) => {
           )}
         </FormDataConsumer>
 
+        <DateInput disabled source="CreatedAt" />
+        <DateInput disabled source="UpdatedAt" />
         <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined} >
           <SelectInput optionText="Name" />
         </ReferenceInput>

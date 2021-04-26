@@ -1,5 +1,5 @@
 import React from 'react';
-import { BooleanField, BooleanInput, Create, CreateProps, Datagrid, Edit, EditProps, List, ListProps, NumberField, NumberInput, ReferenceField, ReferenceInput, SelectInput, SimpleForm, TextField, TextInput } from 'react-admin';
+import { BooleanField, BooleanInput, Create, CreateProps, Datagrid, DateField, DateInput, Edit, EditProps, List, ListProps, NumberField, NumberInput, ReferenceField, ReferenceInput, SelectInput, SimpleForm, TextField, TextInput } from 'react-admin';
 import '../App.css';
 import { ResourceActions } from '../helper';
 
@@ -28,6 +28,8 @@ export const BeaconEdit = (props: EditProps) => (
       <BooleanInput source="Activation" />
       <NumberInput source="CoordX" />
       <NumberInput source="CoordY" />
+      <DateInput disabled source="CreatedAt" />
+      <DateInput disabled source="UpdatedAt" />
       <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined} >
         <SelectInput optionText="Name" />
       </ReferenceInput>
@@ -46,6 +48,8 @@ export const BeaconList = (props: ListProps) => (
       <ReferenceField source="zoneId" reference="zones"><TextField source="id" /></ReferenceField>
       <NumberField source="CoordX" />
       <NumberField source="CoordY" />
+      <DateField source="CreatedAt" />
+      <DateField source="UpdatedAt" />
     </Datagrid>
   </List>
 );

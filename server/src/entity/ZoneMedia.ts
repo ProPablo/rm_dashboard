@@ -1,6 +1,6 @@
 import { genSalt, hash } from "bcrypt";
 import Joi from "joi";
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, BeforeInsert, OneToOne, JoinColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, BeforeInsert, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
 import { Zone } from "./Zone";
 
 export enum MediaType {
@@ -32,6 +32,12 @@ export class ZoneMedia extends BaseEntity {
     default: MediaType.video
   })
   type: MediaType;
+
+  @CreateDateColumn()
+  CreatedAt: Date
+
+  @UpdateDateColumn()
+  UpdatedAt: Date;
 
   @Column()
   zoneId: number;

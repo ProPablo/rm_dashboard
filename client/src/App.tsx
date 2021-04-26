@@ -9,6 +9,7 @@ import { Admin, EditGuesser, ListGuesser, Resource } from 'react-admin';
 import { AppLayout } from './AppLayout';
 import { redlandTheme } from './AppTheme';
 import { authProvider } from './authprovider';
+import customRoutes from './customRoutes';
 import { builtDataProvider } from './dataprovider';
 import { LoginPage } from './LoginPage';
 import { ArtefactCreate, ArtefactEdit, ArtefactList } from './Resources/Artefact';
@@ -23,7 +24,7 @@ import { ZoneMediaCreate, ZoneMediaEdit } from './Resources/ZoneMedia';
 function App() {
   return (
     <div className="App">
-      <Admin layout={AppLayout} theme={redlandTheme} dataProvider={builtDataProvider} authProvider={authProvider} loginPage={LoginPage}>
+      <Admin customRoutes={customRoutes} layout={AppLayout} theme={redlandTheme} dataProvider={builtDataProvider} authProvider={authProvider} loginPage={LoginPage}>
         <Resource name="artefacts" list={ArtefactList} edit={ArtefactEdit} create={ArtefactCreate} icon={ArtefactIcon} />
         <Resource name="zones" list={ZoneList} edit={ZoneEdit} create={ZoneCreate} icon={ZoneIcon} />
         <Resource name="zonemedia" list={ListGuesser} edit={ZoneMediaEdit} create={ZoneMediaCreate} icon={ZoneMediaIcon} />
