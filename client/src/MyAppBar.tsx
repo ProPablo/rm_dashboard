@@ -25,7 +25,7 @@ const useStyles = makeStyles({
         backgroundImage: 'url(https://www.redlandmuseum.org.au/wp-content/uploads/2012/10/redland-museum-logo-wide.png) , linear-gradient(90deg, rgba(249,2,2,1) 0%, rgba(121,9,1,1) 0%, rgba(229,208,173,1) 84%)',
         //backgroundImage: 'url(https://www.redlandmuseum.org.au/wp-content/uploads/2012/10/redland-museum-logo-wide.png)',
         backgroundRepeat: 'no-repeat',
-        backgroundSize: 'auto 50px',
+        backgroundSize: 'min(auto 50vh)',
         //backgroundSize: 'auto',
         backgroundPosition: '75% 75%',
         color: 'Black',
