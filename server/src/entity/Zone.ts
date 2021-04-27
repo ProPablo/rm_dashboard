@@ -30,7 +30,7 @@ export class Zone extends BaseEntity {
   @Column()
   Name: string;
 
-  @Column()
+  @Column( {nullable: true} )
   Description: string;
 
   @CreateDateColumn()

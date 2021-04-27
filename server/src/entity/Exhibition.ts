@@ -6,8 +6,10 @@ export const editSchema = Joi.object({
   Name: Joi.string().min(3).max(30),
   Description: Joi.string(),
   Organiser: Joi.string(),
-  StartDate: Joi.date().strip(),
-  FinishDate: Joi.date().strip(),
+  CreatedAt: Joi.date().strip(),
+  UpdatedAt: Joi.date().strip(),
+  StartDate: Joi.date(),
+  FinishDate: Joi.date(),
   PriceAdult: Joi.number(),
   PriceConcession: Joi.number(),
   PriceChild: Joi.number(),
@@ -36,19 +38,19 @@ export class Exhibition extends BaseEntity {
   @Column()
   Name: string;
 
-  @Column()
+  @Column( {nullable: true} )
   Description: string;
 
-  @Column()
+  @Column( {nullable: true} )
   Organiser: string;
 
-  @Column({ type: "double" })
+  @Column({ type: "double", default: "0.0" })
   PriceAdult: number;
 
-  @Column({ type: "double" })
+  @Column({ type: "double", default: "0.0" })
   PriceConcession: number;
 
-  @Column({ type: "double" })
+  @Column({ type: "double", default: "0.0"})
   PriceChild: number;
 
   @CreateDateColumn()
