@@ -28,6 +28,7 @@ export interface PriorityTableState {
 export interface PriorityTableProps /*extends ListControllerProps */ {
   parentId: number | string | undefined,
   parentPath: string | undefined
+  refresh?: ()=>void
 }
 // const redirect = (basePath: any, id: any, data: any) => `/zones/${data.id}/`;
 
@@ -40,11 +41,8 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
   const notify = useNotify();
 
   let oldIds = useRef(new Array<any>());
-  // useEffect(() => {
-  //   oldIds.current = [];
-  // }, []);
 
-  console.log("oldids", oldIds.current);
+  // console.log("oldids", oldIds.current);
   useEffect(() => {
     let diffed = false;
     for (let i = 0; i < ids.length; i++) {
@@ -53,8 +51,9 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
       break;
     }
     if (!diffed) return;
-    // if (oldIds.current == ids) return;
-    console.log("refreshing idlist", ids, oldIds.current);
+    if (loading) return;
+    console.log("refreshing idlist", ids, state.idList);
+
     oldIds.current = ids;
     setState({ ...state, idList: ids });
   }, [ids]);
@@ -74,14 +73,16 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
     fetch(`${SERVER_URL}${props.parentPath}/${props.parentId}/reorder`, { method: "POST", body, headers })
       .then(result => {
         if (result.status != 200) result.json().then(json => notify(json.message, 'warning'));
-        // else notify("Completed reordering");
+        else notify("Completed reordering");
       })
       .catch((e) => {
         notify('Error: comment not approved', 'warning')
       })
       .finally(() => {
+
         setLoading(false);
-        refresh();
+        const result = refresh();
+        console.log(result);
       });
   }
 
