@@ -38,7 +38,7 @@ export class Artefact extends BaseEntity {
   @Column()
   Name: string;
 
-  @Column()
+  @Column({ nullable: true })
   Description: string;
 
   @Column({
