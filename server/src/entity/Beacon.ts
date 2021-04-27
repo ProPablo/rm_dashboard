@@ -38,7 +38,7 @@ export class Beacon extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column( {nullable: true} )
   Name: string;
 
   @Column({ default: () => "0" })
@@ -47,13 +47,13 @@ export class Beacon extends BaseEntity {
   @Column()
   MACAddress: string;
 
-  @Column()
+  @Column( {default: false} )
   Activation: boolean;
 
-  @Column()
+  @Column( {type: "double", default: "0.0"} )
   CoordX: number;
 
-  @Column()
+  @Column( {type: "double", default: "0.0"} )
   CoordY: number;
 
   @CreateDateColumn()
