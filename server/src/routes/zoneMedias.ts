@@ -10,16 +10,10 @@ const storage = multer.diskStorage({
     // THE DATA IN FORMDATA HAS TO BE ARRANGED SO FILE IS SENT LAST
     console.log(`logging multer req ${JSON.stringify(req.body)}`);
     const ext = file.mimetype.split('/')[1];
-    // if (req.body.title) {
     cb(null, `${req.body.title}-${Date.now()}.${ext}`);
-    // }
-    // else {
-    //   cb(null, file.originalname + '-' + Date.now());
-    // }
   }
 })
 
-// const upload = multer({ dest: `public/` });
 const upload = multer({ storage });
 const zoneMediaRouter = Router();
 
@@ -34,14 +28,13 @@ zoneMediaRouter.get('/:id', async (req, res) => {
   const { id } = req.params;
   res.json(await ZoneMedia.findOneOrFail({ id: Number.parseInt(id) },));
 })
-
+//Name of formdata field = file
 zoneMediaRouter.post('/', upload.single('file'), async (req, res, next) => {
   if (req.file) {
     req.body.src = req.file.path;
 
-    if (isNaN(req.body.type)) {
+    if (isNaN(req.body.type))
       req.body.type = MediaType[req.body.type];
-    }
 
     try {
       res.json(await ZoneMedia.create(req.body as Object).save());
@@ -64,13 +57,8 @@ zoneMediaRouter.put('/:id', upload.single('file'), async (req, res, next) => {
   if (req.file) {
     req.body.src = req.file.path;
 
-    // if (!req.body.title) {
-    //   req.body.title = req.file.originalname;
-    // }
-
-    if (isNaN(req.body.type)) {
+    if (isNaN(req.body.type))
       req.body.type = MediaType[req.body.type];
-    }
 
     try {
       res.json(await ZoneMedia.save({ id: Number.parseInt(id), ...req.body }));

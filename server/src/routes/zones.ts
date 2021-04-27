@@ -1,8 +1,9 @@
 import { Request, Router } from 'express';
 import { BaseEntity, getConnection, SelectQueryBuilder } from 'typeorm';
+import { Artefact } from '../entity/Artefact';
 import { createSchema, editSchema, Zone } from '../entity/Zone';
 import { HTTPException } from '../Errors';
-import { createListQuery } from '../helperFunctions'
+import { createListQuery, IDLookup } from '../helperFunctions'
 const zoneRouter = Router();
 
 
@@ -38,13 +39,59 @@ zoneRouter.post('/', async (req, res) => {
 })
 
 zoneRouter.put('/:id', async (req, res) => {
-  const { id } = req.params;
+  const id = parseInt(req.params.id);
   const value = await editSchema.validateAsync(req.body); // .optional()
   // res.json(await Zone.update({ id: Number.parseInt(id) }, { ...req.body }));
-  res.json(await Zone.save({ id: Number.parseInt(id), ...value }));
+  res.json(await Zone.save({ id, ...value }));
 })
 
+zoneRouter.post('/:id/reorder', async (req, res) => {
+  const id = parseInt(req.params.id);
+  const { ordering } = req.body;
+  if (!ordering) throw new HTTPException(400, "Please include an ordering list for reordering artefacts");
+
+  const artefacts = await Artefact.getRepository()
+    .createQueryBuilder('a')
+    .select(["a.id"])
+    .where("a.zoneId = :id", { id })
+    .getMany();
+  console.log(artefacts);
+
+  const orderingLookup: IDLookup = ordering.reduce((acc: IDLookup, val: number, index: number) => {
+    acc.set(val, ordering.length - index);
+    return acc;
+  }, new Map<number, number>());
+
+  for (const a of artefacts) {
+    const Priority = orderingLookup.get(a.id);
+    if (Priority != undefined) {
+      await Artefact.update({ id: a.id }, { Priority })
+    }
+  }
+
+  res.json({ message: "Done successfully" });
+})
+
+// zoneRouter.get('/:id/artefacts', async (req, res) => {
+//   const id = parseInt(req.params.id);
+//   const artefacts = await Artefact.getRepository()
+//     .createQueryBuilder('a')
+//     .select(["a.id"])
+//     .where("a.zoneId = :id", { id })
+//     .getMany();
+//   console.log(artefacts);
+//   res.json(artefacts);
+
+// })
+
 zoneRouter.delete('/:id', async (req, res) => {
+
+  await Artefact.createQueryBuilder()
+    .update()
+    .set({ Priority: -1 })
+    .where("zoneId = :id")
+    .execute();
+
   res.json(await Zone.delete({ id: Number.parseInt(req.params.id) }));
 });
 

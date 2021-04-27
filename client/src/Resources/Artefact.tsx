@@ -18,41 +18,43 @@ export const ArtefactCreate = (props: CreateProps) => (
       <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined}>
         <SelectInput optionText="Name" />
       </ReferenceInput>
-      <ImageInput source="Media" label="Related pictures" accept="image/*">
+      <ImageInput source="Media" label="Related pictures" accept="image/*" maxSize={1000000}>
         <ImageField source="src" title="title" />
       </ImageInput>
     </SimpleForm>
   </Create>
 );
 
-export const ArtefactEdit = (props: EditProps) => (
-  <Edit actions={<ResourceActions />} {...props}>
-    <SimpleForm>
-      <TextInput disabled source="id" />
-      <TextInput source="Name" />
-      <TextInput source="Description" />
-      <NumberInput source="CoordX" />
-      <NumberInput source="CoordY" />
-      <DateInput source="AcquisitionDate" />
-      <DateInput disabled source="CreatedAt" />
-      <DateInput disabled source="UpdatedAt" />
-      <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined}>
-        <SelectInput optionText="Name" />
-      </ReferenceInput>
-      {/* Display for Thumbnail image */}
-      <FormDataConsumer>
-        {({ formData, ...rest }) => (
-          <img src={formData.Image} />
-        )}
-      </FormDataConsumer>
-      {/* Image input */}
-      <ImageInput source="Media" label="Thumbnail" accept="image/*">
-        <ImageField source="src" title="title" />
-      </ImageInput>
-    </SimpleForm>
-  </Edit>
-);
-
+export const ArtefactEdit = (props: EditProps) => {
+  const classes = useListStyles();
+  return (
+    <Edit actions={<ResourceActions />} undoable={false} {...props}>
+      <SimpleForm>
+        <TextInput disabled source="id" />
+        <TextInput source="Name" />
+        <TextInput source="Description" />
+        <NumberInput source="CoordX" />
+        <NumberInput source="CoordY" />
+        <DateInput source="AcquisitionDate" />
+        <DateInput disabled source="CreatedAt" />
+        <DateInput disabled source="UpdatedAt" />
+        <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined}>
+          <SelectInput optionText="Name" />
+        </ReferenceInput>
+        {/* Display for Thumbnail image */}
+        <FormDataConsumer>
+          {({ formData, ...rest }) => (
+            <img src={formData.Image} className={classes.editImage} />
+          )}
+        </FormDataConsumer>
+        {/* Image input */}
+        <ImageInput source="Media" label="Thumbnail" accept="image/*" maxSize={1000000}>
+          <ImageField source="src" title="title" />
+        </ImageInput>
+      </SimpleForm>
+    </Edit>
+  );
+}
 export const ArtefactList = (props: CreateProps) => {
   const classes = useListStyles();
   return (
