@@ -3,10 +3,18 @@ import { ChipField, Create, CreateProps, Datagrid, DateField, DateInput, Edit, E
 import '../App.css';
 import { useListStyles } from '../AppTheme';
 import { ResourceActions } from '../helper';
-import { ConditionalMediaRender } from './ArtefactMedia';
+import { ConditionalMediaRender, SampleField } from './ArtefactMedia';
 
 
-
+const conditionalMediaInput = (formData: any) => {
+  return (
+    <div>
+      <ImageInput source="Media" label="Thumbnail" labelSingle={!!formData.Image ? "Replace Image" : "Drag an image into here"} accept="image/*" maxSize={1000000}>
+        <ImageField source="src" title="title" />
+      </ImageInput>
+    </div>
+  )
+}
 
 export const ArtefactCreate = (props: CreateProps) => (
   <Create actions={<ResourceActions />} {...props}>
@@ -28,6 +36,7 @@ export const ArtefactCreate = (props: CreateProps) => (
 
 export const ArtefactEdit = (props: EditProps) => {
   const classes = useListStyles();
+
   return (
     <Edit actions={<ResourceActions />} undoable={false} {...props}>
       <SimpleForm>
@@ -42,18 +51,19 @@ export const ArtefactEdit = (props: EditProps) => {
         <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined}>
           <SelectInput optionText="Name" />
         </ReferenceInput>
+        {/* Image input {}*/}
+        <FormDataConsumer>
+          {({ formData, ...rest }) => (
+            conditionalMediaInput(formData)
+          )}
+        </FormDataConsumer>
         {/* Display for Thumbnail image */}
         <FormDataConsumer>
           {({ formData, ...rest }) => (
             <img src={formData.Image} className={classes.editImage} />
           )}
         </FormDataConsumer>
-        {/* Image input */}
-        <ImageInput source="Media" label="Thumbnail" accept="image/*" maxSize={1000000}>
-          <ImageField source="src" title="title" />
-        </ImageInput>
-        {/* @ts-ignore */}
-        <ReferenceField reference="artefactmedia" source="media"><div>gay</div> </ReferenceField>
+        <ReferenceField label="" linkType={false} reference="artefactmedia" source="media"><ConditionalMediaRender /></ReferenceField>
         {/* <ReferenceManyField reference="artefactmedia" target="artefactId" source="id">
           <Datagrid>
             <FormDataConsumer>

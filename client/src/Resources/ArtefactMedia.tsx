@@ -1,5 +1,5 @@
 import React, { FC, memo } from "react";
-import { Create, CreateProps, DateInput, Edit, EditProps, FileFieldProps, FileInput, FormDataConsumer, ImageField, ImageInput, ReferenceInput, SelectInput, SimpleForm, TextInput } from "react-admin";
+import { Create, CreateProps, DateInput, Edit, EditProps, FileFieldProps, FileInput, FormDataConsumer, ImageField, ImageInput, ReferenceInput, SelectInput, SimpleForm, TextInput, useRecordContext } from "react-admin";
 import { MEDIA_URL } from "../constants";
 import { ResourceActions } from "../helper";
 
@@ -41,24 +41,38 @@ const conditionalMediaInput = (formData: any) => {
   }
 }
 
-export const ConditionalMediaRender: FC<any>= memo((formData: any) => {
-  console.log(formData);
-  return (<>gay</>)
-  // switch (formData.type) {
-  //   case 0:
-  //     return (
-  //       <img src={`${MEDIA_URL}/${formData.src}`} />
-  //     )
-  //   case 1:
-  //     return (
-  //       <video src={`${MEDIA_URL}/${formData.src}`} controls />
-  //     )
-  //   default: 
-  //       return (
-  //         <div>Unknown Type</div>
-  //       )
-  // }
-})
+// @ts-ignore
+export const SampleField = (props) => {
+    const { source } = props;
+    // const record = useRecordContext(props);
+
+    return <span>{props.record[source]}</span>;
+}
+
+export const ConditionalMediaRender = (props: any) => {
+  console.log(props);
+  // return (<>gay</>)
+  switch (props.record.type) {
+    case 0:
+      return (
+        <div>
+          <img src={`${MEDIA_URL}/${props.record.src}`} />
+
+        </div>
+      )
+    case 1:
+      return (
+        <div>
+          <video src={`${MEDIA_URL}/${props.record.src}`} controls />
+
+        </div>
+      )
+    default: 
+        return (
+          <div>Unknown Type</div>
+        )
+  }
+}
 
 export const ArtefactMediaEdit = (props: EditProps) => {
   return (
@@ -72,17 +86,17 @@ export const ArtefactMediaEdit = (props: EditProps) => {
           { id: 0, name: 'image' },
           { id: 1, name: 'video' },
         ]} />
-
-        <FormDataConsumer>
-          {({ formData, ...rest }) => (
-            conditionalMediaInput(formData)
-          )}
-        </FormDataConsumer>
         <ReferenceInput source="artefactId" reference="artefacts" allowEmpty emptyValue={undefined} >
           <SelectInput optionText="Name" />
         </ReferenceInput>
         <DateInput disabled source="CreatedAt" />
         <DateInput disabled source="UpdatedAt" />
+        <FormDataConsumer>
+          {({ formData, ...rest }) => (
+            conditionalMediaInput(formData)
+          )}
+        </FormDataConsumer>
+
       </SimpleForm>
     </Edit>
   )
