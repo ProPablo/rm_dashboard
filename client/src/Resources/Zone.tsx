@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Create, CreateProps, Datagrid, DateField, DateInput, Edit, EditProps, Error, FormTab, List, ListControllerProps, ListProps, NumberField, ReferenceManyField, SimpleForm, TabbedForm, TextField, TextInput, useListContext, useNotify, useRefresh } from 'react-admin';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
@@ -23,37 +24,55 @@ const reorder = (list: Array<any>, startIndex: number, endIndex: number) => {
 
 export interface PriorityTableState {
   idList: Array<any>,
+  tableEnabled: boolean
   // loading: boolean,
 }
 export interface PriorityTableProps /*extends ListControllerProps */ {
   parentId: number | string | undefined,
   parentPath: string | undefined
-  refresh?: ()=>void
+  // refresh?: () => any,
+  // priorityRef: any
 }
 // const redirect = (basePath: any, id: any, data: any) => `/zones/${data.id}/`;
+
+const DEBOUNCE_TIMER = 2000;
 
 export const ZoneArtefactsTable = (props: PriorityTableProps) => {
   const { ids, data } = useListContext();
   // const { ids, data } = props;
   const refresh = useRefresh();
-  const [state, setState] = useState<PriorityTableState>({ idList: ids });
+  const [state, setState] = useState<PriorityTableState>({ idList: ids, tableEnabled: false });
   const [loading, setLoading] = useState(false);
   const notify = useNotify();
 
+  const enableTable = () => {
+    setState({ ...state, tableEnabled: true })
+  }
+
   let oldIds = useRef(new Array<any>());
-
-  // console.log("oldids", oldIds.current);
+  let debounceTimer = useRef<any>(null);
   useEffect(() => {
-    let diffed = false;
-    for (let i = 0; i < ids.length; i++) {
-      if (ids[i] == oldIds.current[i]) continue;
-      diffed = true;
-      break;
+    // debounceTimer.current = setTimeout(enableTable, DEBOUNCE_TIMER);
+    return () => {
+      // clearTimeout(debounceTimer.current);
     }
-    if (!diffed) return;
-    if (loading) return;
-    console.log("refreshing idlist", ids, state.idList);
+  }, [])
 
+  console.log("oldids", oldIds);
+  // Use external state or ref from parent to retain 
+  useEffect(() => {
+    // let diffed = false;
+    // for (let i = 0; i < ids.length; i++) {
+    //   if (ids[i] == oldIds.current[i]) continue;
+    //   diffed = true;
+    //   break;
+    // }
+    // if (!diffed) return;
+    // if (loading) return;
+    console.log("refreshing idlist", ids, oldIds.current);
+
+    // clearTimeout(debounceTimer.current);
+    // debounceTimer.current = setTimeout(enableTable, DEBOUNCE_TIMER);
     oldIds.current = ids;
     setState({ ...state, idList: ids });
   }, [ids]);
@@ -79,10 +98,8 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
         notify('Error: comment not approved', 'warning')
       })
       .finally(() => {
-
         setLoading(false);
-        const result = refresh();
-        console.log(result);
+        refresh();
       });
   }
 
@@ -109,27 +126,42 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
       {/* Error is for frontend based errors for really broken stuff */}
       {/* <Error error="bruh" /> */}
       <Button label="Confirm Sort" onClick={handleSortClick} disabled={loading} />
+      {/* <div style={{ fontSize: "20px" }}>{state.tableEnabled ? "Enabled" : "Not Enabled"}</div> */}
+      {/* Table */}
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="list">
           {provided => (
-            <div ref={provided.innerRef} {...provided.droppableProps}>
-              {
-                state.idList.map((id, index) =>
-                  <Draggable draggableId={id.toString()} index={index} key={id}>
-                    {provided => (
-                      <div ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}>
-                        <NumberField record={data[id]} source="id" />
-                        <TextField record={data[id]} source="Description" />
-                        <TextField record={data[id]} source="Name" />
-                      </div>
-                    )}
-                  </Draggable>
-                )
-              }
-              {provided.placeholder}
-            </div>
+            <Table /*contentEditable={state.tableEnabled} */
+              ref={provided.innerRef} {...provided.droppableProps}>
+              <TableHead>
+                <TableRow>
+                  <TableCell >Id</TableCell>
+                  <TableCell >Name</TableCell>
+                  <TableCell >Media</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {
+                  state.idList.map((id, index) =>
+                    // Tbal Row Conditional styles based on isDragging @ react beautiful dnd
+                    <Draggable draggableId={id.toString()} index={index} key={id}>
+                      {provided => (
+                        <TableRow
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}>
+                          <TableCell><NumberField record={data[id]} source="id" /></TableCell>
+                          <TableCell> <TextField record={data[id]} source="Name" /> </TableCell>
+                          <TableCell>  <TextField record={data[id]} source="Description" /> </TableCell>
+                        </TableRow>
+                      )}
+                    </Draggable>
+                  )
+                }
+                {provided.placeholder}
+              </TableBody>
+            </Table>
+
           )}
         </Droppable>
       </DragDropContext >
@@ -137,40 +169,42 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
   )
 }
 
+export const ZoneEdit = (props: EditProps) => {
+  const refresh = useRefresh();
+  return (
+    <Edit actions={<ResourceActions />} undoable={false} {...props}>
 
-export const ZoneEdit = (props: EditProps) => (
-  <Edit actions={<ResourceActions />} undoable={false} {...props}>
-
-    <TabbedForm>
-      <FormTab label="Zone">
-        <TextInput disabled source="id" />
-        <TextInput source="Name" />
-        <TextInput source="Description" />
-        <DateInput disabled source="CreatedAt" />
-        <DateInput disabled source="UpdatedAt" />
+      <TabbedForm>
+        <FormTab label="Zone">
+          <TextInput disabled source="id" />
+          <TextInput source="Name" />
+          <TextInput source="Description" />
+          <DateInput disabled source="CreatedAt" />
+          <DateInput disabled source="UpdatedAt" />
 
 
-      </FormTab>
-      <FormTab label="Relations">
+        </FormTab>
+        <FormTab label="Relations">
 
-        <ReferenceManyField label="ARTEFACTS" reference="artefacts" target="zoneId" source="id" sort={{ field: "Priority", order: "DESC" }}>
-          {/* <Datagrid rowClick="edit">
+          <ReferenceManyField label="ARTEFACTS" reference="artefacts" target="zoneId" source="id" sort={{ field: "Priority", order: "DESC" }}>
+            {/* <Datagrid rowClick="edit">
             <TextField source="Name" />
             <TextField source="Description" />
           </Datagrid> */}
-          <ZoneArtefactsTable parentId={props.id} parentPath={props.basePath} />
-        </ReferenceManyField>
-        <ReferenceManyField label="BEACONS" reference="beacons" target="zoneId">
-          <Datagrid rowClick="edit">
-            <TextField source="Name" />
-            <TextField label="MAC Address" source="MACAddress" />
-          </Datagrid>
-        </ReferenceManyField>
-      </FormTab>
+            <ZoneArtefactsTable parentId={props.id} parentPath={props.basePath} />
+          </ReferenceManyField>
+          <ReferenceManyField label="BEACONS" reference="beacons" target="zoneId">
+            <Datagrid rowClick="edit">
+              <TextField source="Name" />
+              <TextField label="MAC Address" source="MACAddress" />
+            </Datagrid>
+          </ReferenceManyField>
+        </FormTab>
 
-    </TabbedForm>
-  </Edit>
-)
+      </TabbedForm>
+    </Edit>
+  )
+}
 
 export const ZoneList = (props: ListProps) => (
   <List {...props}>
