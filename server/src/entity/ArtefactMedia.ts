@@ -1,6 +1,7 @@
 import { genSalt, hash } from "bcrypt";
 import Joi from "joi";
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, BeforeInsert, OneToOne, JoinColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, BeforeInsert, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { Artefact } from "./Artefact";
 import { Zone } from "./Zone";
 
 export enum MediaType {
@@ -13,7 +14,7 @@ export enum MediaType {
 // });
 
 @Entity()
-export class ZoneMedia extends BaseEntity {
+export class ArtefactMedia extends BaseEntity {
 
   @PrimaryGeneratedColumn()
   id: number;
@@ -33,13 +34,19 @@ export class ZoneMedia extends BaseEntity {
   })
   type: MediaType;
 
-  @Column()
-  zoneId: number;
+  @CreateDateColumn()
+  CreatedAt: Date
 
-  @OneToOne(() => Zone, Zone => Zone.media, {
+  @UpdateDateColumn()
+  UpdatedAt: Date;
+
+  @Column()
+  artefactId: number;
+
+  @OneToOne(() => Artefact, Artefact => Artefact.media, {
     onDelete: "CASCADE"
   })
-  @JoinColumn({ name: "zoneId" })
-  Zone: Zone;
+  @JoinColumn({ name: "artefactId" })
+  Artefact: Artefact;
 
 }

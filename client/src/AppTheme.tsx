@@ -111,9 +111,35 @@ export const redlandTheme: any = ({
 
         MuiFormLabel: {
             root: {
-                alignItems: "center",
-                justifyContent: 'center',
+                marginLeft: "auto",
+                marginRight: "auto",
+                color: "grey",
+                fontWeight: "450",
+                position: "relative"
+            }
+        },
 
+        RaLabeled: {
+            label: {
+                position: "relative",
+                marginLeft: "auto",
+                marginTop: "3vh",
+                fontSize: "x-large",
+                paddingLeft: "7vh"
+
+            }
+        },
+
+        RaButton: {
+            label: {
+                paddingLeft: 0
+            }
+        },
+        
+        RaTabbedForm: {
+            root: {
+                alignItems: "center",
+                justifyContent: "center",
             }
         }
     },

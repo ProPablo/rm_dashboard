@@ -5,6 +5,8 @@ export const editSchema = Joi.object({
   id: Joi.number().strip(),
   Name: Joi.string().min(3).max(30),
   Description: Joi.string(),
+  CreatedAt: Joi.date().strip(),
+  UpdatedAt: Joi.date().strip(),
   Cost: Joi.number(),
   InStock: Joi.boolean(),
 
@@ -31,13 +33,13 @@ export class StoreItem extends BaseEntity {
   @Column()
   Name: string;
 
-  @Column()
+  @Column( {nullable: true} )
   Description: string;
 
-  @Column({type: "double"})
+  @Column( {type: "double", default: "0.0"} )
   Cost: number;
 
-  @Column()
+  @Column( {default: false} )
   InStock: boolean;
 
   @CreateDateColumn()

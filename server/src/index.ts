@@ -12,7 +12,7 @@ import { beaconRouter } from "./routes/beacon";
 import { exhibitionRouter } from "./routes/exhibition";
 import { isLoggedIn, loginRouter } from './routes/login';
 import { storeItemRouter } from "./routes/storeItem";
-import { zoneMediaRouter } from "./routes/zoneMedias";
+import { artefactMediaRouter } from "./routes/artefactMedias";
 import { zoneRouter } from "./routes/zones";
 import swaggerDoc from './swagger.json';
 
@@ -73,7 +73,7 @@ createConnection({
   router.use('/artefacts', artefactRouter);
   router.use('/zones', zoneRouter);
   router.use('/beacons', beaconRouter);
-  router.use('/zonemedia', zoneMediaRouter);
+  router.use('/artefactmedia', artefactMediaRouter);
   router.use('/exhibitions', exhibitionRouter);
   router.use('/storeItems', storeItemRouter);
 
