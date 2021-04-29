@@ -2,7 +2,6 @@ import Joi from "joi";
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, BaseEntity, CreateDateColumn, UpdateDateColumn, OneToOne, ManyToOne, JoinColumn } from "typeorm";
 import { Artefact } from "./Artefact"
 import { Beacon } from "./Beacon";
-import { ZoneMedia } from "./ZoneMedia";
 
 export const editSchema = Joi.object({
   id: Joi.number().strip(),
@@ -44,7 +43,4 @@ export class Zone extends BaseEntity {
 
   @OneToMany(() => Beacon, Beacon => Beacon.Zone)
   Beacons: Beacon[]
-
-  @OneToOne(() => ZoneMedia, ZoneMedia => ZoneMedia.Zone, { nullable: true })
-  media: ZoneMedia;
 }
