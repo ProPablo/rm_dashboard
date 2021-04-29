@@ -52,6 +52,7 @@ artefactRouter.get('/:id', async (req, res) => {
 artefactRouter.post('/', async (req, res) => {
   console.log("logging new artefact", req.body);
   const value: Object = await createSchema.validateAsync(req.body);
+  console.log(value);
   res.json(await Artefact.create(value).save());
 })
 

@@ -5,7 +5,7 @@ import { Beacon } from './Beacon';
 
 export const editSchema = Joi.object({
   id: Joi.number().strip(),
-  AcquisitionDate: Joi.date(),
+  AcquisitionDate: [Joi.allow("").strip(), Joi.date()], //Strip if empty string
   CreatedAt: Joi.date().strip(),
   UpdatedAt: Joi.date().strip(),
   Name: Joi.string().min(3).max(30),

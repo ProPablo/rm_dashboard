@@ -1,5 +1,5 @@
 import { Request, Router } from 'express';
-import { BaseEntity, getConnection, SelectQueryBuilder } from 'typeorm';
+import { BaseEntity, getConnection, getRepository, SelectQueryBuilder } from 'typeorm';
 import { Artefact } from '../entity/Artefact';
 import { createSchema, editSchema, Zone } from '../entity/Zone';
 import { HTTPException } from '../Errors';

@@ -1,3 +1,4 @@
+import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, Create, CreateProps, Datagrid, DateField, DateInput, Edit, EditProps, Error, FormTab, List, ListControllerProps, ListProps, NumberField, ReferenceManyField, SimpleForm, TabbedForm, TextField, TextInput, useListContext, useNotify, useRefresh } from 'react-admin';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
@@ -51,9 +52,9 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
   let oldIds = useRef(new Array<any>());
   let debounceTimer = useRef<any>(null);
   useEffect(() => {
-    debounceTimer.current = setTimeout(enableTable, DEBOUNCE_TIMER);
+    // debounceTimer.current = setTimeout(enableTable, DEBOUNCE_TIMER);
     return () => {
-      clearTimeout(debounceTimer.current);
+      // clearTimeout(debounceTimer.current);
     }
   }, [])
 
@@ -70,8 +71,8 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
     // if (loading) return;
     console.log("refreshing idlist", ids, oldIds.current);
 
-    clearTimeout(debounceTimer.current);
-    debounceTimer.current = setTimeout(enableTable, DEBOUNCE_TIMER);
+    // clearTimeout(debounceTimer.current);
+    // debounceTimer.current = setTimeout(enableTable, DEBOUNCE_TIMER);
     oldIds.current = ids;
     setState({ ...state, idList: ids });
   }, [ids]);
@@ -125,37 +126,48 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
       {/* Error is for frontend based errors for really broken stuff */}
       {/* <Error error="bruh" /> */}
       <Button label="Confirm Sort" onClick={handleSortClick} disabled={loading} />
-      <div style={{ fontSize: "20px" }}>{state.tableEnabled ? "Enabled" : "Not Enabled"}</div>
+      {/* <div style={{ fontSize: "20px" }}>{state.tableEnabled ? "Enabled" : "Not Enabled"}</div> */}
       {/* Table */}
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="list">
           {provided => (
-            <div ref={provided.innerRef} {...provided.droppableProps}>
-              {
-                state.idList.map((id, index) =>
-                  // Tbal Row
-                  <Draggable draggableId={id.toString()} index={index} key={id}>
-                    {provided => (
-                      <div ref={provided.innerRef}
-                        {...provided.draggableProps}
-                        {...provided.dragHandleProps}>
-                        <NumberField record={data[id]} source="id" />
-                        <TextField record={data[id]} source="Description" />
-                        <TextField record={data[id]} source="Name" />
-                      </div>
-                    )}
-                  </Draggable>
-                )
-              }
-              {provided.placeholder}
-            </div>
+            <Table /*contentEditable={state.tableEnabled} */
+              ref={provided.innerRef} {...provided.droppableProps}>
+              <TableHead>
+                <TableRow>
+                  <TableCell >Id</TableCell>
+                  <TableCell >Name</TableCell>
+                  <TableCell >Media</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {
+                  state.idList.map((id, index) =>
+                    // Tbal Row Conditional styles based on isDragging @ react beautiful dnd
+                    <Draggable draggableId={id.toString()} index={index} key={id}>
+                      {provided => (
+                        <TableRow
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}>
+                          <TableCell><NumberField record={data[id]} source="id" /></TableCell>
+                          <TableCell> <TextField record={data[id]} source="Name" /> </TableCell>
+                          <TableCell>  <TextField record={data[id]} source="Description" /> </TableCell>
+                        </TableRow>
+                      )}
+                    </Draggable>
+                  )
+                }
+                {provided.placeholder}
+              </TableBody>
+            </Table>
+
           )}
         </Droppable>
       </DragDropContext >
     </div>
   )
 }
-
 
 export const ZoneEdit = (props: EditProps) => {
   const refresh = useRefresh();
