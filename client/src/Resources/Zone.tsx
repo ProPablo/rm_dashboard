@@ -125,7 +125,6 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
     <div>
       {/* Error is for frontend based errors for really broken stuff */}
       {/* <Error error="bruh" /> */}
-      <Button label="Confirm Sort" onClick={handleSortClick} disabled={loading} />
       {/* <div style={{ fontSize: "20px" }}>{state.tableEnabled ? "Enabled" : "Not Enabled"}</div> */}
       {/* Table */}
       <DragDropContext onDragEnd={onDragEnd}>
@@ -165,6 +164,7 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
           )}
         </Droppable>
       </DragDropContext >
+      <Button label="Confirm Sort" onClick={handleSortClick} disabled={loading} />
     </div>
   )
 }

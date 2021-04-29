@@ -9,7 +9,7 @@ import { ConditionalMediaRender, SampleField } from './ArtefactMedia';
 const conditionalMediaInput = (formData: any) => {
   return (
     <div>
-      <ImageInput source="Media" label="Thumbnail" labelSingle={!!formData.Image ? "Replace Image" : "Drag an image into here"} accept="image/*" maxSize={1000000}>
+      <ImageInput source="Media" label="Thumbnail" labelSingle={!!formData.Image ? "Replace image" : "Drag an image into here"} accept="image/*" maxSize={1000000}>
         <ImageField source="src" title="title" />
       </ImageInput>
     </div>
@@ -27,7 +27,7 @@ export const ArtefactCreate = (props: CreateProps) => (
       <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined}>
         <SelectInput optionText="Name" />
       </ReferenceInput>
-      <ImageInput source="Media" label="Related pictures" accept="image/*" maxSize={1000000}>
+      <ImageInput source="Media" label="Thumbnail" accept="image/*" maxSize={1000000}>
         <ImageField source="src" title="title" />
       </ImageInput>
     </SimpleForm>

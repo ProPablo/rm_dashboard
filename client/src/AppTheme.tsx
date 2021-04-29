@@ -125,7 +125,7 @@ export const redlandTheme: any = ({
                 marginLeft: "auto",
                 marginTop: "3vh",
                 fontSize: "x-large",
-                paddingLeft: "7vh"
+                paddingLeft: "5vh"
 
             }
         },
@@ -135,6 +135,11 @@ export const redlandTheme: any = ({
                 paddingLeft: 0
             }
         },
+
+        MuiButton: {
+            backgroundColor: "Black"
+        },
+
         
         RaTabbedForm: {
             root: {
