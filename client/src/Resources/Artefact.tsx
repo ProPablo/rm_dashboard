@@ -1,8 +1,9 @@
 import React from 'react';
-import { Create, CreateProps, Datagrid, DateField, DateInput, Edit, EditProps, FormDataConsumer, FunctionField, ImageField, ImageInput, List, NumberField, NumberInput, ReferenceField, ReferenceInput, SelectInput, SimpleForm, TextField, TextInput } from 'react-admin';
+import { ChipField, Create, CreateProps, Datagrid, DateField, DateInput, Edit, EditProps, FormDataConsumer, FunctionField, ImageField, ImageInput, List, NumberField, NumberInput, ReferenceField, ReferenceInput, ReferenceManyField, SelectInput, SimpleForm, SingleFieldList, TextField, TextInput } from 'react-admin';
 import '../App.css';
 import { useListStyles } from '../AppTheme';
 import { ResourceActions } from '../helper';
+import { conditionalMediaRender } from './ArtefactMedia';
 
 
 
@@ -51,6 +52,16 @@ export const ArtefactEdit = (props: EditProps) => {
         <ImageInput source="Media" label="Thumbnail" accept="image/*" maxSize={1000000}>
           <ImageField source="src" title="title" />
         </ImageInput>
+        <ReferenceManyField label="" reference="artefactmedia" target="artefactId" source="id">
+          <SingleFieldList>
+            <ChipField source="src" />
+          </SingleFieldList>
+          {/* <FormDataConsumer>
+            {({ formData, ...rest }) => (
+              conditionalMediaRender(formData)
+            )}
+          </FormDataConsumer> */}
+        </ReferenceManyField>
       </SimpleForm>
     </Edit>
   );
@@ -80,5 +91,3 @@ export const ArtefactList = (props: CreateProps) => {
     </List>
   )
 }
-
-

@@ -43,7 +43,7 @@ artefactRouter.get('/', async (req, res) => {
 
 artefactRouter.get('/:id', async (req, res) => {
   const { id } = req.params;
-  const artefact = await Artefact.findOneOrFail({ id: Number.parseInt(id) });
+  const artefact = await Artefact.findOneOrFail({ id: Number.parseInt(id) },);
   // Change Buffer to base64 string
   artefact.Image = artefact.Image?.toString() as any;
   res.json(artefact);

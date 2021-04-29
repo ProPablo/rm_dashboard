@@ -16,7 +16,7 @@ const httpClient = (url: any, options: any = {}) => {
 };
 const dataProvider = jsonServerProvider(SERVER_URL, httpClient);
 
-interface ZoneMedia {
+interface ArtefactMedia {
   title: string,
 
 }
@@ -36,7 +36,7 @@ export const builtDataProvider: DataProvider = {
     if (!params.data.Media) return dataProvider.update(resource, params);
 
     // This is for remaining base64 implementations
-    if (resource !== 'zonemedia') {
+    if (resource !== 'artefactmedia') {
       return convertFileToBase64(params.data.Media)
         .then(base64String => {
           delete params.data.Media;
@@ -50,14 +50,14 @@ export const builtDataProvider: DataProvider = {
         })
     }
 
-    console.log("printing param data zonemedia", params.data);
+    console.log("printing param data artefactmedia", params.data);
     const formData = new FormData();
     formData.append('type', params.data.type);
     formData.append('title', params.data.title);
-    formData.append('zoneId', params.data.zoneId);
+    formData.append('artefactId', params.data.artefactId);
     formData.append('file', params.data.Media.rawFile);
 
-    return httpClient(`${SERVER_URL}/zonemedia/${params.data.id}`, {
+    return httpClient(`${SERVER_URL}/artefactmedia/${params.data.id}`, {
       method: "PUT",
       body: formData,
     }).then(({ json }) => { if (json) return { data: json }; throw new Error("No response") })
@@ -67,7 +67,7 @@ export const builtDataProvider: DataProvider = {
     if (!params.data.Media) return dataProvider.create(resource, params);
 
     // This is for remaining base64 implementations
-    if (resource !== 'zonemedia') {
+    if (resource !== 'artefactmedia') {
       return convertFileToBase64(params.data.Media)
         .then(base64String => {
           delete params.data.Media;
@@ -81,14 +81,14 @@ export const builtDataProvider: DataProvider = {
         })
     }
 
-    console.log("printing param data zonemedia", params.data);
+    console.log("printing param data artefactmedia", params.data);
     const formData = new FormData();
     formData.append('type', params.data.type);
     formData.append('title', params.data.title);
-    formData.append('zoneId', params.data.zoneId);
+    formData.append('artefactId', params.data.artefactId);
     formData.append('file', params.data.Media.rawFile);
 
-    return httpClient(`${SERVER_URL}/zonemedia`, {
+    return httpClient(`${SERVER_URL}/artefactmedia`, {
       method: "POST",
       body: formData,
     }).then(({ json }) => { if (json) return { data: json }; throw new Error("No response") })

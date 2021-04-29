@@ -3,15 +3,6 @@ import { Create, CreateProps, DateInput, Edit, EditProps, FileFieldProps, FileIn
 import { MEDIA_URL } from "../constants";
 import { ResourceActions } from "../helper";
 
-const choices = [
-  { id: 123, first_name: 'Leo', last_name: 'Tolstoi' },
-  { id: 456, first_name: 'Jane', last_name: 'Austen' },
-];
-// Use instead for options 
-const FullNameField = ({ record }: any) => <span>{record.first_name} {record.last_name}</span>;
-{/* <SelectInput source="gender" choices={choices} optionText={<FullNameField />}/> */ }
-
-
 const VideoField = (filefield: FileFieldProps) => {
   console.log(filefield.record);
   if (filefield.record?.undefined) {
@@ -30,7 +21,7 @@ const conditionalMediaInput = (formData: any) => {
     case 0:
       return (
         <div>
-          <ImageInput /*placeholder={<p>gay retard</p>}*/ source="Media" labelSingle="Drag an Image into here" accept="image/*" multiple={false}  >
+          <ImageInput /*placeholder={<p>placeholder</p>}*/ source="Media" labelSingle="Drag an Image into here" accept="image/*" multiple={false}  >
             <ImageField source="src" title="title" />
           </ImageInput>
           {formData.src && !!!formData.Media && <img src={`${MEDIA_URL}/${formData.src}`} />}
@@ -44,14 +35,27 @@ const conditionalMediaInput = (formData: any) => {
             {/* <FileField source="src" title="title" /> */}
             <VideoField />
           </FileInput>
-          {/* TODO: add conditional rendering cehck if isVideo */}
           {formData.src && !!!formData.Media && <video src={`${MEDIA_URL}/${formData.src}`} controls />}
         </div>
       )
   }
 }
 
-export const ZoneMediaEdit = (props: EditProps) => {
+export const conditionalMediaRender = (formData: any) => {
+  console.log(formData);
+  switch (formData.type) {
+    case 0:
+      return (
+        <img src={`${MEDIA_URL}/${formData.src}`} />
+      )
+    case 1:
+      return (
+        <video src={`${MEDIA_URL}/${formData.src}`} controls />
+      )
+  }
+}
+
+export const ArtefactMediaEdit = (props: EditProps) => {
   return (
     <Edit actions={<ResourceActions />} {...props}>
       <SimpleForm>
@@ -69,18 +73,17 @@ export const ZoneMediaEdit = (props: EditProps) => {
             conditionalMediaInput(formData)
           )}
         </FormDataConsumer>
-
-        <DateInput disabled source="CreatedAt" />
-        <DateInput disabled source="UpdatedAt" />
-        <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined} >
+        <ReferenceInput source="artefactId" reference="artefacts" allowEmpty emptyValue={undefined} >
           <SelectInput optionText="Name" />
         </ReferenceInput>
+        <DateInput disabled source="CreatedAt" />
+        <DateInput disabled source="UpdatedAt" />
       </SimpleForm>
     </Edit>
   )
 };
 
-export const ZoneMediaCreate = (props: CreateProps) => (
+export const ArtefactMediaCreate = (props: CreateProps) => (
   <Create actions={<ResourceActions />} {...props}>
     <SimpleForm>
       <TextInput disabled source="src" />
@@ -97,7 +100,7 @@ export const ZoneMediaCreate = (props: CreateProps) => (
         )}
       </FormDataConsumer>
 
-      <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined} >
+      <ReferenceInput source="artefactId" reference="artefacts" allowEmpty emptyValue={undefined} >
         <SelectInput optionText="Name" />
       </ReferenceInput>
     </SimpleForm>

@@ -62,6 +62,9 @@ zoneRouter.post('/:id/reorder', async (req, res) => {
     return acc;
   }, new Map<number, number>());
 
+  // artefactindex = orderingLookup.get(a.id);
+  // const artefactwewant = artefactList[artefactindex]
+
   for (const a of artefacts) {
     const Priority = orderingLookup.get(a.id);
     if (Priority != undefined) {

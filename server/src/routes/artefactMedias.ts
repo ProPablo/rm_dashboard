@@ -1,7 +1,7 @@
 import { json, Request, Response, Router } from 'express';
 import multer from 'multer';
 import { HTTPException } from '../Errors';
-import { MediaType, ZoneMedia } from '../entity/ZoneMedia';
+import { MediaType, ArtefactMedia } from '../entity/ArtefactMedia';
 import { unlink } from 'fs/promises';
 
 const storage = multer.diskStorage({
@@ -15,21 +15,21 @@ const storage = multer.diskStorage({
 })
 
 const upload = multer({ storage });
-const zoneMediaRouter = Router();
+const artefactMediaRouter = Router();
 
-zoneMediaRouter.get('/', async (req, res) => {
-  const zoneMedias = await ZoneMedia.find();
+artefactMediaRouter.get('/', async (req, res) => {
+  const artefactMedias = await ArtefactMedia.find();
   res.header('Access-Control-Expose-Headers', 'X-Total-Count');
-  res.header('X-Total-Count', zoneMedias.length.toString());
-  res.json(zoneMedias);
+  res.header('X-Total-Count', artefactMedias.length.toString());
+  res.json(artefactMedias);
 })
 
-zoneMediaRouter.get('/:id', async (req, res) => {
+artefactMediaRouter.get('/:id', async (req, res) => {
   const { id } = req.params;
-  res.json(await ZoneMedia.findOneOrFail({ id: Number.parseInt(id) },));
+  res.json(await ArtefactMedia.findOneOrFail({ id: Number.parseInt(id) },));
 })
 //Name of formdata field = file
-zoneMediaRouter.post('/', upload.single('file'), async (req, res, next) => {
+artefactMediaRouter.post('/', upload.single('file'), async (req, res, next) => {
   if (req.file) {
     req.body.src = req.file.path;
 
@@ -37,7 +37,7 @@ zoneMediaRouter.post('/', upload.single('file'), async (req, res, next) => {
       req.body.type = MediaType[req.body.type];
 
     try {
-      res.json(await ZoneMedia.create(req.body as Object).save());
+      res.json(await ArtefactMedia.create(req.body as Object).save());
     }
     catch (e) {
       console.log("error", e);
@@ -51,7 +51,7 @@ zoneMediaRouter.post('/', upload.single('file'), async (req, res, next) => {
   }
 })
 
-zoneMediaRouter.put('/:id', upload.single('file'), async (req, res, next) => {
+artefactMediaRouter.put('/:id', upload.single('file'), async (req, res, next) => {
   // Fix logic, get title from db 
   const { id } = req.params;
   if (req.file) {
@@ -61,7 +61,7 @@ zoneMediaRouter.put('/:id', upload.single('file'), async (req, res, next) => {
       req.body.type = MediaType[req.body.type];
 
     try {
-      res.json(await ZoneMedia.save({ id: Number.parseInt(id), ...req.body }));
+      res.json(await ArtefactMedia.save({ id: Number.parseInt(id), ...req.body }));
     }
     catch (e) {
       console.log("error", e);
@@ -91,8 +91,8 @@ zoneMediaRouter.put('/:id', upload.single('file'), async (req, res, next) => {
 //   res.json(await ZoneMedia.save({ id: Number.parseInt(id), ...req.body }));
 // })
 
-zoneMediaRouter.delete('/:id', async (req, res) => {
-  res.json(await ZoneMedia.delete({ id: Number.parseInt(req.params.id) }));
+artefactMediaRouter.delete('/:id', async (req, res) => {
+  res.json(await ArtefactMedia.delete({ id: Number.parseInt(req.params.id) }));
 });
 
-export { zoneMediaRouter };
+export { artefactMediaRouter };
