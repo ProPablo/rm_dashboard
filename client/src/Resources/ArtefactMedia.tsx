@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC, memo } from "react";
 import { Create, CreateProps, DateInput, Edit, EditProps, FileFieldProps, FileInput, FormDataConsumer, ImageField, ImageInput, ReferenceInput, SelectInput, SimpleForm, TextInput } from "react-admin";
 import { MEDIA_URL } from "../constants";
 import { ResourceActions } from "../helper";
@@ -41,19 +41,24 @@ const conditionalMediaInput = (formData: any) => {
   }
 }
 
-export const conditionalMediaRender = (formData: any) => {
+export const ConditionalMediaRender: FC<any>= memo((formData: any) => {
   console.log(formData);
-  switch (formData.type) {
-    case 0:
-      return (
-        <img src={`${MEDIA_URL}/${formData.src}`} />
-      )
-    case 1:
-      return (
-        <video src={`${MEDIA_URL}/${formData.src}`} controls />
-      )
-  }
-}
+  return (<>gay</>)
+  // switch (formData.type) {
+  //   case 0:
+  //     return (
+  //       <img src={`${MEDIA_URL}/${formData.src}`} />
+  //     )
+  //   case 1:
+  //     return (
+  //       <video src={`${MEDIA_URL}/${formData.src}`} controls />
+  //     )
+  //   default: 
+  //       return (
+  //         <div>Unknown Type</div>
+  //       )
+  // }
+})
 
 export const ArtefactMediaEdit = (props: EditProps) => {
   return (

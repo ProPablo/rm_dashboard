@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { getConnection } from 'typeorm';
 import { Artefact, createSchema, editSchema } from '../entity/Artefact';
+import { ArtefactMedia } from '../entity/ArtefactMedia';
 import { HTTPException } from '../Errors';
 import { createListQuery } from '../helperFunctions'
 const artefactRouter = Router();
@@ -44,6 +45,10 @@ artefactRouter.get('/', async (req, res) => {
 artefactRouter.get('/:id', async (req, res) => {
   const { id } = req.params;
   const artefact = await Artefact.findOneOrFail({ id: Number.parseInt(id) },);
+  const artefactMedia = await ArtefactMedia.getRepository().createQueryBuilder('am')
+    .where({ artefactId: id })
+    .getOne();
+  if (artefactMedia) artefact.media = artefactMedia.id as any;
   // Change Buffer to base64 string
   artefact.Image = artefact.Image?.toString() as any;
   res.json(artefact);

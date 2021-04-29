@@ -3,7 +3,7 @@ import { ChipField, Create, CreateProps, Datagrid, DateField, DateInput, Edit, E
 import '../App.css';
 import { useListStyles } from '../AppTheme';
 import { ResourceActions } from '../helper';
-import { conditionalMediaRender } from './ArtefactMedia';
+import { ConditionalMediaRender } from './ArtefactMedia';
 
 
 
@@ -52,18 +52,19 @@ export const ArtefactEdit = (props: EditProps) => {
         <ImageInput source="Media" label="Thumbnail" accept="image/*" maxSize={1000000}>
           <ImageField source="src" title="title" />
         </ImageInput>
-        <ReferenceManyField label="" reference="artefactmedia" target="artefactId" source="id">
-          <SingleFieldList>
-            <ChipField source="src" />
-          </SingleFieldList>
-          {/* <FormDataConsumer>
-            {({ formData, ...rest }) => (
-              conditionalMediaRender(formData)
-            )}
-          </FormDataConsumer> */}
-        </ReferenceManyField>
+        {/* @ts-ignore */}
+        <ReferenceField reference="artefactmedia" source="media"><div>gay</div> </ReferenceField>
+        {/* <ReferenceManyField reference="artefactmedia" target="artefactId" source="id">
+          <Datagrid>
+            <FormDataConsumer>
+              {({ formData, ...rest }) => (
+                conditionalMediaRender(formData)
+              )}
+            </FormDataConsumer>
+          </Datagrid>
+        </ReferenceManyField>  */}
       </SimpleForm>
-    </Edit>
+    </Edit >
   );
 }
 export const ArtefactList = (props: CreateProps) => {

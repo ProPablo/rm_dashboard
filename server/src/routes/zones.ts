@@ -19,6 +19,26 @@ zoneRouter.get('/', async (req, res) => {
   res.json(zones);
 })
 
+zoneRouter.get('/artefacts', async (req, res) => {
+
+  const query = Zone.getRepository().createQueryBuilder('E');
+  const zoneProps = getConnection().getMetadata(Zone).ownColumns.map(column => column.propertyName);
+  createListQuery<Zone>(query, req, zoneProps);
+
+  const zones = await query.getMany();
+  for await (const zone of zones) {
+    const artefacts = (await Artefact.getRepository()
+      .createQueryBuilder("a")
+      .select("a.id")
+      .leftJoin(Zone, "z", "z.id = a.zoneId")
+      .where("z.id = :id", { id: zone.id })
+      .getMany()).map(x => x.id)
+    zone.Artefacts = artefacts as any; 
+  }
+
+  res.json(zones);
+})
+
 zoneRouter.get('/:id', async (req, res) => {
   // let zone: any | Zone = await Zone.findOneOrFail({ id: Number.parseInt(id) },);
   // const artefacts = (await getRepository(Artefact)
@@ -36,7 +56,7 @@ zoneRouter.post('/', async (req, res) => {
   const value: Object = await createSchema.validateAsync(req.body);
   console.log(req.body);
   res.json(await Zone.create(value).save());
-})
+});
 
 zoneRouter.put('/:id', async (req, res) => {
   const id = parseInt(req.params.id);
