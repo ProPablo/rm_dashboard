@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { getConnection } from 'typeorm';
 import { Artefact, createSchema, editSchema } from '../entity/Artefact';
+// No autocomplete from path syntax
+// import {} from '@entity/Artefact';
 import { ArtefactMedia } from '../entity/ArtefactMedia';
 import { HTTPException } from '../Errors';
 import { createListQuery } from '../helperFunctions'

@@ -19,7 +19,7 @@ import { StoreItemCreate, StoreItemList, StoreItemEdit } from './Resources/Store
 import { ZoneCreate, ZoneEdit, ZoneList } from './Resources/Zone';
 import { ArtefactMediaCreate, ArtefactMediaEdit } from './Resources/ArtefactMedia';
 
-
+import { Artefact } from "../../shared/types";
 
 function App() {
   return (
@@ -29,7 +29,7 @@ function App() {
         <Resource name="artefactmedia" list={ListGuesser} edit={ArtefactMediaEdit} create={ArtefactMediaCreate} icon={ArtefactMediaIcon} />
         <Resource name="zones" list={ZoneList} edit={ZoneEdit} create={ZoneCreate} icon={ZoneIcon} />
         <Resource name="beacons" list={BeaconList} edit={BeaconEdit} create={BeaconCreate} icon={BeaconIcon} />
-        <Resource name="exhibitions" list={ExhibitionList} edit={ExhibitionEdit} create={ExhibitionCreate} icon={ExhibitionsIcon}/>
+        <Resource name="exhibitions" list={ExhibitionList} edit={ExhibitionEdit} create={ExhibitionCreate} icon={ExhibitionsIcon} />
         <Resource name="storeItems" list={StoreItemList} edit={StoreItemEdit} create={StoreItemCreate} icon={StoreItemIcon} />
       </Admin>
     </div>
