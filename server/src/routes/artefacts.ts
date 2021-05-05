@@ -44,8 +44,17 @@ artefactRouter.get('/', async (req, res) => {
   res.json(artefacts);
 })
 
-artefactRouter.get('/consumable', async (req, res)=> {
-
+artefactRouter.get('/consumable', async (req, res) => {
+  const artefacts = await Artefact.getRepository()
+    .createQueryBuilder("a")
+    .leftJoinAndSelect("a.Media", "m")
+    .getMany();
+  artefacts.forEach(a => {
+    a.thumbnail = a.thumbnail?.toString() as any
+    // @ts-ignore
+    if (a.Media) a.Media = { src: a.Media.src, type: a.Media.type };
+  })
+  res.json(artefacts);
 });
 
 artefactRouter.get('/:id', async (req, res) => {
@@ -54,10 +63,10 @@ artefactRouter.get('/:id', async (req, res) => {
   const artefactMedia = await ArtefactMedia.getRepository().createQueryBuilder('am')
     .where({ artefactId: id })
     .getOne();
-  if (artefactMedia) {
-    artefact.MediaSrc = artefactMedia.id as any;
-    artefact.MediaType = artefactMedia.type;
-  }
+  // if (artefactMedia) {
+  //   artefact.MediaSrc = artefactMedia.id as any;
+  //   artefact.MediaType = artefactMedia.type;
+  // }
 
   // Change Buffer to base64 string
   artefact.thumbnail = artefact.thumbnail?.toString() as any;
