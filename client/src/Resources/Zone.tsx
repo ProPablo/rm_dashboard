@@ -9,8 +9,8 @@ import { ResourceActions } from '../helper';
 export const ZoneCreate = (props: CreateProps) => (
   <Create actions={<ResourceActions />} {...props}>
     <SimpleForm>
-      <TextInput source="Name" />
-      <TextInput source="Description" />
+      <TextInput source="name" />
+      <TextInput source="description" />
     </SimpleForm>
   </Create>
 )
@@ -150,8 +150,8 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}>
                           <TableCell><NumberField record={data[id]} source="id" /></TableCell>
-                          <TableCell> <TextField record={data[id]} source="Name" /> </TableCell>
-                          <TableCell>  <TextField record={data[id]} source="Description" /> </TableCell>
+                          <TableCell> <TextField record={data[id]} source="name" /> </TableCell>
+                          <TableCell>  <TextField record={data[id]} source="description" /> </TableCell>
                         </TableRow>
                       )}
                     </Draggable>
@@ -177,16 +177,16 @@ export const ZoneEdit = (props: EditProps) => {
       <TabbedForm>
         <FormTab label="Zone">
           <TextInput disabled source="id" />
-          <TextInput source="Name" />
-          <TextInput source="Description" />
-          <DateInput disabled source="CreatedAt" />
-          <DateInput disabled source="UpdatedAt" />
+          <TextInput source="name" />
+          <TextInput source="description" />
+          <DateInput disabled source="createdAt" />
+          <DateInput disabled source="updatedAt" />
 
 
         </FormTab>
         <FormTab label="Relations">
 
-          <ReferenceManyField label="ARTEFACTS" reference="artefacts" target="zoneId" source="id" sort={{ field: "Priority", order: "DESC" }}>
+          <ReferenceManyField label="ARTEFACTS" reference="artefacts" target="zoneId" source="id" sort={{ field: "priority", order: "DESC" }}>
             {/* <Datagrid rowClick="edit">
             <TextField source="Name" />
             <TextField source="Description" />
@@ -195,8 +195,8 @@ export const ZoneEdit = (props: EditProps) => {
           </ReferenceManyField>
           <ReferenceManyField label="BEACONS" reference="beacons" target="zoneId">
             <Datagrid rowClick="edit">
-              <TextField source="Name" />
-              <TextField label="MAC Address" source="MACAddress" />
+              <TextField source="name" />
+              <TextField label="MAC Address" source="macAddress" />
             </Datagrid>
           </ReferenceManyField>
         </FormTab>
@@ -210,10 +210,10 @@ export const ZoneList = (props: ListProps) => (
   <List {...props}>
     <Datagrid rowClick="edit">
       <TextField source="id" />
-      <TextField source="Name" />
-      <TextField source="Description" />
-      <DateField source="CreatedAt" />
-      <DateField source="UpdatedAt" />
+      <TextField source="name" />
+      <TextField source="description" />
+      <DateField source="createdAt" />
+      <DateField source="updatedAt" />
     </Datagrid>
   </List>
 );

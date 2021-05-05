@@ -11,6 +11,7 @@ storeItemRouter.get('/', async (req, res) => {
   createListQuery<StoreItem>(query, req, storeItemProps);
 
   const storeItems = await query.getMany();
+  storeItems.forEach(a => a.thumbnail = a.thumbnail?.toString() as any);
   res.header('Access-Control-Expose-Headers', 'X-Total-Count');
   res.header('X-Total-Count', storeItems.length.toString());
   res.json(storeItems);
@@ -18,7 +19,9 @@ storeItemRouter.get('/', async (req, res) => {
 
 storeItemRouter.get('/:id', async (req, res) => {
   const { id } = req.params;
-  res.json(await StoreItem.findOneOrFail({ id: Number.parseInt(id) },));
+  const storeItem = await StoreItem.findOneOrFail({ id: Number.parseInt(id) },);
+  storeItem.thumbnail = storeItem.thumbnail?.toString() as any;
+  res.json(storeItem);
 })
 
 storeItemRouter.post('/', async (req, res) => {

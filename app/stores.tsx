@@ -9,6 +9,7 @@ import { baseURL, request } from "./lib/controllers";
 export interface ActionContextValue {
   reload: () => void,
   cacheImages?: null,
+  isLoading?: boolean
 }
 // @ts-ignore
 const GlobalActionContext = createContext<ActionContextValue>();
@@ -24,8 +25,8 @@ export const GlobalStore: React.FC = ({ children }) => {
   // console.log("rerender store");
   const globalValue: ActionContextValue = useMemo(() => ({
     reload: async () => {
-      const url = `${baseURL}/artefacts`;
-      console.log("Getting data from " + url);
+      // const url = `${baseURL}/artefacts`;
+      // console.log("Getting data from " + url);
       const artefactResults = await request<Artefact[]>(`${baseURL}/artefacts`);
       console.log(artefactResults);
       setArtefacts(artefactResults);
@@ -46,4 +47,4 @@ export const GlobalStore: React.FC = ({ children }) => {
 }
 
 
-export { ArtefactsContext };
+export { ArtefactsContext, GlobalActionContext };

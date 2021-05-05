@@ -11,6 +11,7 @@ exhibitionRouter.get('/', async (req, res) => {
   createListQuery<Exhibition>(query, req, exhibitionProps);
 
   const exhibitions = await query.getMany();
+  exhibitions.forEach(a => a.thumbnail = a.thumbnail?.toString() as any);
   res.header('Access-Control-Expose-Headers', 'X-Total-Count');
   res.header('X-Total-Count', exhibitions.length.toString());
   res.json(exhibitions);
@@ -18,7 +19,9 @@ exhibitionRouter.get('/', async (req, res) => {
 
 exhibitionRouter.get('/:id', async (req, res) => {
   const { id } = req.params;
-  res.json(await Exhibition.findOneOrFail({ id: Number.parseInt(id) },));
+  const exhibition = await Exhibition.findOneOrFail({ id: Number.parseInt(id) },);
+  exhibition.thumbnail = exhibition.thumbnail?.toString() as any;
+  res.json(exhibition);
 })
 
 exhibitionRouter.post('/', async (req, res) => {
@@ -28,7 +31,7 @@ exhibitionRouter.post('/', async (req, res) => {
 
 exhibitionRouter.put('/:id', async (req, res) => {
   const { id } = req.params;
-  
+
   const value = await editSchema.validateAsync(req.body);
   res.json(await Exhibition.save({ id: Number.parseInt(id), ...value }));
 })

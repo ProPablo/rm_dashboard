@@ -8,7 +8,7 @@
  * @format
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   Button,
   SafeAreaView,
@@ -29,7 +29,7 @@ import {
 
 import { Artefact } from '@shared/types';
 import { request, baseURL } from './lib/controllers';
-import { GlobalStore } from './stores';
+import { GlobalStore, GlobalActionContext } from './stores';
 
 //  const Section: React.FC<{
 //    title: string;
@@ -61,9 +61,6 @@ import { GlobalStore } from './stores';
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
-  // Handle in separate component that also exposes a button to refresh all data
-  // Refresh context (useRefresh exposed as context and usememo)
-  const [state, setstate] = useState(0);
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -81,14 +78,14 @@ const App = () => {
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
           <GlobalStore>
-            <Text>{state}</Text>
+            {/* <Text>{state}</Text> */}
           </GlobalStore>
-          <Button
-            onPress={()=> setstate(state+1)}
+          {/* <Button
+            onPress={() => setstate(state + 1)}
             title="Learn More"
             color="#841584"
             accessibilityLabel="Learn more about this purple button"
-          />
+          /> */}
           {/* <Section title="Step One">
              Edit <Text style={styles.highlight}>App.js</Text> to change this
              screen and then come back to see your edits.

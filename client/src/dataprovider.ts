@@ -37,6 +37,7 @@ export const builtDataProvider: DataProvider = {
 
     // This is for remaining base64 implementations
     if (resource !== 'artefactmedia') {
+      console.log("GOT params data", params.data);
       return convertFileToBase64(params.data.Media)
         .then(base64String => {
           delete params.data.Media;
@@ -44,7 +45,7 @@ export const builtDataProvider: DataProvider = {
             ...params,
             data: {
               ...params.data,
-              Image: base64String
+              thumbnail: base64String
             }
           })
         })
@@ -75,7 +76,7 @@ export const builtDataProvider: DataProvider = {
             ...params,
             data: {
               ...params.data,
-              Image: base64String
+              thumbnail: base64String
             }
           })
         })

@@ -33,7 +33,7 @@ zoneRouter.get('/artefacts', async (req, res) => {
       .leftJoin(Zone, "z", "z.id = a.zoneId")
       .where("z.id = :id", { id: zone.id })
       .getMany()).map(x => x.id)
-    zone.Artefacts = artefacts as any; 
+    zone.Artefacts = artefacts as any;
   }
 
   res.json(zones);
@@ -86,9 +86,9 @@ zoneRouter.post('/:id/reorder', async (req, res) => {
   // const artefactwewant = artefactList[artefactindex]
 
   for (const a of artefacts) {
-    const Priority = orderingLookup.get(a.id);
-    if (Priority != undefined) {
-      await Artefact.update({ id: a.id }, { Priority })
+    const priority = orderingLookup.get(a.id);
+    if (priority != undefined) {
+      await Artefact.update({ id: a.id }, { priority});
     }
   }
 
@@ -111,7 +111,7 @@ zoneRouter.delete('/:id', async (req, res) => {
 
   await Artefact.createQueryBuilder()
     .update()
-    .set({ Priority: -1 })
+    .set({ priority: -1 })
     .where("zoneId = :id")
     .execute();
 

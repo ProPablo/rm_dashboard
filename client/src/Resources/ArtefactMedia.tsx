@@ -87,10 +87,10 @@ export const ArtefactMediaEdit = (props: EditProps) => {
           { id: 1, name: 'video' },
         ]} />
         <ReferenceInput source="artefactId" reference="artefacts" allowEmpty emptyValue={undefined} >
-          <SelectInput optionText="Name" />
+          <SelectInput optionText="name" />
         </ReferenceInput>
-        <DateInput disabled source="CreatedAt" />
-        <DateInput disabled source="UpdatedAt" />
+        <DateInput disabled source="createdAt" />
+        <DateInput disabled source="updatedAt" />
         <FormDataConsumer>
           {({ formData, ...rest }) => (
             conditionalMediaInput(formData)
@@ -120,7 +120,7 @@ export const ArtefactMediaCreate = (props: CreateProps) => (
       </FormDataConsumer>
 
       <ReferenceInput source="artefactId" reference="artefacts" allowEmpty emptyValue={undefined} >
-        <SelectInput optionText="Name" />
+        <SelectInput optionText="name" />
       </ReferenceInput>
     </SimpleForm>
   </Create>

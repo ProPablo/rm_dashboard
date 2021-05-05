@@ -38,7 +38,7 @@ artefactRouter.get('/', async (req, res) => {
 
   const artefacts = await query.getMany();
   // Change Buffer to base64 string
-  artefacts.forEach(a => a.Image = a.Image?.toString() as any);
+  artefacts.forEach(a => a.thumbnail = a.thumbnail?.toString() as any);
   res.header('Access-Control-Expose-Headers', 'X-Total-Count');
   res.header('X-Total-Count', artefacts.length.toString());
   res.json(artefacts);
@@ -50,16 +50,16 @@ artefactRouter.get('/:id', async (req, res) => {
   const artefactMedia = await ArtefactMedia.getRepository().createQueryBuilder('am')
     .where({ artefactId: id })
     .getOne();
-  if (artefactMedia) artefact.media = artefactMedia.id as any;
+  if (artefactMedia) artefact.MediaId = artefactMedia.id as any;
   // Change Buffer to base64 string
-  artefact.Image = artefact.Image?.toString() as any;
+  artefact.thumbnail = artefact.thumbnail?.toString() as any;
   res.json(artefact);
 })
 
 artefactRouter.post('/', async (req, res) => {
-  console.log("logging new artefact", req.body);
+  // console.log("logging new artefact", req.body);
   const value: Object = await createSchema.validateAsync(req.body);
-  console.log(value);
+  // console.log(value);
   res.json(await Artefact.create(value).save());
 })
 

@@ -3,30 +3,31 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, BaseEntity, CreateDa
 
 export const editSchema = Joi.object({
   id: Joi.number().strip(),
-  Name: Joi.string().min(3).max(30),
-  Description: Joi.string(),
-  Organiser: Joi.string(),
-  CreatedAt: Joi.date().strip(),
-  UpdatedAt: Joi.date().strip(),
-  StartDate: Joi.date(),
-  FinishDate: Joi.date(),
-  PriceAdult: Joi.number(),
-  PriceConcession: Joi.number(),
-  PriceChild: Joi.number(),
+  name: Joi.string().min(3).max(30),
+  description: Joi.string(),
+  thumbnail: Joi.binary(),
+  organiser: Joi.string(),
+  createdAt: Joi.date().strip(),
+  updatedAt: Joi.date().strip(),
+  startDate: Joi.date(),
+  finishDate: Joi.date(),
+  priceAdult: Joi.number(),
+  priceConcession: Joi.number(),
+  priceChild: Joi.number(),
 
 })
 
 export const createSchema = editSchema.concat(Joi.object({
-  Name: Joi.required(),
+  name: Joi.required(),
 }));
 
 export interface inputExhibition {
-  Name: string,
-  Description: string,
-  Organiser: string,
-  PriceAdult: number,
-  PriceConcession: number,
-  PriceChild: number,
+  name: string,
+  description: string,
+  organiser: string,
+  priceAdult: number,
+  priceConcession: number,
+  priceChild: number,
 }
 
 @Entity()
@@ -36,38 +37,38 @@ export class Exhibition extends BaseEntity {
   id: number;
 
   @Column()
-  Name: string;
+  name: string;
 
-  @Column( {nullable: true} )
-  Description: string;
+  @Column({ nullable: true })
+  description: string;
 
-  @Column( {nullable: true} )
-  Organiser: string;
-
-  @Column({ type: "double", default: "0.0" })
-  PriceAdult: number;
+  @Column({ nullable: true })
+  organiser: string;
 
   @Column({ type: "double", default: "0.0" })
-  PriceConcession: number;
+  priceAdult: number;
 
-  @Column({ type: "double", default: "0.0"})
-  PriceChild: number;
+  @Column({ type: "double", default: "0.0" })
+  priceConcession: number;
+
+  @Column({ type: "double", default: "0.0" })
+  priceChild: number;
+
+  @Column({ default: () => 'CURRENT_TIMESTAMP' })
+  startDate: Date
+
+  @Column({ default: () => 'CURRENT_TIMESTAMP' })
+  finishDate: Date;
 
   @CreateDateColumn()
-  StartDate: Date
+  createdAt: Date
 
   @UpdateDateColumn()
-  FinishDate: Date;
-
-  @CreateDateColumn()
-  CreatedAt: Date
-
-  @UpdateDateColumn()
-  UpdatedAt: Date;
+  updatedAt: Date;
 
   @Column({
     type: 'longblob',
     nullable: true
   })
-  Image: Buffer;
+  thumbnail: Buffer;
 }
