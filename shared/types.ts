@@ -27,13 +27,13 @@ export interface ArtefactMedia {
   artefactId: number,
 }
 
-export interface Zones {
+export interface Zone {
   id: number,
   name: string,
   description: string,
 }
 
-export interface Beacons {
+export interface Beacon {
   id: number,
   name: string,
   visits: number,
@@ -54,7 +54,7 @@ export interface Beacons {
   
 // }
 
-export interface StoreItems {
+export interface StoreItem {
   id: number,
   name: string,
   description: string,

@@ -3,7 +3,7 @@ import { ChipField, Create, CreateProps, Datagrid, DateField, DateInput, Edit, E
 import '../App.css';
 import { useListStyles } from '../AppTheme';
 import { ConditionalThumbnailEdit, ResourceActions } from '../helper';
-import { ConditionalMediaRender, SampleField } from './ArtefactMedia';
+import { ConditionalMediaRender } from './ArtefactMedia';
 
 
 

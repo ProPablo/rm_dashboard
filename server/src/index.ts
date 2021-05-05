@@ -63,6 +63,7 @@ createConnection({
     console.log("Serving static files from: " + publicDir);
     app.use('/public', express.static('public'));
     swaggerDoc.host = `localhost:${PORT}`
+    swaggerDoc.basePath = '/';
   }
   else {
     // router.use(isLoggedIn);

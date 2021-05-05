@@ -26,15 +26,15 @@ zoneRouter.get('/artefacts', async (req, res) => {
   createListQuery<Zone>(query, req, zoneProps);
 
   const zones = await query.getMany();
-  for await (const zone of zones) {
-    const artefacts = (await Artefact.getRepository()
-      .createQueryBuilder("a")
-      .select("a.id")
-      .leftJoin(Zone, "z", "z.id = a.zoneId")
-      .where("z.id = :id", { id: zone.id })
-      .getMany()).map(x => x.id)
-    zone.Artefacts = artefacts as any;
-  }
+  // for await (const zone of zones) {
+  //   const artefacts = (await Artefact.getRepository()
+  //     .createQueryBuilder("a")
+  //     .select("a.id")
+  //     .leftJoin(Zone, "z", "z.id = a.zoneId")
+  //     .where("z.id = :id", { id: zone.id })
+  //     .getMany()).map(x => x.id)
+  //   zone.Artefacts = artefacts as any;
+  // }
 
   res.json(zones);
 })

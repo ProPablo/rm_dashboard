@@ -9,7 +9,7 @@
     }
   },
   "host": "rm.kongroo.xyz",
-  "basePath": "/",
+  "basePath": "/api",
   "tags": [
     {
       "name": "login",

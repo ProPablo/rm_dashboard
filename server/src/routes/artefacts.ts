@@ -44,13 +44,21 @@ artefactRouter.get('/', async (req, res) => {
   res.json(artefacts);
 })
 
+artefactRouter.get('/consumable', async (req, res)=> {
+
+});
+
 artefactRouter.get('/:id', async (req, res) => {
   const { id } = req.params;
   const artefact = await Artefact.findOneOrFail({ id: Number.parseInt(id) },);
   const artefactMedia = await ArtefactMedia.getRepository().createQueryBuilder('am')
     .where({ artefactId: id })
     .getOne();
-  if (artefactMedia) artefact.MediaId = artefactMedia.id as any;
+  if (artefactMedia) {
+    artefact.MediaSrc = artefactMedia.id as any;
+    artefact.MediaType = artefactMedia.type;
+  }
+
   // Change Buffer to base64 string
   artefact.thumbnail = artefact.thumbnail?.toString() as any;
   res.json(artefact);

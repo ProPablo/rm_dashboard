@@ -15,7 +15,7 @@ export const editSchema = Joi.object({
   coordX: Joi.number(),
   coordY: Joi.number(),
   zoneId: Joi.number().allow(null),
-  MediaId: Joi.any().strip(),
+  MediaSrc: Joi.any().strip(),
   priority: Joi.number(),
 })
 
@@ -77,13 +77,8 @@ export class Artefact extends BaseEntity {
   priority: number;
 
   @OneToOne(() => ArtefactMedia, ArtefactMedia => ArtefactMedia.Artefact, { nullable: true })
-  MediaId: ArtefactMedia;
+  Media: ArtefactMedia;
 
-  //   @Column({ nullable: true })
-  //   sourceId: number
-  //   @ManyToOne(() => Source, source => source.referred, {
-  //     nullable: true
-  //   })
-  //   @JoinColumn({ name: "sourceId" })
-  //   source: Source
+  // This doesnt create a column
+  // MediaType: number;
 }

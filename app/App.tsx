@@ -7,57 +7,63 @@
  *
  * @format
  */
-
-import React, { useContext, useEffect, useState } from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import React from 'react';
 import {
-  Button,
   SafeAreaView,
   ScrollView,
   StatusBar,
   StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
 
+  useColorScheme,
+  View
+} from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import {
   Colors,
-  DebugInstructions,
-  Header,
-  ReloadInstructions,
+  Header
 } from 'react-native/Libraries/NewAppScreen';
+import { ArtefactStack } from './components/Artefacts/ArtefactStack';
+import { HomeStack } from './components/Home/HomeStack';
+import { GlobalStore } from './stores';
 
-import { Artefact } from '@shared/types';
-import { request, baseURL } from './lib/controllers';
-import { GlobalStore, GlobalActionContext } from './stores';
+const icons: Record<string, string> = {
+  Home: "home",
+  Artefacts: "bank",
+  Events: "info-circle",
+  Store: "shopping-cart"
+}
 
-//  const Section: React.FC<{
-//    title: string;
-//  }> = ({children, title}) => {
-//    const isDarkMode = useColorScheme() === 'dark';
-//    return (
-//      <View style={styles.sectionContainer}>
-//        <Text
-//          style={[
-//            styles.sectionTitle,
-//            {
-//              color: isDarkMode ? Colors.white : Colors.black,
-//            },
-//          ]}>
-//          {title}
-//        </Text>
-//        <Text
-//          style={[
-//            styles.sectionDescription,
-//            {
-//              color: isDarkMode ? Colors.light : Colors.dark,
-//            },
-//          ]}>
-//          {children}
-//        </Text>
-//      </View>
-//    );
-//  };
+const sizes: Record<string, number> = {
+  Home: 25,
+  Artefacts: 20,
+  Events: 25,
+  Store: 25,
+}
+
+const Tab = createBottomTabNavigator();
+function Tabs() {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+
+          return (
+            <Icon name={icons[route.name]} size={sizes[route.name]} color={color} />
+          );
+        },
+      })}
+      tabBarOptions={{
+        activeTintColor: "#A20C02",
+      }}>
+      <Tab.Screen name="Home" component={HomeStack} />
+      <Tab.Screen name="Artefacts" component={ArtefactStack}/>
+      {/* <Tab.Screen name="Events" component={EventStack}/>
+      <Tab.Screen name="Store" component={StoreStack}/> */}
+
+    </Tab.Navigator>
+  );
+}
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';

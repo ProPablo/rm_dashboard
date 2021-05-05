@@ -41,13 +41,6 @@ const conditionalMediaInput = (formData: any) => {
   }
 }
 
-// @ts-ignore
-export const SampleField = (props) => {
-    const { source } = props;
-    // const record = useRecordContext(props);
-
-    return <span>{props.record[source]}</span>;
-}
 
 export const ConditionalMediaRender = (props: any) => {
   console.log(props);
