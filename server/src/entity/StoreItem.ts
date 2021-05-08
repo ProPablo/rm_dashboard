@@ -3,26 +3,18 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, BaseEntity, CreateDa
 
 export const editSchema = Joi.object({
   id: Joi.number().strip(),
-  Name: Joi.string().min(3).max(30),
-  Description: Joi.string(),
-  CreatedAt: Joi.date().strip(),
-  UpdatedAt: Joi.date().strip(),
-  Cost: Joi.number(),
-  InStock: Joi.boolean(),
-
+  name: Joi.string().min(3).max(30),
+  description: Joi.string(),
+  thumbnail: Joi.binary(),
+  createdAt: Joi.date().strip(),
+  updatedAt: Joi.date().strip(),
+  cost: Joi.number(),
+  inStock: Joi.boolean(),
 })
 
 export const createSchema = editSchema.concat(Joi.object({
-  Name: Joi.required(),
+  name: Joi.required(),
 }));
-
-export interface inputStoreItem {
-  Name: string,
-  Description: string,
-  Cost: number,
-  InStock: boolean,
-  Image: string,
-}
 
 @Entity()
 export class StoreItem extends BaseEntity {
@@ -31,26 +23,26 @@ export class StoreItem extends BaseEntity {
   id: number;
 
   @Column()
-  Name: string;
+  name: string;
 
   @Column( {nullable: true} )
-  Description: string;
+  description: string;
 
   @Column( {type: "double", default: "0.0"} )
-  Cost: number;
+  cost: number;
 
   @Column( {default: false} )
-  InStock: boolean;
+  inStock: boolean;
 
   @CreateDateColumn()
-  CreatedAt: Date
+  createdAt: Date
 
   @UpdateDateColumn()
-  UpdatedAt: Date;
+  updatedAt: Date;
 
   @Column({
     type: 'longblob',
     nullable: true
   })
-  Image: Buffer;
+  thumbnail: Buffer;
 }

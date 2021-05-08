@@ -2,30 +2,21 @@ import React from 'react';
 import { ChipField, Create, CreateProps, Datagrid, DateField, DateInput, Edit, EditProps, FormDataConsumer, FunctionField, ImageField, ImageInput, List, NumberField, NumberInput, ReferenceField, ReferenceInput, ReferenceManyField, SelectInput, SimpleForm, SingleFieldList, TextField, TextInput } from 'react-admin';
 import '../App.css';
 import { useListStyles } from '../AppTheme';
-import { ResourceActions } from '../helper';
-import { ConditionalMediaRender, SampleField } from './ArtefactMedia';
+import { ConditionalThumbnailEdit, ResourceActions } from '../helper';
+import { ConditionalMediaRender } from './ArtefactMedia';
 
 
-const conditionalMediaInput = (formData: any) => {
-  return (
-    <div>
-      <ImageInput source="Media" label="Thumbnail" labelSingle={!!formData.Image ? "Replace image" : "Drag an image into here"} accept="image/*" maxSize={1000000}>
-        <ImageField source="src" title="title" />
-      </ImageInput>
-    </div>
-  )
-}
 
 export const ArtefactCreate = (props: CreateProps) => (
   <Create actions={<ResourceActions />} {...props}>
     <SimpleForm>
-      <TextInput source="Name" />
-      <TextInput source="Description" />
-      <NumberInput source="CoordX" />
-      <NumberInput source="CoordY" />
-      <DateInput source="AcquisitionDate" />
+      <TextInput source="name" />
+      <TextInput source="description" />
+      <NumberInput source="coordX" />
+      <NumberInput source="coordY" />
+      <DateInput source="acquisitionDate" />
       <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined}>
-        <SelectInput optionText="Name" />
+        <SelectInput optionText="name" />
       </ReferenceInput>
       <ImageInput source="Media" label="Thumbnail" accept="image/*" maxSize={1000000}>
         <ImageField source="src" title="title" />
@@ -41,38 +32,28 @@ export const ArtefactEdit = (props: EditProps) => {
     <Edit actions={<ResourceActions />} undoable={false} {...props}>
       <SimpleForm>
         <TextInput disabled source="id" />
-        <TextInput source="Name" />
-        <TextInput source="Description" />
-        <NumberInput source="CoordX" />
-        <NumberInput source="CoordY" />
-        <DateInput source="AcquisitionDate" />
-        <DateInput disabled source="CreatedAt" />
-        <DateInput disabled source="UpdatedAt" />
+        <TextInput source="name" />
+        <TextInput source="description" />
+        <NumberInput source="coordX" />
+        <NumberInput source="coordY" />
+        <DateInput source="acquisitionDate" />
+        <DateInput disabled source="createdAt" />
+        <DateInput disabled source="updatedAt" />
         <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined}>
-          <SelectInput optionText="Name" />
+          <SelectInput optionText="name" />
         </ReferenceInput>
         {/* Image input {}*/}
         <FormDataConsumer>
           {({ formData, ...rest }) => (
-            conditionalMediaInput(formData)
+            ConditionalThumbnailEdit(formData)
           )}
         </FormDataConsumer>
-        {/* Display for Thumbnail image */}
+        {/* <ReferenceField label="" linkType={false} reference="artefactmedia" source="MediaId"><ConditionalMediaRender /></ReferenceField> */}
         <FormDataConsumer>
           {({ formData, ...rest }) => (
-            <img src={formData.Image} className={classes.editImage} />
+            ConditionalMediaRender(formData)
           )}
         </FormDataConsumer>
-        <ReferenceField label="" linkType={false} reference="artefactmedia" source="media"><ConditionalMediaRender /></ReferenceField>
-        {/* <ReferenceManyField reference="artefactmedia" target="artefactId" source="id">
-          <Datagrid>
-            <FormDataConsumer>
-              {({ formData, ...rest }) => (
-                conditionalMediaRender(formData)
-              )}
-            </FormDataConsumer>
-          </Datagrid>
-        </ReferenceManyField>  */}
       </SimpleForm>
     </Edit >
   );
@@ -88,16 +69,16 @@ export const ArtefactList = (props: CreateProps) => {
         {/* Thumbnail view on List*/}
         <FunctionField
           label="Thumbnail"
-          render={(artefact: any) => <img className={classes.thumbnailImage} src={artefact.Image} />} />
+          render={(artefact: any) => <img className={classes.thumbnailImage} src={artefact.thumbnail} />} />
         <TextField source="id" />
-        <TextField source="Name" />
-        <TextField source="Description" />
-        <NumberField source="CoordX" />
-        <NumberField source="CoordY" />
+        <TextField source="name" />
+        <TextField source="description" />
+        <NumberField source="coordX" />
+        <NumberField source="coordY" />
         <ReferenceField source="zoneId" reference="zones"><TextField source="id" /></ReferenceField>
-        <DateField source="AcquisitionDate" />
-        <DateField source="CreatedAt" />
-        <DateField source="UpdatedAt" />
+        <DateField source="acquisitionDate" />
+        <DateField source="createdAt" />
+        <DateField source="updatedAt" />
       </Datagrid>
     </List>
   )

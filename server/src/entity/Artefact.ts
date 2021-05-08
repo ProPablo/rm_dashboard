@@ -6,21 +6,21 @@ import { ArtefactMedia } from "./ArtefactMedia";
 
 export const editSchema = Joi.object({
   id: Joi.number().strip(),
-  AcquisitionDate: [Joi.allow("").strip(), Joi.date()], //Strip if empty string
-  CreatedAt: Joi.date().strip(),
-  UpdatedAt: Joi.date().strip(),
-  Name: Joi.string().min(3).max(30),
-  Image: Joi.binary(),
-  Description: Joi.string(),
-  CoordX: Joi.number(),
-  CoordY: Joi.number(),
+  acquisitionDate: [Joi.allow("").strip(), Joi.date()], //Strip if empty string
+  createdAt: Joi.date().strip(),
+  updatedAt: Joi.date().strip(),
+  name: Joi.string().min(3).max(30),
+  thumbnail: Joi.binary(),
+  description: Joi.string(),
+  coordX: Joi.number(),
+  coordY: Joi.number(),
   zoneId: Joi.number().allow(null),
-  media: Joi.any().strip(),
-  Priority: Joi.number(),
+  Media: Joi.any().strip(),
+  priority: Joi.number(),
 })
 
 export const createSchema = editSchema.concat(Joi.object({
-  Name: Joi.required(),
+  name: Joi.required(),
 }));
 
 export interface inputArtefact {
@@ -38,31 +38,31 @@ export class Artefact extends BaseEntity {
   id: number;
 
   @Column()
-  Name: string;
+  name: string;
 
   @Column({ nullable: true })
-  Description: string;
+  description: string;
 
   @Column({
     type: 'longblob',
     nullable: true
   })
-  Image: Buffer;
+  thumbnail: Buffer;
 
   @Column({ default: () => "CURRENT_TIMESTAMP" })
-  AcquisitionDate: Date;
+  acquisitionDate: Date;
 
   @Column({ type: "double", default: "0.0" })
-  CoordX: number;
+  coordX: number;
 
   @Column({ type: "double", default: "0.0" })
-  CoordY: number;
+  coordY: number;
 
   @CreateDateColumn()
-  CreatedAt: Date
+  createdAt: Date
 
   @UpdateDateColumn()
-  UpdatedAt: Date;
+  updatedAt: Date;
 
   @Column({ nullable: true })
   zoneId: number;
@@ -74,16 +74,11 @@ export class Artefact extends BaseEntity {
   Zone: Zone;
 
   @Column({ default: () => '-1' })
-  Priority: number;
+  priority: number;
 
   @OneToOne(() => ArtefactMedia, ArtefactMedia => ArtefactMedia.Artefact, { nullable: true })
-  media: ArtefactMedia;
+  Media: ArtefactMedia;
 
-  //   @Column({ nullable: true })
-  //   sourceId: number
-  //   @ManyToOne(() => Source, source => source.referred, {
-  //     nullable: true
-  //   })
-  //   @JoinColumn({ name: "sourceId" })
-  //   source: Source
+  // This doesnt create a column
+  // MediaType: number;
 }

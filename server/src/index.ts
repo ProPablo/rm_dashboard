@@ -16,6 +16,9 @@ import { artefactMediaRouter } from "./routes/artefactMedias";
 import { zoneRouter } from "./routes/zones";
 import swaggerDoc from './swagger.json';
 
+const isDevelopment = process.env.NODE_ENV === "development";
+
+
 createConnection({
   "type": "mysql",
   "host": "localhost",
@@ -24,7 +27,7 @@ createConnection({
   "password": process.env.DB_PASSWORD,
   "database": process.env.DB_NAME,
   "synchronize": true,
-  "logging": true,
+  "logging": isDevelopment ? true : ["error", "warn", "info",],
   "entities": [
     __dirname + "/entity/**.{ts,js}" // TODO: clarity change import each entity
   ],
@@ -54,12 +57,13 @@ createConnection({
   // })
 
 
-  if (process.env.NODE_ENV === "development") {
+  if (isDevelopment) {
     console.log("Using development environment");
     const publicDir = resolve(__dirname + '/../public');
     console.log("Serving static files from: " + publicDir);
     app.use('/public', express.static('public'));
     swaggerDoc.host = `localhost:${PORT}`
+    swaggerDoc.basePath = '/';
   }
   else {
     // router.use(isLoggedIn);

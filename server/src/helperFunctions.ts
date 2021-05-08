@@ -21,7 +21,8 @@ export function errorMiddleware(error: any, request: Request, response: Response
 }
 
 export function createListQuery<EntityType extends BaseEntity>(query: SelectQueryBuilder<EntityType>, req: Request, acceptableParams: Array<String>): SelectQueryBuilder<EntityType> {
-  if (req.query._sort && typeof req.query._sort == 'string') query.orderBy(req.query._sort, req.query._order as any);
+  // Possibly apply sanitisation to order and sort to avoid sql injection
+  if (req.query._sort && typeof req.query._sort == 'string') query.orderBy("E." + req.query._sort, req.query._order as any);
 
   let listOfParams = Object.keys(req.query).filter(x => !x.startsWith('_'));
   if (listOfParams && listOfParams.every(x => acceptableParams.includes(x))) {

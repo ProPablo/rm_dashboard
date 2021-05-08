@@ -35,15 +35,15 @@ export class ArtefactMedia extends BaseEntity {
   type: MediaType;
 
   @CreateDateColumn()
-  CreatedAt: Date
+  createdAt: Date
 
   @UpdateDateColumn()
-  UpdatedAt: Date;
+  updatedAt: Date;
 
   @Column()
   artefactId: number;
 
-  @OneToOne(() => Artefact, Artefact => Artefact.media, {
+  @OneToOne(() => Artefact, Artefact => Artefact.MediaSrc, {
     onDelete: "CASCADE"
   })
   @JoinColumn({ name: "artefactId" })

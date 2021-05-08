@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { getConnection } from 'typeorm';
 import { Artefact, createSchema, editSchema } from '../entity/Artefact';
+// No autocomplete from path syntax
+// import {} from '@entity/Artefact';
 import { ArtefactMedia } from '../entity/ArtefactMedia';
 import { HTTPException } from '../Errors';
 import { createListQuery } from '../helperFunctions'
@@ -33,10 +35,13 @@ artefactRouter.get('/', async (req, res) => {
   // NOTE: inefficient retrieval of properties on entity
   const artefactProps = getConnection().getMetadata(Artefact).ownColumns.map(column => column.propertyName);
   createListQuery<Artefact>(query, req, artefactProps);
+  query.leftJoinAndSelect("E.Media", "m");
 
   const artefacts = await query.getMany();
-  // Change Buffer to base64 string
-  artefacts.forEach(a => a.Image = a.Image?.toString() as any);
+  artefacts.forEach(a => {
+    a.thumbnail = a.thumbnail?.toString() as any;
+    if (a.Media) a.Media = { src: a.Media.src, type: a.Media.type } as ArtefactMedia;
+  })
   res.header('Access-Control-Expose-Headers', 'X-Total-Count');
   res.header('X-Total-Count', artefacts.length.toString());
   res.json(artefacts);
@@ -44,20 +49,24 @@ artefactRouter.get('/', async (req, res) => {
 
 artefactRouter.get('/:id', async (req, res) => {
   const { id } = req.params;
-  const artefact = await Artefact.findOneOrFail({ id: Number.parseInt(id) },);
-  const artefactMedia = await ArtefactMedia.getRepository().createQueryBuilder('am')
-    .where({ artefactId: id })
-    .getOne();
-  if (artefactMedia) artefact.media = artefactMedia.id as any;
+  const artefact = await Artefact.getRepository().createQueryBuilder('a')
+    .leftJoinAndSelect("a.Media", "m")
+    .where("a.id = :id", { id: parseInt(id) })
+    .getOneOrFail();
+  // const artefact = await Artefact.findOneOrFail({ id: Number.parseInt(id) },);
+
+  // const artefactMedia = await ArtefactMedia.getRepository().createQueryBuilder('am')
+  //   .where({ artefactId: id })
+  //   .getOne();
+
   // Change Buffer to base64 string
-  artefact.Image = artefact.Image?.toString() as any;
+  artefact.thumbnail = artefact.thumbnail?.toString() as any;
+  if (artefact.Media) artefact.Media = { src: artefact.Media.src, type: artefact.Media.type } as ArtefactMedia;
   res.json(artefact);
 })
 
 artefactRouter.post('/', async (req, res) => {
-  console.log("logging new artefact", req.body);
   const value: Object = await createSchema.validateAsync(req.body);
-  console.log(value);
   res.json(await Artefact.create(value).save());
 })
 

@@ -5,20 +5,15 @@ import { Beacon } from "./Beacon";
 
 export const editSchema = Joi.object({
   id: Joi.number().strip(),
-  CreatedAt: Joi.date().strip(),
-  UpdatedAt: Joi.date().strip(),
-  Name: Joi.string().min(3).max(30),
-  Description: Joi.string().min(3).max(30),
+  createdAt: Joi.date().strip(),
+  updatedAt: Joi.date().strip(),
+  name: Joi.string().min(3).max(30),
+  description: Joi.string().min(3).max(30),
 })
 
 export const createSchema = editSchema.concat(Joi.object({
-  Name: Joi.required(),
+  name: Joi.required(),
 }));
-
-export interface inputZone {
-  Name: string,
-  Description: string,
-}
 
 @Entity()
 export class Zone extends BaseEntity {
@@ -27,20 +22,21 @@ export class Zone extends BaseEntity {
   id: number;
 
   @Column()
-  Name: string;
+  name: string;
 
-  @Column( {nullable: true} )
-  Description: string;
+  @Column({ nullable: true })
+  description: string;
 
   @CreateDateColumn()
-  CreatedAt: Date
+  createdAt: Date
 
   @UpdateDateColumn()
-  UpdatedAt: Date
+  updatedAt: Date
 
   @OneToMany(() => Artefact, Artefact => Artefact.Zone)
   Artefacts: Artefact[]
 
   @OneToMany(() => Beacon, Beacon => Beacon.Zone)
   Beacons: Beacon[]
+
 }

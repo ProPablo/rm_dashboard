@@ -21,57 +21,76 @@ const conditionalMediaInput = (formData: any) => {
     case 0:
       return (
         <div>
-          <ImageInput /*placeholder={<p>placeholder</p>}*/ source="Media" labelSingle="Drag an Image into here" accept="image/*" multiple={false}  >
+          <ImageInput /*placeholder={<p>placeholder</p>}*/ source="InputMedia" labelSingle="Drag an Image into here" accept="image/*" multiple={false}  >
             <ImageField source="src" title="title" />
           </ImageInput>
-          {formData.src && !!!formData.Media && <img src={`${MEDIA_URL}/${formData.src}`} />}
+          {formData.src && !!!formData.InputMedia && <img src={`${MEDIA_URL}/${formData.src}`} />}
         </div>
       )
     case 1:
       return (
         <div>
-          <FileInput source="Media" labelSingle="Drag a Video into here" accept="video/*" multiple={false}>
+          <FileInput source="InputMedia" labelSingle="Drag a Video into here" accept="video/*" multiple={false}>
             {/* <video src={`${MEDIA_URL}/${formData.src}`} controls /> */}
             {/* <FileField source="src" title="title" /> */}
             <VideoField />
           </FileInput>
-          {formData.src && !!!formData.Media && <video src={`${MEDIA_URL}/${formData.src}`} controls />}
+          {formData.src && !!!formData.InputMedia && <video src={`${MEDIA_URL}/${formData.src}`} controls />}
         </div>
       )
   }
 }
 
-// @ts-ignore
-export const SampleField = (props) => {
-    const { source } = props;
-    // const record = useRecordContext(props);
 
-    return <span>{props.record[source]}</span>;
-}
+// export const ConditionalMediaRender = (props: any) => {
+//   console.log(props);
+//   switch (props.record.type) {
+//     case 0:
+//       return (
+//         <div>
+//           <img src={`${MEDIA_URL}/${props.record.src}`} />
 
-export const ConditionalMediaRender = (props: any) => {
-  console.log(props);
-  // return (<>gay</>)
-  switch (props.record.type) {
+//         </div>
+//       )
+//     case 1:
+//       return (
+//         <div>
+//           <video src={`${MEDIA_URL}/${props.record.src}`} controls />
+
+//         </div>
+//       )
+//     default: 
+//         return (
+//           <div>Unknown Type</div>
+//         )
+//   }
+// }
+export const ConditionalMediaRender = (formdata: any) => {
+  if (!formdata.Media) return (
+    <div>Does not exist</div>
+  )
+
+  switch (formdata.Media.type) {
     case 0:
       return (
         <div>
-          <img src={`${MEDIA_URL}/${props.record.src}`} />
+          <img src={`${MEDIA_URL}/${formdata.Media.src}`} />
 
         </div>
       )
     case 1:
       return (
         <div>
-          <video src={`${MEDIA_URL}/${props.record.src}`} controls />
+          <video src={`${MEDIA_URL}/${formdata.Media.src}`} controls />
 
         </div>
       )
-    default: 
-        return (
-          <div>Unknown Type</div>
-        )
+    default:
+      return (
+        <div>Unknown Type</div>
+      )
   }
+
 }
 
 export const ArtefactMediaEdit = (props: EditProps) => {
@@ -87,10 +106,10 @@ export const ArtefactMediaEdit = (props: EditProps) => {
           { id: 1, name: 'video' },
         ]} />
         <ReferenceInput source="artefactId" reference="artefacts" allowEmpty emptyValue={undefined} >
-          <SelectInput optionText="Name" />
+          <SelectInput optionText="name" />
         </ReferenceInput>
-        <DateInput disabled source="CreatedAt" />
-        <DateInput disabled source="UpdatedAt" />
+        <DateInput disabled source="createdAt" />
+        <DateInput disabled source="updatedAt" />
         <FormDataConsumer>
           {({ formData, ...rest }) => (
             conditionalMediaInput(formData)
@@ -120,7 +139,7 @@ export const ArtefactMediaCreate = (props: CreateProps) => (
       </FormDataConsumer>
 
       <ReferenceInput source="artefactId" reference="artefacts" allowEmpty emptyValue={undefined} >
-        <SelectInput optionText="Name" />
+        <SelectInput optionText="name" />
       </ReferenceInput>
     </SimpleForm>
   </Create>
