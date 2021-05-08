@@ -1,5 +1,5 @@
 import { Request, Response, Router } from 'express';
-import { Beacon, inputBeacon, editSchema, createSchema } from '../entity/Beacon'
+import { Beacon, editSchema, createSchema } from '../entity/Beacon'
 import Joi, { optional } from 'joi';
 import { getConnection } from 'typeorm';
 import { HTTPException } from '../Errors';
@@ -30,7 +30,7 @@ beaconRouter.post('/', async (req, res) => {
 
 beaconRouter.put('/:id', async (req, res) => {
   const { id } = req.params;
-  
+
   const value = await editSchema.validateAsync(req.body);
   // res.json(await Beacons.update({ id: Number.parseInt(id) }, { ...req.body }));
   res.json(await Beacon.save({ id: Number.parseInt(id), ...value }));

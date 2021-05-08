@@ -43,7 +43,7 @@ export class ArtefactMedia extends BaseEntity {
   @Column()
   artefactId: number;
 
-  @OneToOne(() => Artefact, Artefact => Artefact.MediaSrc, {
+  @OneToOne(() => Artefact, Artefact => Artefact.Media, {
     onDelete: "CASCADE"
   })
   @JoinColumn({ name: "artefactId" })
