@@ -25,7 +25,9 @@ import {
   Header
 } from 'react-native/Libraries/NewAppScreen';
 import { ArtefactStack } from './components/Artefacts/ArtefactStack';
+import { ExhibitionStack } from './components/Exhibitions/ExhibitionStack';
 import { HomeStack } from './components/Home/HomeStack';
+import { StoreStack } from './components/Store/StoreStack';
 import { GlobalStore } from './store';
 
 const icons: Record<string, string> = {
@@ -48,7 +50,7 @@ function Tabs() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
-
+          console.log(route.name);
           return (
             <Icon name={icons[route.name]} size={sizes[route.name]} color={color} />
           );
@@ -59,8 +61,8 @@ function Tabs() {
       }}>
       <Tab.Screen name="Home" component={HomeStack} />
       <Tab.Screen name="Artefacts" component={ArtefactStack} />
-      {/* <Tab.Screen name="Events" component={EventStack}/>
-      <Tab.Screen name="Store" component={StoreStack}/> */}
+      <Tab.Screen name="Exhibitions" component={ExhibitionStack}/>
+      <Tab.Screen name="Store" component={StoreStack}/>
 
     </Tab.Navigator>
   );
@@ -77,40 +79,6 @@ const App = () => {
     <NavigationContainer theme={NavigationTheme}>
       <GlobalStore>
         <Tabs />
-
-        {/* <SafeAreaView style={backgroundStyle}>
-        <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={backgroundStyle}>
-          <Header />
-          <View
-            style={{
-              backgroundColor: isDarkMode ? Colors.black : Colors.white,
-            }}> */}
-        {/* <Button
-            onPress={() => setstate(state + 1)}
-            title="Learn More"
-            color="#841584"
-            accessibilityLabel="Learn more about this purple button"
-          /> */}
-        {/* <Section title="Step One">
-             Edit <Text style={styles.highlight}>App.js</Text> to change this
-             screen and then come back to see your edits.
-           </Section>
-           <Section title="See Your Changes">
-             <ReloadInstructions />
-           </Section>
-           <Section title="Debug">
-             <DebugInstructions />
-           </Section>
-           <Section title="Learn More">
-             Read the docs to discover what to do next:
-           </Section> */}
-
-        {/* </View>
-        </ScrollView>
-      </SafeAreaView> */}
       </GlobalStore>
     </NavigationContainer>
   );

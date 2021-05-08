@@ -1,30 +1,28 @@
 import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from './HomeScreen';
-import TourScreen from "./TourScreen";
+import StoreDetailScreen from "./StoreDetailsScreen";
+import StoreScreen from './StoreScreen';
 import { ActionBarIcon } from '../../lib/styles';
-
-export type HomeStackParams = {
-    HomeScreen: undefined;
-    TourScreen: undefined;
+export type StoreStackParams = {
+    StoreScreen: undefined;
+    StoreDetailScreen: { storeId: number | string };
 }
 
-const Stack = createStackNavigator<HomeStackParams>();
 
-export const HomeStack: React.FC = () => {
+const Stack = createStackNavigator<StoreStackParams>();
+
+export const StoreStack: React.FC = () => {
     return (
         <Stack.Navigator 
             screenOptions={{
                 headerTitle: ""
             }}>
             {/* TODO: make back button that navigates back to  */}
-            {/* @ts-ignore */}
-            <Stack.Screen name="HomeScreen" component={HomeScreen}
+            <Stack.Screen name="StoreScreen" component={StoreScreen}
                 options={{
                     headerLeft: props => <ActionBarIcon />
                 }} />
-            {/* @ts-ignore */}
-            <Stack.Screen name="TourScreen" component={TourScreen} />
+            <Stack.Screen name="StoreDetailScreen" component={StoreDetailScreen} />
         </Stack.Navigator>
     )
 }

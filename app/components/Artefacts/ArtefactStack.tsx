@@ -14,8 +14,12 @@ const Stack = createStackNavigator<ArtefactStackParams>();
 
 export const ArtefactStack: React.FC = () => {
     return (
-        <Stack.Navigator>
+        <Stack.Navigator 
+            screenOptions={{
+                headerTitle: ""
+            }}>
             {/* TODO: make back button that navigates back to  */}
+            {/* @ts-ignore */}
             <Stack.Screen name="ArtefactsScreen" component={ArtefactsScreen}
                 options={{
                     headerLeft: props => <ActionBarIcon/>
