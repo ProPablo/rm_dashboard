@@ -17,7 +17,7 @@ export const ConditionalThumbnailEdit = (formData: any) => {
     const classes = useListStyles();
     return (
         <div>
-            <ImageInput source="Media" label="Thumbnail" labelSingle={!!formData.thumbnail ? "Replace image" : "Drag an image into here"} accept="image/*" maxSize={1000000}>
+            <ImageInput source="InputMedia" label="Thumbnail" labelSingle={!!formData.thumbnail ? "Replace image" : "Drag an image into here"} accept="image/*" maxSize={1000000}>
                 <ImageField source="src" title="title" />
             </ImageInput>
             <img src={formData.thumbnail} className={classes.editImage} />

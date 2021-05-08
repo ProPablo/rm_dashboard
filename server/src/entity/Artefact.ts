@@ -15,7 +15,7 @@ export const editSchema = Joi.object({
   coordX: Joi.number(),
   coordY: Joi.number(),
   zoneId: Joi.number().allow(null),
-  MediaSrc: Joi.any().strip(),
+  Media: Joi.any().strip(),
   priority: Joi.number(),
 })
 

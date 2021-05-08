@@ -12,7 +12,7 @@ export const StoreItemCreate = (props: CreateProps) => (
       <TextInput source="description" />
       <NumberInput source="cost" />
       <BooleanInput source="inStock" />
-      <ImageInput source="Media" label="Related pictures" accept="image/*">
+      <ImageInput source="InputMedia" label="Related pictures" accept="image/*">
         <ImageField source="src" title="title" />
       </ImageInput>
     </SimpleForm>

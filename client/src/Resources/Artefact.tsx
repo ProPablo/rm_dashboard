@@ -48,16 +48,12 @@ export const ArtefactEdit = (props: EditProps) => {
             ConditionalThumbnailEdit(formData)
           )}
         </FormDataConsumer>
-        <ReferenceField label="" linkType={false} reference="artefactmedia" source="MediaId"><ConditionalMediaRender /></ReferenceField>
-        {/* <ReferenceManyField reference="artefactmedia" target="artefactId" source="id">
-          <Datagrid>
-            <FormDataConsumer>
-              {({ formData, ...rest }) => (
-                conditionalMediaRender(formData)
-              )}
-            </FormDataConsumer>
-          </Datagrid>
-        </ReferenceManyField>  */}
+        {/* <ReferenceField label="" linkType={false} reference="artefactmedia" source="MediaId"><ConditionalMediaRender /></ReferenceField> */}
+        <FormDataConsumer>
+          {({ formData, ...rest }) => (
+            ConditionalMediaRender(formData)
+          )}
+        </FormDataConsumer>
       </SimpleForm>
     </Edit >
   );

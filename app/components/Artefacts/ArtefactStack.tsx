@@ -3,7 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import ArtefactDetailsScreen from "./ArtefactDetailScreen";
 import ArtefactsScreen from './ArtefactsScreen';
 import { Image } from 'react-native-elements';
-import { ActionBarIcon } from '../../lib/Styles';
+import { ActionBarIcon } from '../../lib/styles';
 
 export type ArtefactStackParams = {
     ArtefactsScreen: undefined;

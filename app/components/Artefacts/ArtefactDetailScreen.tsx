@@ -4,8 +4,8 @@ import {
     Dimensions, Image,
     StyleSheet, Text, View
 } from 'react-native';
-import { globalStyle } from '../../lib/Styles';
-import { ArtefactsContext } from '../../stores';
+import { globalStyle } from '../../lib/styles';
+import { ArtefactsContext } from '../../store';
 // import CustomCarousel from './ArtefactDetailCarousel';
 // import ArtefactsContext from './ArtefactsContext';
 import { ArtefactStackParams } from './ArtefactStack';

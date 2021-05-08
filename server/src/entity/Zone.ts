@@ -24,7 +24,7 @@ export class Zone extends BaseEntity {
   @Column()
   name: string;
 
-  @Column( {nullable: true} )
+  @Column({ nullable: true })
   description: string;
 
   @CreateDateColumn()
@@ -38,4 +38,5 @@ export class Zone extends BaseEntity {
 
   @OneToMany(() => Beacon, Beacon => Beacon.Zone)
   Beacons: Beacon[]
+
 }

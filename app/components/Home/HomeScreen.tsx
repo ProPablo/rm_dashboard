@@ -4,7 +4,7 @@ import { Button, Dimensions, Image, Pressable, StyleSheet, Text, View } from 're
 import { Card } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { HomeStackParams } from './HomeStack';
-import { globalStyle } from '../../lib/Styles'
+import { globalStyle } from '../../lib/styles'
 
 type NavigationProp = StackNavigationProp<HomeStackParams>
 

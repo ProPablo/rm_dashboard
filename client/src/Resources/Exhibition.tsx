@@ -16,7 +16,7 @@ export const ExhibitionCreate = (props: CreateProps) => (
       <NumberInput source="priceAdult" />
       <NumberInput source="priceConcession" />
       <NumberInput source="priceChild" />
-      <ImageInput source="Media" label="Related pictures" accept="image/*">
+      <ImageInput source="InputMedia" label="Related pictures" accept="image/*">
         <ImageField source="src" title="title" />
       </ImageInput>
     </SimpleForm>

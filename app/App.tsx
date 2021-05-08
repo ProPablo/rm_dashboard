@@ -8,6 +8,7 @@
  * @format
  */
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import React from 'react';
 import {
   SafeAreaView,
@@ -25,7 +26,7 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import { ArtefactStack } from './components/Artefacts/ArtefactStack';
 import { HomeStack } from './components/Home/HomeStack';
-import { GlobalStore } from './stores';
+import { GlobalStore } from './store';
 
 const icons: Record<string, string> = {
   Home: "home",
@@ -57,7 +58,7 @@ function Tabs() {
         activeTintColor: "#A20C02",
       }}>
       <Tab.Screen name="Home" component={HomeStack} />
-      <Tab.Screen name="Artefacts" component={ArtefactStack}/>
+      <Tab.Screen name="Artefacts" component={ArtefactStack} />
       {/* <Tab.Screen name="Events" component={EventStack}/>
       <Tab.Screen name="Store" component={StoreStack}/> */}
 
@@ -73,26 +74,27 @@ const App = () => {
   };
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <GlobalStore>
-            {/* <Text>{state}</Text> */}
-          </GlobalStore>
-          {/* <Button
+    <NavigationContainer theme={NavigationTheme}>
+      <GlobalStore>
+        <Tabs />
+
+        {/* <SafeAreaView style={backgroundStyle}>
+        <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+        <ScrollView
+          contentInsetAdjustmentBehavior="automatic"
+          style={backgroundStyle}>
+          <Header />
+          <View
+            style={{
+              backgroundColor: isDarkMode ? Colors.black : Colors.white,
+            }}> */}
+        {/* <Button
             onPress={() => setstate(state + 1)}
             title="Learn More"
             color="#841584"
             accessibilityLabel="Learn more about this purple button"
           /> */}
-          {/* <Section title="Step One">
+        {/* <Section title="Step One">
              Edit <Text style={styles.highlight}>App.js</Text> to change this
              screen and then come back to see your edits.
            </Section>
@@ -106,9 +108,11 @@ const App = () => {
              Read the docs to discover what to do next:
            </Section> */}
 
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+        {/* </View>
+        </ScrollView>
+      </SafeAreaView> */}
+      </GlobalStore>
+    </NavigationContainer>
   );
 };
 
@@ -130,5 +134,18 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 });
+
+
+
+export const NavigationTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: '#A20C02',
+    card: '#F2E3A6',
+    text: '#000'
+  },
+};
+
 
 export default App;

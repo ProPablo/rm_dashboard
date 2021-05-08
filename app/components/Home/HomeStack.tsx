@@ -2,7 +2,7 @@ import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './HomeScreen';
 // import TourScreen from "./TourScreen";
-import { ActionBarIcon } from '../../lib/Styles';
+import { ActionBarIcon } from '../../lib/styles';
 
 export type HomeStackParams = {
     HomeScreen: undefined;

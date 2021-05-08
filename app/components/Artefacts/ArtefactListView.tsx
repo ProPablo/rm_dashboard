@@ -1,7 +1,7 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { Card } from 'react-native-elements';
-import { globalStyle } from '../../lib/Styles';
+import { globalStyle } from '../../lib/styles';
 import { Artefact } from '@shared/types';
 
 interface Props {
