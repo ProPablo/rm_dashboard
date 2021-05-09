@@ -30,33 +30,43 @@ ExhibitionsContext.displayName = "ExhibitionsContext";
 
 export const GlobalStore: React.FC = ({ children }) => {
   const [artefacts, setArtefacts] = useState<Artefact[]>([]);
-  const [artefactMedias, setArtefactMedias] = useState<ArtefactMedia[]>([]);
   const [storeItems, setStoreItems] = useState<StoreItem[]>([]);
   const [exhibitions, setExhibitions] = useState<Exhibition[]>([]);
   const [zones, setZones] = useState<Zone[]>([]);
   const [beacons, setBeacons] = useState<Beacon[]>([]);
 
+  const [isLoading, setisLoading] = useState(false);
+
   // console.log("rerender store");
   const globalValue: ActionContextValue = useMemo(() => ({
     reload: async () => {
-      // const url = `${baseURL}/artefacts`;
-      // console.log("Getting data from " + url);
-      const artefactResults = await request<Artefact[]>(`${baseURL}/artefacts`);
-      const storeItemResults = await request<StoreItem[]>(`${baseURL}/storeItems`);
-      const exhibitionResults = await request<Exhibition[]>(`${baseURL}/exhibitions`);
-      const zoneResults = await request<Zone[]>(`${baseURL}/zones`);
-      const beaconResults = await request<Beacon[]>(`${baseURL}/beacons`);
+      setisLoading(true);
+      try {
+        const artefactResults = await request<Artefact[]>(`${baseURL}/artefacts`);
+        const storeItemResults = await request<StoreItem[]>(`${baseURL}/storeItems`);
+        const exhibitionResults = await request<Exhibition[]>(`${baseURL}/exhibitions`);
+        const zoneResults = await request<Zone[]>(`${baseURL}/zones`);
+        const beaconResults = await request<Beacon[]>(`${baseURL}/beacons`);
 
-      console.log(artefactResults);
-      console.log(storeItemResults);
-      console.log(exhibitionResults);
-      console.log(beaconResults);
-      console.log(zoneResults);
-      setArtefacts(artefactResults);
-      setStoreItems(storeItemResults);
-      setExhibitions(exhibitionResults);
-      setZones(zoneResults)
-      setBeacons(beaconResults);
+        // if production / logger
+        // console.log(artefactResults);
+        // console.log(storeItemResults);
+        // console.log(exhibitionResults);
+        // console.log(beaconResults);
+        // console.log(zoneResults);
+        setArtefacts(artefactResults);
+        setStoreItems(storeItemResults);
+        setExhibitions(exhibitionResults);
+        setZones(zoneResults)
+        setBeacons(beaconResults);
+
+      } catch (e) {
+        console.log(e.message);
+        // TODO inform user of failure and retry in setTimeout
+      }
+      finally {
+        setisLoading(false);
+      }
 
     }
   }), []);

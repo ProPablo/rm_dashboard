@@ -33,14 +33,14 @@ import { GlobalStore } from './store';
 const icons: Record<string, string> = {
   Home: "home",
   Artefacts: "bank",
-  Events: "info-circle",
+  Exhibitions: "info-circle",
   Store: "shopping-cart"
 }
 
 const sizes: Record<string, number> = {
   Home: 25,
   Artefacts: 20,
-  Events: 25,
+  Exhibitions: 25,
   Store: 25,
 }
 

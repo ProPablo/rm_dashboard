@@ -4,9 +4,9 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, BaseEntity, CreateDa
 export const editSchema = Joi.object({
   id: Joi.number().strip(),
   name: Joi.string().min(3).max(30),
-  description: Joi.string(),
-  thumbnail: Joi.binary(),
-  organiser: Joi.string(),
+  description: Joi.string().allow(null),
+  thumbnail: Joi.binary().allow(null),
+  organiser: Joi.string().allow(null),
   createdAt: Joi.date().strip(),
   updatedAt: Joi.date().strip(),
   startDate: Joi.date(),

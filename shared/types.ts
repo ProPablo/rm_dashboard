@@ -8,7 +8,7 @@ export interface Artefact {
   coordY: number,
   zoneid: number,
   priority: number,
-  MediaId: number,
+  Media: ArtefactMedia,
 }
 
 // inputArtefact {}
@@ -21,10 +21,8 @@ export interface Artefact {
 // }
 
 export interface ArtefactMedia {
-  id: number,
   src: string,
-  title: string,
-  artefactId: number,
+  type: [0,1], // 0 image, 1 video 
 }
 
 export interface Zone {

@@ -7,7 +7,7 @@ import {
 import BottomSheet from 'reanimated-bottom-sheet';
 import { HomeStackParams } from './HomeStack';
 import Transform from './Transform';
-// import VideoComponent from './VideoComponent';
+import VideoComponent from './VideoComponent';
 
 type NavigationProp = StackNavigationProp<HomeStackParams>
 
@@ -26,13 +26,14 @@ const TourScreen: React.FC<Props> = ({ navigation }) => {
                 height: 450,
             }}
         >
-            {/* <VideoComponent /> */}
+            <VideoComponent src={"bruh"} />
         </View>
     );
 
     const sheetRef = useRef(null);
     return (
         <View style={styles.containerStyle}>
+            {/* @ts-ignore */}
             {/* <Button title="Open POGGUM Sheet" onPress={() => sheetRef.current?.snapTo(0)} /> */}
             <BottomSheet
                 ref={sheetRef}

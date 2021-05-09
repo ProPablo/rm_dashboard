@@ -11,7 +11,7 @@ export const editSchema = Joi.object({
   updatedAt: Joi.date().strip(),
   name: Joi.string().min(3).max(30),
   thumbnail: Joi.binary(),
-  description: Joi.string(),
+  description: Joi.string().allow(null),
   coordX: Joi.number(),
   coordY: Joi.number(),
   zoneId: Joi.number().allow(null),
