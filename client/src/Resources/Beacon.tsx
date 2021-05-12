@@ -41,8 +41,8 @@ export const BeaconList = (props: ListProps) => (
   <List {...props}>
     <Datagrid rowClick="edit">
       <TextField source="id" />
-      <TextField source="Name" />
-      <NumberField source="Visits" />
+      <TextField source="name" />
+      <NumberField source="visits" />
       <TextField label="MAC Address" source="macAddress" />
       <BooleanField source="activation" />
       <ReferenceField source="zoneId" reference="zones"><TextField source="id" /></ReferenceField>

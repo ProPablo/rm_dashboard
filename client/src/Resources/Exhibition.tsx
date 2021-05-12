@@ -24,7 +24,7 @@ export const ExhibitionCreate = (props: CreateProps) => (
 );
 
 export const ExhibitionEdit = (props: EditProps) => (
-  <Edit actions={<ResourceActions />} {...props}>
+  <Edit actions={<ResourceActions />} {...props} undoable={false}>
     <SimpleForm>
       <TextInput disabled source="id" />
       <TextInput source="name" />

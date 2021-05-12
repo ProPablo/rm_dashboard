@@ -9,8 +9,9 @@
  */
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
+  PermissionsAndroid,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -24,6 +25,7 @@ import {
   Colors,
   Header
 } from 'react-native/Libraries/NewAppScreen';
+import { BleManager } from 'react-native-ble-plx';
 import { ArtefactStack } from './components/Artefacts/ArtefactStack';
 import { ExhibitionStack } from './components/Exhibitions/ExhibitionStack';
 import { HomeStack } from './components/Home/HomeStack';
@@ -61,19 +63,76 @@ function Tabs() {
       }}>
       <Tab.Screen name="Home" component={HomeStack} />
       <Tab.Screen name="Artefacts" component={ArtefactStack} />
-      <Tab.Screen name="Exhibitions" component={ExhibitionStack}/>
-      <Tab.Screen name="Store" component={StoreStack}/>
+      <Tab.Screen name="Exhibitions" component={ExhibitionStack} />
+      <Tab.Screen name="Store" component={StoreStack} />
 
     </Tab.Navigator>
   );
 }
 
+// const allPerms = [PermissionsAndroid.PERMISSIONS.BLUETOOTH, PermissionsAndroid.PERMISSIONS.BLUETOOTH_ADMIN, PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION];
+const requestLocationPermission = async () => {
+  try {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      {
+        title: 'Location Permission',
+        message:
+          'This example app needs to access your location in order to use bluetooth beacons.',
+        buttonNeutral: 'Ask Me Later',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
+      },
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log("GOT PERMS")
+      return true;
+    } else {
+      // permission denied
+      return false;
+    }
+  } catch (err) {
+    console.warn(err);
+    return false;
+  }
+};
+
 const App = () => {
+  const manager = useRef<BleManager | null>(null);
+  const scanAndConnect = () => {
+    manager.current?.startDeviceScan(null, null, (error, device) => {
+      console.log({ device });
+    });
+  }
+
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+  //TODO create Hook for BT updates
+  useEffect(() => {
+    requestLocationPermission()
+      .then(() => {
+        manager.current = new BleManager();
+        manager.current?.startDeviceScan(null, null, (error, device) => {
+          console.log({ device });
+        });
+
+        const subscription = manager.current.onStateChange((state => {
+          console.log("BLE Manager online");
+          if (state === 'PoweredOn') {
+            // console.log("Starting scanning");
+            scanAndConnect();
+            subscription.remove();
+          }
+        }));
+      })
+    return () => {
+      manager.current?.stopDeviceScan();
+      manager.current?.destroy();
+    }
+  })
 
   return (
     <NavigationContainer theme={NavigationTheme}>

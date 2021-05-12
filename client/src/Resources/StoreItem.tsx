@@ -20,7 +20,7 @@ export const StoreItemCreate = (props: CreateProps) => (
 );
 
 export const StoreItemEdit = (props: EditProps) => (
-  <Edit actions={<ResourceActions />} {...props}>
+  <Edit actions={<ResourceActions />} {...props} undoable={false}>
     <SimpleForm>
       <TextInput disabled source="id" />
       <TextInput source="name" />

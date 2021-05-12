@@ -5,8 +5,6 @@ import { useListStyles } from '../AppTheme';
 import { ConditionalThumbnailEdit, ResourceActions } from '../helper';
 import { ConditionalMediaRender } from './ArtefactMedia';
 
-
-
 export const ArtefactCreate = (props: CreateProps) => (
   <Create actions={<ResourceActions />} {...props}>
     <SimpleForm>
@@ -48,7 +46,6 @@ export const ArtefactEdit = (props: EditProps) => {
             ConditionalThumbnailEdit(formData)
           )}
         </FormDataConsumer>
-        {/* <ReferenceField label="" linkType={false} reference="artefactmedia" source="MediaId"><ConditionalMediaRender /></ReferenceField> */}
         <FormDataConsumer>
           {({ formData, ...rest }) => (
             ConditionalMediaRender(formData)

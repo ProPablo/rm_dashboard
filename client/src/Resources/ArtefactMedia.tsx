@@ -41,30 +41,6 @@ const conditionalMediaInput = (formData: any) => {
   }
 }
 
-
-// export const ConditionalMediaRender = (props: any) => {
-//   console.log(props);
-//   switch (props.record.type) {
-//     case 0:
-//       return (
-//         <div>
-//           <img src={`${MEDIA_URL}/${props.record.src}`} />
-
-//         </div>
-//       )
-//     case 1:
-//       return (
-//         <div>
-//           <video src={`${MEDIA_URL}/${props.record.src}`} controls />
-
-//         </div>
-//       )
-//     default: 
-//         return (
-//           <div>Unknown Type</div>
-//         )
-//   }
-// }
 export const ConditionalMediaRender = (formdata: any) => {
   if (!formdata.Media) return (
     <div>Does not exist</div>
@@ -95,7 +71,7 @@ export const ConditionalMediaRender = (formdata: any) => {
 
 export const ArtefactMediaEdit = (props: EditProps) => {
   return (
-    <Edit actions={<ResourceActions />} {...props}>
+    <Edit actions={<ResourceActions />} {...props} undoable={false}>
       <SimpleForm>
         <TextInput source="id" />
         <TextInput disabled source="src" />

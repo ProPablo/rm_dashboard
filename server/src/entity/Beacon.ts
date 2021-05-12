@@ -10,9 +10,9 @@ export const editSchema = Joi.object({
   name: Joi.string().min(3).max(30),
   coordX: Joi.number(),
   coordY: Joi.number(),
-  macAddress: Joi.string().pattern(/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/),
+  macAddress: Joi.string().pattern(/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/).message("Invalid MAC Address, e.g. D4:A9:53:AA:9A:76"),
   activation: Joi.boolean().default(false),
-  zoneId: Joi.number(),
+  zoneId: Joi.number().allow(null),
   visits: Joi.number(),
 })
 
@@ -52,7 +52,7 @@ export class Beacon extends BaseEntity {
   createdAt: Date
 
   @UpdateDateColumn()
-  cpdatedAt: Date;
+  updatedAt: Date;
 
   @Column({ nullable: true })
   zoneId: number;
