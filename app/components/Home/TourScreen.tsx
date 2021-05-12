@@ -1,13 +1,19 @@
 import { StackNavigationProp } from '@react-navigation/stack';
-import React, { useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
     Button,
     Image, StyleSheet, View
 } from 'react-native';
+import { Text } from 'react-native-elements';
 import BottomSheet from 'reanimated-bottom-sheet';
+import { ZonesContext, BeaconsContext, ArtefactsContext } from '../../store';
 import { HomeStackParams } from './HomeStack';
 import Transform from './Transform';
 import VideoComponent from './VideoComponent';
+
+import { Artefact, Zone, Beacon, ArtefactMedia } from "@shared/types";
+import { BeaconContext } from '../../App';
+import { MEDIA_URL } from '../../lib/controllers';
 
 type NavigationProp = StackNavigationProp<HomeStackParams>
 
@@ -16,7 +22,82 @@ interface Props {
     navigation: NavigationProp
 }
 
+export const BeaconVideo = () => {
+    const beaconcontext = useContext(BeaconContext);
+
+    const zones = useContext(ZonesContext);
+    const beacons = useContext(BeaconsContext);
+    const artefacts = useContext(ArtefactsContext);
+    const [media, setmedia] = useState<ArtefactMedia | undefined>(undefined);
+    // Wrap in memoised function and return false and early and gay if null
+    let foundMedia: ArtefactMedia | undefined;
+
+    useEffect(() => {
+        const beacon = beacons.find((b) => b.macAddress === beaconcontext.beaconMAC);
+        if (beacon && !media) {
+            let foundZone = zones.find((z) => z.id === beacon.zoneId);
+            if (foundZone) {
+                const artefactNumber = foundZone.Artefacts[0];
+                console.log({ beacon, foundZone, artefactNumber })
+                if (artefactNumber) {
+                    foundMedia = artefacts.find((a) => a.id === artefactNumber)?.Media;
+                    setmedia(foundMedia);
+                }
+            }
+        }
+
+    }, [beaconcontext]);
+
+    return (
+        <View
+            style={{
+                backgroundColor: 'white',
+                padding: 16,
+                height: 450,
+
+            }}
+        >
+            {/* <View> */}
+                {/* {beaconcontext.beaconMAC &&
+                    <Text>Beacon: {beaconcontext.beaconMAC}</Text>
+                } */}
+                {
+                    media &&
+                    <VideoComponent src={`${MEDIA_URL}/${media.src}`} />
+                }
+            {/* </View> */}
+
+        </View>
+    );
+}
+
 const TourScreen: React.FC<Props> = ({ navigation }) => {
+
+    const beaconcontext = useContext(BeaconContext);
+
+    const zones = useContext(ZonesContext);
+    const beacons = useContext(BeaconsContext);
+    const artefacts = useContext(ArtefactsContext);
+    const [media, setmedia] = useState<ArtefactMedia | undefined>(undefined);
+    // Wrap in memoised function and return false and early and gay if null
+    let foundMedia: ArtefactMedia | undefined;
+
+    useEffect(() => {
+        console.log("insideuseffect");
+        const beacon = beacons.find((b) => b.macAddress === beaconcontext.beaconMAC);
+        if (beacon && !media) {
+            let foundZone = zones.find((z) => z.id === beacon.zoneId);
+            if (foundZone) {
+                const artefactNumber = foundZone.Artefacts[0];
+                console.log({ beacon, foundZone, artefactNumber })
+                if (artefactNumber) {
+                    foundMedia = artefacts.find((a) => a.id === artefactNumber)?.Media;
+                    setmedia(foundMedia);
+                }
+            }
+        }
+
+    }, [beaconcontext]);
 
     const renderContent = () => (
         <View
@@ -26,7 +107,16 @@ const TourScreen: React.FC<Props> = ({ navigation }) => {
                 height: 450,
             }}
         >
-            <VideoComponent src={"bruh"} />
+            {beaconcontext.beaconMAC &&
+                <View>
+                    <Text>Beacon: {beaconcontext.beaconMAC}</Text>
+                    {
+                        media &&
+                        <VideoComponent src={`${MEDIA_URL}/${media.src}`} />
+                    }
+                </View>
+            }
+
         </View>
     );
 
@@ -41,8 +131,8 @@ const TourScreen: React.FC<Props> = ({ navigation }) => {
                 borderRadius={10}
                 renderContent={renderContent}
             />
-            <Transform><Image source={require('./floorplan.jpg')}/></Transform>
-            
+            <Transform><Image source={require('./floorplan.jpg')} /></Transform>
+
         </View>
     );
 }

@@ -29,6 +29,7 @@ export interface Zone {
   id: number,
   name: string,
   description: string,
+  Artefacts: number[],
 }
 
 export interface Beacon {
@@ -39,7 +40,7 @@ export interface Beacon {
   activation: boolean,
   coordX: number,
   coordY: number,
-  zoneid: number,
+  zoneId: number,
 }
 
 // export interface inputBeacon {

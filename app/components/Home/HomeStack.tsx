@@ -1,7 +1,7 @@
 import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './HomeScreen';
-import TourScreen from "./TourScreen";
+import TourScreen, { BeaconVideo } from "./TourScreen";
 import { ActionBarIcon } from '../../lib/styles';
 
 export type HomeStackParams = {
@@ -24,7 +24,7 @@ export const HomeStack: React.FC = () => {
                     headerLeft: props => <ActionBarIcon />
                 }} />
             {/* @ts-ignore */}
-            <Stack.Screen name="TourScreen" component={TourScreen} />
+            <Stack.Screen name="TourScreen" component={BeaconVideo} />
         </Stack.Navigator>
     )
 }

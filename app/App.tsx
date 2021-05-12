@@ -9,7 +9,7 @@
  */
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
-import React, { useEffect, useRef } from 'react';
+import React, { createContext, useEffect, useRef, useState } from 'react';
 import {
   PermissionsAndroid,
   SafeAreaView,
@@ -52,7 +52,6 @@ function Tabs() {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
-          console.log(route.name);
           return (
             <Icon name={icons[route.name]} size={sizes[route.name]} color={color} />
           );
@@ -72,8 +71,10 @@ function Tabs() {
 
 // const allPerms = [PermissionsAndroid.PERMISSIONS.BLUETOOTH, PermissionsAndroid.PERMISSIONS.BLUETOOTH_ADMIN, PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION];
 const requestLocationPermission = async () => {
+  console.log("asking for perms");
   try {
     const granted = await PermissionsAndroid.request(
+
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       {
         title: 'Location Permission',
@@ -97,15 +98,26 @@ const requestLocationPermission = async () => {
   }
 };
 
+export interface BeaconContextValue {
+  beaconMAC: string | null
+}
+
+const BeaconContext = createContext<BeaconContextValue>({ beaconMAC: null });
+BeaconContext.displayName = "BeaconContext";
+
+
 const App = () => {
   const manager = useRef<BleManager | null>(null);
+
   const scanAndConnect = () => {
     manager.current?.startDeviceScan(null, null, (error, device) => {
-      console.log({ device });
+      console.log("inside", { device });
     });
   }
 
   const isDarkMode = useColorScheme() === 'dark';
+
+  const [beaconState, setfoundBeacon] = useState<BeaconContextValue>({ beaconMAC: null });
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -116,29 +128,35 @@ const App = () => {
       .then(() => {
         manager.current = new BleManager();
         manager.current?.startDeviceScan(null, null, (error, device) => {
-          console.log({ device });
+          // TODO display error
+          // console.log({ device, error });
+          if (device) {
+            setfoundBeacon({ beaconMAC: device.id });
+          }
         });
 
         const subscription = manager.current.onStateChange((state => {
           console.log("BLE Manager online");
           if (state === 'PoweredOn') {
-            // console.log("Starting scanning");
+            console.log("Starting scanning");
             scanAndConnect();
             subscription.remove();
           }
         }));
       })
     return () => {
-      manager.current?.stopDeviceScan();
-      manager.current?.destroy();
+      // manager.current?.stopDeviceScan();
+      // manager.current?.destroy();
     }
-  })
+  }, [])
 
   return (
     <NavigationContainer theme={NavigationTheme}>
-      <GlobalStore>
-        <Tabs />
-      </GlobalStore>
+      <BeaconContext.Provider value={beaconState}>
+        <GlobalStore>
+          <Tabs />
+        </GlobalStore>
+      </BeaconContext.Provider>
     </NavigationContainer>
   );
 };
@@ -176,3 +194,5 @@ export const NavigationTheme = {
 
 
 export default App;
+
+export { BeaconContext };

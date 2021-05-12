@@ -20,6 +20,14 @@ const ArtefactsContext = createContext<Artefact[]>();
 ArtefactsContext.displayName = "ArtefactsContext";
 
 // @ts-ignore
+const ZonesContext = createContext<Zone[]>();
+ZonesContext.displayName = "ZoneContext";
+
+// @ts-ignore
+const BeaconsContext = createContext<Beacon[]>();
+BeaconsContext.displayName = "BeaconContext";
+
+// @ts-ignore
 const StoreItemsContext = createContext<StoreItem[]>();
 StoreItemsContext.displayName = "StoreItemsContext";
 
@@ -42,10 +50,11 @@ export const GlobalStore: React.FC = ({ children }) => {
     reload: async () => {
       setisLoading(true);
       try {
+        console.log("Getting payloads");
         const artefactResults = await request<Artefact[]>(`${baseURL}/artefacts`);
         const storeItemResults = await request<StoreItem[]>(`${baseURL}/storeItems`);
         const exhibitionResults = await request<Exhibition[]>(`${baseURL}/exhibitions`);
-        const zoneResults = await request<Zone[]>(`${baseURL}/zones`);
+        const zoneResults = await request<Zone[]>(`${baseURL}/zones/app`);
         const beaconResults = await request<Beacon[]>(`${baseURL}/beacons`);
 
         // if production / logger
@@ -78,15 +87,19 @@ export const GlobalStore: React.FC = ({ children }) => {
   return (
     <GlobalActionContext.Provider value={globalValue}>
       <ArtefactsContext.Provider value={artefacts}>
-        <StoreItemsContext.Provider value={storeItems}>
-          <ExhibitionsContext.Provider value={exhibitions}>
-            {children}
-          </ExhibitionsContext.Provider>
-        </StoreItemsContext.Provider>
+        <ZonesContext.Provider value={zones}>
+          <BeaconsContext.Provider value={beacons}>
+            <StoreItemsContext.Provider value={storeItems}>
+              <ExhibitionsContext.Provider value={exhibitions}>
+                {children}
+              </ExhibitionsContext.Provider>
+            </StoreItemsContext.Provider>
+          </BeaconsContext.Provider>
+        </ZonesContext.Provider>
       </ArtefactsContext.Provider>
     </GlobalActionContext.Provider>
   )
 }
 
 
-export { ArtefactsContext, StoreItemsContext, ExhibitionsContext, GlobalActionContext };
+export { ArtefactsContext, ZonesContext, BeaconsContext, StoreItemsContext, ExhibitionsContext, GlobalActionContext };
