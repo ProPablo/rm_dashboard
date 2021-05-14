@@ -95,11 +95,12 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
         else notify("Completed reordering");
       })
       .catch((e) => {
-        notify('Error: comment not approved', 'warning')
+        notify('Error: reordering not approved, network connection missing', 'warning')
       })
       .finally(() => {
         setLoading(false);
-        refresh();
+        // Right now refresh makes it so that some flicking goes on
+        // refresh();
       });
   }
 
