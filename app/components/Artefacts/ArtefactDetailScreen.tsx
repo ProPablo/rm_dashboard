@@ -12,7 +12,7 @@ import { ArtefactsContext } from '../../store';
 import { ArtefactStackParams } from './ArtefactStack';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import VideoPlayer from '../Home/VideoComponent';
-import { ArtefactMedia } from '@shared/types';
+import { ArtefactMediaSmall } from '@shared/types';
 import { ScrollView } from 'react-native-gesture-handler';
 // import VideoTest from '../Home/VideoTest';
 
@@ -24,7 +24,7 @@ interface Props {
 }
 
 
-export const ConditionalMediaRender = (props: { artefactMedia: ArtefactMedia }) => {
+export const ConditionalMediaRender = (props: { artefactMedia: ArtefactMediaSmall }) => {
     // if (!props) return (
     //     <Text>Does not exist</Text>
     // )

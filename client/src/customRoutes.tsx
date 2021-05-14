@@ -1,7 +1,9 @@
 import * as React from "react";
 import { Route } from 'react-router-dom';
 import { AboutPage } from './Resources/About'
+import { Map } from "./Resources/Map";
 
 export default [
-    <Route exact path="/About" component={AboutPage} />,
+    <Route exact path="/about" component={AboutPage} />,
+    <Route exact path="/map" component={Map} />
 ];

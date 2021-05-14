@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { Artefact, Zone, Beacon, ArtefactMedia, StoreItem, Exhibition } from "@shared/types";
+import { Artefact, ZoneConsumable, Beacon, ArtefactMediaSmall, StoreItem, Exhibition } from "@shared/types";
 import { baseURL, request } from "./lib/controllers";
 // export interface artefactsContextValue {
 //   artefacts: IArtefact[];
@@ -20,7 +20,7 @@ const ArtefactsContext = createContext<Artefact[]>();
 ArtefactsContext.displayName = "ArtefactsContext";
 
 // @ts-ignore
-const ZonesContext = createContext<Zone[]>();
+const ZonesContext = createContext<ZoneConsumable[]>();
 ZonesContext.displayName = "ZoneContext";
 
 // @ts-ignore
@@ -40,7 +40,7 @@ export const GlobalStore: React.FC = ({ children }) => {
   const [artefacts, setArtefacts] = useState<Artefact[]>([]);
   const [storeItems, setStoreItems] = useState<StoreItem[]>([]);
   const [exhibitions, setExhibitions] = useState<Exhibition[]>([]);
-  const [zones, setZones] = useState<Zone[]>([]);
+  const [zones, setZones] = useState<ZoneConsumable[]>([]);
   const [beacons, setBeacons] = useState<Beacon[]>([]);
 
   const [isLoading, setisLoading] = useState(false);
@@ -54,7 +54,7 @@ export const GlobalStore: React.FC = ({ children }) => {
         const artefactResults = await request<Artefact[]>(`${baseURL}/artefacts`);
         const storeItemResults = await request<StoreItem[]>(`${baseURL}/storeItems`);
         const exhibitionResults = await request<Exhibition[]>(`${baseURL}/exhibitions`);
-        const zoneResults = await request<Zone[]>(`${baseURL}/zones/app`);
+        const zoneResults = await request<ZoneConsumable[]>(`${baseURL}/zones/app`);
         const beaconResults = await request<Beacon[]>(`${baseURL}/beacons`);
 
         // if production / logger

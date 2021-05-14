@@ -11,7 +11,7 @@ import { HomeStackParams } from './HomeStack';
 import Transform from './Transform';
 import VideoComponent from './VideoComponent';
 
-import { Artefact, Zone, Beacon, ArtefactMedia } from "@shared/types";
+import { Artefact, ZoneConsumable, Beacon, ArtefactMediaSmall } from "@shared/types";
 import { BeaconContext } from '../../App';
 import { MEDIA_URL } from '../../lib/controllers';
 
@@ -28,9 +28,9 @@ export const BeaconVideo = () => {
     const zones = useContext(ZonesContext);
     const beacons = useContext(BeaconsContext);
     const artefacts = useContext(ArtefactsContext);
-    const [media, setmedia] = useState<ArtefactMedia | undefined>(undefined);
+    const [media, setmedia] = useState<ArtefactMediaSmall | undefined>(undefined);
     // Wrap in memoised function and return false and early and gay if null
-    let foundMedia: ArtefactMedia | undefined;
+    let foundMedia: ArtefactMediaSmall | undefined;
 
     useEffect(() => {
         const beacon = beacons.find((b) => b.macAddress === beaconcontext.beaconMAC);
@@ -78,9 +78,9 @@ const TourScreen: React.FC<Props> = ({ navigation }) => {
     const zones = useContext(ZonesContext);
     const beacons = useContext(BeaconsContext);
     const artefacts = useContext(ArtefactsContext);
-    const [media, setmedia] = useState<ArtefactMedia | undefined>(undefined);
+    const [media, setmedia] = useState<ArtefactMediaSmall | undefined>(undefined);
     // Wrap in memoised function and return false and early and gay if null
-    let foundMedia: ArtefactMedia | undefined;
+    let foundMedia: ArtefactMediaSmall | undefined;
 
     useEffect(() => {
         console.log("insideuseffect");
