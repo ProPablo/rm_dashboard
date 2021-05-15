@@ -25,10 +25,6 @@ interface Props {
 
 
 export const ConditionalMediaRender = (props: { artefactMedia: ArtefactMediaSmall }) => {
-    // if (!props) return (
-    //     <Text>Does not exist</Text>
-    // )
-
     switch (+props.artefactMedia.type) {
         case 0:
             return (
@@ -69,17 +65,16 @@ const ArtefactDetailScreen: React.FC<Props> = ({ route }) => {
                         }} style={[styles.image]} />
                     </View>
 
-                    <Text style={styles.textName}> {artefact.name}</Text>
-                    <Text style={styles.textDescr}>{artefact.description}</Text>
-                    <Text style={styles.textDescr}>{artefact.acquisitionDate}</Text>
-                    <Text style={styles.textDescr}>{artefact.zoneid}</Text>
-                    <ConditionalMediaRender artefactMedia={artefact.Media} />
+                    <View style={[globalStyle.shadow, styles.viewDescr]}>
+                        <Text selectable style={styles.textName}> {artefact.name}</Text>
+                        <Text style={styles.textDescr}>{artefact.description}</Text>
+                        <Text style={styles.textDescr}>{artefact.name} was acquired on {artefact.acquisitionDate} and can be and can be located in {artefact.zoneid}</Text>
+                    </View>
+                    {artefact.Media && 
+                        <ConditionalMediaRender artefactMedia={artefact.Media} />
+                    }
                 </ScrollView>
             }
-            {/* <CustomCarousel
-                artefactInfos={artefact?.Infos}
-                artefactName={artefact?.Name}
-            /> */}
         </View>
     )
 }
@@ -115,6 +110,11 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontFamily: 'Roboto'
     },
+
+    viewDescr: {
+        backgroundColor: '#FDF3BF',
+        paddingTop: 15,
+    }
 });
 
 export default ArtefactDetailScreen;

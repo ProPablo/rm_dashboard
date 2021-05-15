@@ -9,7 +9,7 @@ export const ExhibitionCreate = (props: CreateProps) => (
   <Create actions={<ResourceActions />} {...props}>
     <SimpleForm>
       <TextInput source="name" />
-      <TextInput source="description" />
+      <TextInput multiline source="description" />
       <TextInput source="organiser" />
       <DateInput source="startDate" />
       <DateInput source="finishDate" />
@@ -28,7 +28,7 @@ export const ExhibitionEdit = (props: EditProps) => (
     <SimpleForm>
       <TextInput disabled source="id" />
       <TextInput source="name" />
-      <TextInput source="description" />
+      <TextInput multiline source="description" />
       <TextInput source="organiser" />
       <DateInput source="startDate" />
       <DateInput source="finishDate" />

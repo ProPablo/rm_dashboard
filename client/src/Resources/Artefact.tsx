@@ -9,7 +9,7 @@ export const ArtefactCreate = (props: CreateProps) => (
   <Create actions={<ResourceActions />} {...props}>
     <SimpleForm>
       <TextInput source="name" />
-      <TextInput source="description" />
+      <TextInput multiline source="description" />
       <NumberInput source="coordX" />
       <NumberInput source="coordY" />
       <DateInput source="acquisitionDate" />
@@ -31,7 +31,7 @@ export const ArtefactEdit = (props: EditProps) => {
       <SimpleForm>
         <TextInput disabled source="id" />
         <TextInput source="name" />
-        <TextInput source="description" />
+        <TextInput multiline source="description" />
         <NumberInput source="coordX" />
         <NumberInput source="coordY" />
         <DateInput source="acquisitionDate" />

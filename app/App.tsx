@@ -27,6 +27,7 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import { BleManager } from 'react-native-ble-plx';
 import { ArtefactStack } from './components/Artefacts/ArtefactStack';
+import { TourStack } from './components/Tour/TourStack'; 
 import { ExhibitionStack } from './components/Exhibitions/ExhibitionStack';
 import { HomeStack } from './components/Home/HomeStack';
 import { StoreStack } from './components/Store/StoreStack';
@@ -35,6 +36,7 @@ import { GlobalStore } from './store';
 const icons: Record<string, string> = {
   Home: "home",
   Artefacts: "bank",
+  Tour: "map-marker",
   Exhibitions: "info-circle",
   Store: "shopping-cart"
 }
@@ -42,6 +44,7 @@ const icons: Record<string, string> = {
 const sizes: Record<string, number> = {
   Home: 25,
   Artefacts: 20,
+  Tour: 20,
   Exhibitions: 25,
   Store: 25,
 }
@@ -62,6 +65,7 @@ function Tabs() {
       }}>
       <Tab.Screen name="Home" component={HomeStack} />
       <Tab.Screen name="Artefacts" component={ArtefactStack} />
+      <Tab.Screen name="Tour" component={TourStack} />
       <Tab.Screen name="Exhibitions" component={ExhibitionStack} />
       <Tab.Screen name="Store" component={StoreStack} />
 
@@ -79,7 +83,7 @@ const requestLocationPermission = async () => {
       {
         title: 'Location Permission',
         message:
-          'This example app needs to access your location in order to use bluetooth beacons.',
+          'Redland Museum app needs to access your location in order to use bluetooth beacons.',
         buttonNeutral: 'Ask Me Later',
         buttonNegative: 'Cancel',
         buttonPositive: 'OK',
@@ -109,15 +113,20 @@ BeaconContext.displayName = "BeaconContext";
 const App = () => {
   const manager = useRef<BleManager | null>(null);
 
-  const scanAndConnect = () => {
-    manager.current?.startDeviceScan(null, null, (error, device) => {
-      console.log("inside", { device });
-    });
-  }
+
 
   const isDarkMode = useColorScheme() === 'dark';
 
   const [beaconState, setfoundBeacon] = useState<BeaconContextValue>({ beaconMAC: null });
+
+  const scanAndConnect = () => {
+    manager.current?.startDeviceScan(null, null, (error, device) => {
+      // console.log("inside", { device });
+      if (device) {
+        setfoundBeacon({ beaconMAC: device.id });
+      }
+    });
+  }
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,

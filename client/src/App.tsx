@@ -21,16 +21,17 @@ import { ArtefactMediaCreate, ArtefactMediaEdit } from './Resources/ArtefactMedi
 
 import { Artefact } from "../../shared/types";
 
+
 function App() {
   return (
     <div className="App">
-      <Admin customRoutes={customRoutes} layout={AppLayout} theme={redlandTheme} dataProvider={builtDataProvider} authProvider={authProvider} loginPage={LoginPage}>
-        <Resource name="artefacts" list={ArtefactList} edit={ArtefactEdit} create={ArtefactCreate} icon={ArtefactIcon} />
-        <Resource name="artefactmedia" list={ListGuesser} edit={ArtefactMediaEdit} create={ArtefactMediaCreate} icon={ArtefactMediaIcon} />
-        <Resource name="zones" list={ZoneList} edit={ZoneEdit} create={ZoneCreate} icon={ZoneIcon} />
-        <Resource name="beacons" list={BeaconList} edit={BeaconEdit} create={BeaconCreate} icon={BeaconIcon} />
-        <Resource name="exhibitions" list={ExhibitionList} edit={ExhibitionEdit} create={ExhibitionCreate} icon={ExhibitionsIcon} />
-        <Resource name="storeItems" list={StoreItemList} edit={StoreItemEdit} create={StoreItemCreate} icon={StoreItemIcon} />
+      <Admin customRoutes={customRoutes} layout={AppLayout} theme={redlandTheme} dataProvider={builtDataProvider} authProvider={authProvider} loginPage={LoginPage} >
+        <Resource name="artefacts" options={{label: "Artefacts"}} list={ArtefactList} edit={ArtefactEdit} create={ArtefactCreate} icon={ArtefactIcon} />
+        <Resource name="artefactmedia" options={{label: "Artefact Media"}} list={ListGuesser} edit={ArtefactMediaEdit} create={ArtefactMediaCreate} icon={ArtefactMediaIcon} />
+        <Resource name="zones" options={{label: "Zones"}} list={ZoneList} edit={ZoneEdit} create={ZoneCreate} icon={ZoneIcon} />
+        <Resource name="beacons" options={{label: "Beacons"}} list={BeaconList} edit={BeaconEdit} create={BeaconCreate} icon={BeaconIcon} />
+        <Resource name="exhibitions" options={{label: "Exhibitions"}} list={ExhibitionList} edit={ExhibitionEdit} create={ExhibitionCreate} icon={ExhibitionsIcon} />
+        <Resource name="storeItems" options={{label: "Store Items"}} list={StoreItemList} edit={StoreItemEdit} create={StoreItemCreate} icon={StoreItemIcon} />
       </Admin>
     </div>
   );

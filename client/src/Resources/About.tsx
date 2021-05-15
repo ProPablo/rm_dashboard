@@ -23,7 +23,7 @@ export const AboutPage = (props: AboutProps) => {
 
     return (
         <div>
-            <Title title="My Page" />
+            <Title title="About" />
             <p>{JSON.stringify(info, null, 2)} {props.version}</p>
         </div>
     );

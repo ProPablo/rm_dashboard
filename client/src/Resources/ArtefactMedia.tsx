@@ -73,7 +73,7 @@ export const ArtefactMediaEdit = (props: EditProps) => {
   return (
     <Edit actions={<ResourceActions />} {...props} undoable={false}>
       <SimpleForm>
-        <TextInput source="id" />
+        <TextInput disabled source="id" />
         <TextInput disabled source="src" />
         <TextInput source="title" />
         {/* <ImageField source="src" title="Image Loaded" /> */}

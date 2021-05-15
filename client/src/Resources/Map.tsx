@@ -7,6 +7,8 @@ export interface MapProps {
 
 }
 
+const MAP_ZOOM_SCALE = 0.001;
+
 export const Map = (props: MapProps) => {
   const [{ xOffset, yOffset }, setOffset] = useState({ xOffset: 0, yOffset: 0 });
   const [zoom, setZoom] = useState(1);
@@ -17,9 +19,12 @@ export const Map = (props: MapProps) => {
       onDrag: ({ down, movement: [mx, my] }) => {
         setOffset({ xOffset: down ? mx : 0, yOffset: down ? my : 0 });
       },
-      onWheel: (state) => {
-        // state.movement.y;
-        console.log({ ...state });
+      onWheel: ({ wheeling, movement: [_, y] }) => {
+        console.log(y);
+        // Negative y = bigger
+        if (wheeling) {
+          setZoom(zoom + (-y * MAP_ZOOM_SCALE) );
+        }
       }
     }
   )
@@ -34,7 +39,6 @@ export const Map = (props: MapProps) => {
       <Title title="Map" />
       <div
         className="movable map-main"
-
       >
         <img
           style={style}

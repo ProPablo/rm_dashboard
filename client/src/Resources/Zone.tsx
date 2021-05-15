@@ -10,7 +10,7 @@ export const ZoneCreate = (props: CreateProps) => (
   <Create actions={<ResourceActions />} {...props}>
     <SimpleForm>
       <TextInput source="name" />
-      <TextInput source="description" />
+      <TextInput multiline source="description" />
     </SimpleForm>
   </Create>
 )

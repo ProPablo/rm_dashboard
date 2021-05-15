@@ -1,8 +1,8 @@
 import { backendURL } from "../env.js";
 
-export const baseURL = (process.env.NODE_ENV === "production") ? "rm.kongroo.xyz/api" : backendURL;
+export const baseURL = (process.env.NODE_ENV === "production") ? "https://rm.kongroo.xyz/api" : backendURL;
 
-export const MEDIA_URL = process.env.NODE_ENV === "production" ? "rm.kongroo.xyz" : baseURL;
+export const MEDIA_URL = process.env.NODE_ENV === "production" ? "https://rm.kongroo.xyz" : baseURL;
 
 // Standard variation
 export function request<T>(url: string): Promise<T> {

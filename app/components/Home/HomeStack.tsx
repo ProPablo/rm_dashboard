@@ -1,7 +1,7 @@
 import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './HomeScreen';
-import TourScreen, { BeaconVideo } from "./TourScreen";
+import TourScreen, { BeaconVideo } from "../Tour/TourScreen";
 import { ActionBarIcon } from '../../lib/styles';
 
 export type HomeStackParams = {

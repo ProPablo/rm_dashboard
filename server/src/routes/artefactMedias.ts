@@ -32,6 +32,7 @@ artefactMediaRouter.get('/:id', async (req, res) => {
 artefactMediaRouter.post('/', upload.single('file'), async (req, res, next) => {
   if (req.file) {
     req.body.src = req.file.path;
+    
 
     if (isNaN(req.body.type))
       req.body.type = MediaType[req.body.type];
@@ -71,6 +72,7 @@ artefactMediaRouter.put('/:id', upload.single('file'), async (req, res, next) =>
     }
   }
   else {
+
     throw new HTTPException(400, "No file detected");
   }
 })

@@ -9,9 +9,12 @@ export enum MediaType {
   video,
 }
 
-// export const schema = Joi.object({
-
-// });
+export const editSchema = Joi.object({
+  id: Joi.number().strip(),
+  src: Joi.string().strip(),
+  type: [Joi.number(), Joi.valid("image", "video")],
+  
+});
 
 @Entity()
 export class ArtefactMedia extends BaseEntity {
