@@ -14,7 +14,6 @@ import VideoComponent from '../Home/VideoComponent';
 import { Artefact, ZoneConsumable, Beacon, ArtefactMediaSmall } from "@shared/types";
 import { BeaconContext } from '../../App';
 import { MEDIA_URL } from '../../lib/controllers';
-
 type NavigationProp = StackNavigationProp<TourStackParams>
 
 
@@ -30,7 +29,7 @@ export const BeaconVideo = () => {
     const artefacts = useContext(ArtefactsContext);
     const [media, setmedia] = useState<ArtefactMediaSmall | undefined>(undefined);
     // Wrap in memoised function and return false and early and gay if null
-    let foundMedia: ArtefactMediaSmall | undefined;
+    
 
     useEffect(() => {
         const beacon = beacons.find((b) => b.macAddress === beaconcontext.beaconMAC);
@@ -38,11 +37,15 @@ export const BeaconVideo = () => {
         if (beacon && !media) {
             let foundZone = zones.find((z) => z.id === beacon.zoneId);
             if (foundZone) {
-                const artefactNumber = foundZone.Artefacts[0];
-                console.log({ beacon, foundZone, artefactNumber })
-                if (artefactNumber) {
-                    foundMedia = artefacts.find((a) => a.id === artefactNumber)?.Media;
-                    console.log("found media", foundMedia);
+                let artefactIndex = 0;
+                let foundMedia: ArtefactMediaSmall | undefined;
+                while(artefactIndex <foundZone.Artefacts.length) {
+                    const artefactId = foundZone.Artefacts[artefactIndex];
+                    foundMedia = artefacts.find((a) => a.id === artefactId)?.Media;
+                    if (foundMedia) break;
+                    artefactIndex++;
+                }
+                if (foundMedia) {
                     setmedia(foundMedia);
                 }
             }
@@ -61,6 +64,7 @@ export const BeaconVideo = () => {
             {
                 media &&
                 <VideoComponent height={450} src={`${MEDIA_URL}/${media.src}`} />
+                // <VideoPlayer src={`${MEDIA_URL}/${media.src}`} />
             }
         </View>
     );

@@ -11,9 +11,13 @@ export enum MediaType {
 
 export const editSchema = Joi.object({
   id: Joi.number().strip(),
-  src: Joi.string().strip(),
+  title: Joi.string(),
+  src: Joi.any().strip(),
   type: [Joi.number(), Joi.valid("image", "video")],
-  
+  name: Joi.string(),
+  artefactId: Joi.number(),
+  createdAt: Joi.date().strip(),
+  updatedAt: Joi.date().strip(),
 });
 
 @Entity()

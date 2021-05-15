@@ -1,8 +1,9 @@
 import { json, Request, Response, Router } from 'express';
 import multer from 'multer';
 import { HTTPException } from '../Errors';
-import { MediaType, ArtefactMedia } from '../entity/ArtefactMedia';
+import { MediaType, ArtefactMedia, editSchema } from '../entity/ArtefactMedia';
 import { unlink } from 'fs/promises';
+import { idParams } from '../helperFunctions';
 
 const storage = multer.diskStorage({
   destination: "public/",
@@ -32,7 +33,6 @@ artefactMediaRouter.get('/:id', async (req, res) => {
 artefactMediaRouter.post('/', upload.single('file'), async (req, res, next) => {
   if (req.file) {
     req.body.src = req.file.path;
-    
 
     if (isNaN(req.body.type))
       req.body.type = MediaType[req.body.type];
@@ -54,44 +54,29 @@ artefactMediaRouter.post('/', upload.single('file'), async (req, res, next) => {
 
 artefactMediaRouter.put('/:id', upload.single('file'), async (req, res, next) => {
   // Fix logic, get title from db 
-  const { id } = req.params;
+  let { id }: idParams = req.params;
+  id = Number.parseInt(id);
+  console.log(req.body);
+  const value = await editSchema.validateAsync(req.body);
   if (req.file) {
-    req.body.src = req.file.path;
+    value.src = req.file.path;
 
-    if (isNaN(req.body.type))
-      req.body.type = MediaType[req.body.type];
+    if (isNaN(value.type))
+      value.type = MediaType[value.type];
 
     try {
-      res.json(await ArtefactMedia.save({ id: Number.parseInt(id), ...req.body }));
+      res.json(await ArtefactMedia.save({ id, ...value }));
     }
     catch (e) {
       console.log("error", e);
-      // delete the file 
       await unlink(req.file.path);
       throw new HTTPException(400, e.message);
     }
   }
   else {
-
-    throw new HTTPException(400, "No file detected");
+    res.json(await ArtefactMedia.save({ id, ...value }));
   }
 })
-
-// zoneMediaRouter.post('/:id', upload.single('file'), async (req, res) => {
-//   if (req.file) {
-
-//     console.log("Bruh got upload", JSON.stringify(req.body, null, 2));
-//     res.json({ message: "done" });
-//   } else {
-//     throw new HTTPException(400, "No file detected");
-//   }
-// })
-
-// zoneMediaRouter.put('/:id', upload.single('file'), async (req, res) => {
-//   const { id } = req.params;
-//   // res.json(await Zone.update({ id: Number.parseInt(id) }, { ...req.body }));
-//   res.json(await ZoneMedia.save({ id: Number.parseInt(id), ...req.body }));
-// })
 
 artefactMediaRouter.delete('/:id', async (req, res) => {
   res.json(await ArtefactMedia.delete({ id: Number.parseInt(req.params.id) }));

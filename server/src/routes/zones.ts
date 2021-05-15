@@ -23,6 +23,7 @@ zoneRouter.get('/app', async (req, res) => {
   const zones = await Zone.getRepository()
     .createQueryBuilder("z")
     .leftJoinAndSelect("z.Artefacts", "a")
+    .orderBy({"a.priority": "DESC"})
     .getMany();
   // Non destructive map mutating list of zones
   zones.forEach(zone => zone.Artefacts = zone.Artefacts.map(x => x.id) as any);

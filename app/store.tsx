@@ -37,6 +37,7 @@ ExhibitionsContext.displayName = "ExhibitionsContext";
 
 
 export const GlobalStore: React.FC = ({ children }) => {
+  // TODO: Possibly memoize into dictionary
   const [artefacts, setArtefacts] = useState<Artefact[]>([]);
   const [storeItems, setStoreItems] = useState<StoreItem[]>([]);
   const [exhibitions, setExhibitions] = useState<Exhibition[]>([]);

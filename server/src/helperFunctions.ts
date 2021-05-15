@@ -3,8 +3,9 @@ import { BaseEntity, SelectQueryBuilder } from "typeorm";
 import { HTTPException } from "./Errors";
 
 export type IDLookup = Map<number, number>;
-export interface idDestructure {
-  id: number
+
+export interface idParams {
+  id?: number | string
 }
 
 //this will be called by default without try catch or if next(error);

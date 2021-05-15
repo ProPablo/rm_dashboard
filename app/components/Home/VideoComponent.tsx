@@ -12,6 +12,7 @@ import {
 import { Slider } from 'react-native-elements';
 
 import Video, { OnLoadData, OnProgressData } from 'react-native-video';
+import { getFloat } from '../../lib/helper';
 
 export interface VideoPlayerProps {
     src: string
@@ -72,11 +73,11 @@ export default class VideoPlayer extends Component<VideoPlayerProps, VideoPlayer
 
     getCurrentTimePercentage() {
         if (this.state.currentTime > 0) {
-            // @ts-ignore
-            return parseFloat(this.state.currentTime) / parseFloat(this.state.duration);
+            return getFloat(this.state.currentTime) / getFloat(this.state.duration);
         }
         return 0;
     };
+    
 
     // renderRateControl(rate: any) {
     //     const isSelected = (this.state.rate === rate);
@@ -133,6 +134,7 @@ export default class VideoPlayer extends Component<VideoPlayerProps, VideoPlayer
                         // source={{ uri: "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4" }}
                         // controls
                         style={styles.fullScreen}
+                        controls={true}
                         rate={this.state.rate}
                         paused={this.state.paused}
                         volume={this.state.volume}
@@ -149,13 +151,16 @@ export default class VideoPlayer extends Component<VideoPlayerProps, VideoPlayer
 
                 </TouchableOpacity>
 
-                {/* <View style={{ flex: 1, alignItems: 'stretch', justifyContent: 'center' }}>
+                {/* <View style={{ flex: 1, alignItems: 'stretch', justifyContent: 'flex-end' }}>
                     <Slider
-                        value={this.state.currentTime}
-                        onValueChange={(value) => this.setState({ value })}
+                        maximumValue={this.state.duration}
+                        step={0.1}
+                        value={getFloat(this.state.currentTime)}
+                        onValueChange={( currentTime ) => this.setState({ currentTime })}
+                        
                     />
-                    <Text>Value: {this.state.value}</Text>
-                </View>; */}
+                    <Text>Value: {this.state.currentTime}</Text>
+                </View> */}
 
                 <View style={styles.controls}>
                     {/* <View style={styles.generalControls}>
@@ -251,14 +256,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    controlOption: {
-        alignSelf: 'center',
-        fontSize: 11,
-        color: 'white',
-        paddingLeft: 2,
-        paddingRight: 2,
-        lineHeight: 12,
     },
     // trackingControls: {
 

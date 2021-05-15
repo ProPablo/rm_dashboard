@@ -152,7 +152,7 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
                           {...provided.dragHandleProps}>
                           <TableCell><NumberField record={data[id]} source="id" /></TableCell>
                           <TableCell> <TextField record={data[id]} source="name" /> </TableCell>
-                          <TableCell>  <TextField record={data[id]} source="description" /> </TableCell>
+                          <TableCell>  <TextField record={data[id]} source="media.src" /> </TableCell>
                         </TableRow>
                       )}
                     </Draggable>
