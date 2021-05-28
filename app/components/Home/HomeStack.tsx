@@ -2,7 +2,7 @@ import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './HomeScreen';
 import TourScreen, { BeaconVideo } from "../Tour/TourScreen";
-import { ActionBarIcon } from '../../lib/styles';
+import { HeaderIcon } from '../../lib/styles';
 
 export type HomeStackParams = {
     HomeScreen: undefined;
@@ -18,12 +18,10 @@ export const HomeStack: React.FC = () => {
                 headerTitle: ""
             }}>
             {/* TODO: make back button that navigates back to  */}
-            {/* @ts-ignore */}
             <Stack.Screen name="HomeScreen" component={HomeScreen}
                 options={{
-                    headerLeft: props => <ActionBarIcon />
+                    headerLeft: props => <HeaderIcon />
                 }} />
-            {/* @ts-ignore */}
             <Stack.Screen name="TourScreen" component={BeaconVideo} />
         </Stack.Navigator>
     )

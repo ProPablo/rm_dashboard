@@ -10,9 +10,12 @@ import { ZonesContext, BeaconsContext, ArtefactsContext } from '../../store';
 import { TourStackParams } from './TourStack';
 import Transform from './Transform';
 import VideoComponent from '../Home/VideoComponent';
+import { FAB } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 
 import { Artefact, ZoneConsumable, Beacon, ArtefactMediaSmall } from "@shared/types";
-import { BeaconContext } from '../../App';
+import { TourContext } from '../../App';
 import { MEDIA_URL } from '../../lib/controllers';
 type NavigationProp = StackNavigationProp<TourStackParams>
 
@@ -22,24 +25,25 @@ interface Props {
 }
 
 export const BeaconVideo = () => {
-    const beaconcontext = useContext(BeaconContext);
+    const tourContext = useContext(TourContext);
+    
 
     const zones = useContext(ZonesContext);
     const beacons = useContext(BeaconsContext);
     const artefacts = useContext(ArtefactsContext);
     const [media, setmedia] = useState<ArtefactMediaSmall | undefined>(undefined);
-    // Wrap in memoised function and return false and early and gay if null
-    
 
     useEffect(() => {
-        const beacon = beacons.find((b) => b.macAddress === beaconcontext.beaconMAC);
+        const {beaconMAC, isBLEnabled} = tourContext;
+        if (!isBLEnabled || !beaconMAC) return;
+        const beacon = beacons.find((b) => b.macAddress === beaconMAC);
         console.log("beacon", beacon);
         if (beacon && !media) {
             let foundZone = zones.find((z) => z.id === beacon.zoneId);
             if (foundZone) {
                 let artefactIndex = 0;
                 let foundMedia: ArtefactMediaSmall | undefined;
-                while(artefactIndex <foundZone.Artefacts.length) {
+                while (artefactIndex < foundZone.Artefacts.length) {
                     const artefactId = foundZone.Artefacts[artefactIndex];
                     foundMedia = artefacts.find((a) => a.id === artefactId)?.Media;
                     if (foundMedia) break;
@@ -51,18 +55,12 @@ export const BeaconVideo = () => {
             }
         }
 
-    }, [beaconcontext]);
+    }, [tourContext, zones, beacons, artefacts]);
+
 
     return (
-        <View
-            style={{
-                backgroundColor: 'white',
-                padding: 16,
-                height: 600
-            }}
-        >
-            {
-                media &&
+        <View style={styles.videoBottomSheetStyle}>
+            { media &&
                 <VideoComponent height={450} src={`${MEDIA_URL}/${media.src}`} />
                 // <VideoPlayer src={`${MEDIA_URL}/${media.src}`} />
             }
@@ -93,24 +91,28 @@ const TourScreen: React.FC<Props> = ({ navigation }) => {
 
     //     </View>
     // );
-    const renderContent = ()=> (
-        <View >
+    const renderContent = () => (
+        <View style={styles.bottomSheetStyle}>
             <BeaconVideo />
         </View>
     )
 
+    const handlePopUp = () => {
+        // @ts-ignore
+        sheetRef.current?.snapTo(0);
+    }
+
     const sheetRef = useRef(null);
     return (
         <View style={styles.containerStyle}>
-            {/* @ts-ignore */}
-            {/* <Button title="Open POGGUM Sheet" onPress={() => sheetRef.current?.snapTo(0)} /> */}
             <BottomSheet
                 ref={sheetRef}
                 snapPoints={[450, 300, 0]}
-                borderRadius={10}
+                borderRadius={20}
                 renderContent={renderContent}
             />
             <Transform><Image source={require('./floorplan.jpg')} /></Transform>
+            <FAB color="#7A0600" onPress={handlePopUp} placement="right" icon={<Icon name="chevron-up" size={23} color="white" />} />
 
         </View>
     );
@@ -133,7 +135,20 @@ const styles = StyleSheet.create({
     containerStyle: {
         flex: 1,
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
+        backgroundColor: "#FDF3BF",
+    },
+
+    videoBottomSheetStyle: {
+        backgroundColor: '#F3E1C7',
+        padding: 16,
+        height: 600
+    },
+
+    bottomSheetStyle: {
+        backgroundColor: "#F3E1C7",
+        padding: 16,
+        height: 450,
     },
 
     wrapperStyle: {

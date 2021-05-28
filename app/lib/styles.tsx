@@ -3,7 +3,7 @@ import React from 'react'
 import { StyleSheet } from 'react-native';
 import { Image } from "react-native"
 
-export function ActionBarIcon() {
+export function HeaderIcon() {
     return (
         <Image
             source={{ uri: 'https://www.redlandmuseum.org.au/wp-content/uploads/2012/10/redland-museum-logo-wide.png' }}

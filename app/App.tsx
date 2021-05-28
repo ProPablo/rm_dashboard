@@ -18,8 +18,10 @@ import {
   StyleSheet,
 
   useColorScheme,
-  View
+  View,
+  LogBox
 } from 'react-native';
+LogBox.ignoreLogs(['Reanimated 2']);
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {
   Colors,
@@ -32,6 +34,7 @@ import { ExhibitionStack } from './components/Exhibitions/ExhibitionStack';
 import { HomeStack } from './components/Home/HomeStack';
 import { StoreStack } from './components/Store/StoreStack';
 import { GlobalStore } from './store';
+
 
 const icons: Record<string, string> = {
   Home: "home",
@@ -73,57 +76,21 @@ function Tabs() {
   );
 }
 
-// const allPerms = [PermissionsAndroid.PERMISSIONS.BLUETOOTH, PermissionsAndroid.PERMISSIONS.BLUETOOTH_ADMIN, PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION];
-const requestLocationPermission = async () => {
-  console.log("asking for perms");
-  try {
-    const granted = await PermissionsAndroid.request(
 
-      PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      {
-        title: 'Location Permission',
-        message:
-          'Redland Museum app needs to access your location in order to use bluetooth beacons.',
-        buttonNeutral: 'Ask Me Later',
-        buttonNegative: 'Cancel',
-        buttonPositive: 'OK',
-      },
-    );
-    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      console.log("GOT PERMS")
-      return true;
-    } else {
-      // permission denied
-      return false;
-    }
-  } catch (err) {
-    console.warn(err);
-    return false;
-  }
-};
-
-export interface BeaconContextValue {
-  beaconMAC: string | null
-}
-
-const BeaconContext = createContext<BeaconContextValue>({ beaconMAC: null });
-BeaconContext.displayName = "BeaconContext";
 
 
 const App = () => {
   const manager = useRef<BleManager | null>(null);
 
-
-
   const isDarkMode = useColorScheme() === 'dark';
 
-  const [beaconState, setfoundBeacon] = useState<BeaconContextValue>({ beaconMAC: null });
+  const [tourState, setTour] = useState<BeaconContextValue>({ beaconMAC: null, isBLEnabled: false});
 
   const scanAndConnect = () => {
     manager.current?.startDeviceScan(null, null, (error, device) => {
       // console.log("inside", { device });
       if (device) {
-        setfoundBeacon({ beaconMAC: device.id });
+        setTour({ ...tourState, beaconMAC: device.id});
       }
     });
   }
@@ -140,7 +107,7 @@ const App = () => {
           // TODO display error
           // console.log({ device, error });
           if (device) {
-            setfoundBeacon({ beaconMAC: device.id });
+            setTour({ ...tourState, beaconMAC: device.id });
           }
         });
 
@@ -161,11 +128,11 @@ const App = () => {
 
   return (
     <NavigationContainer theme={NavigationTheme}>
-      <BeaconContext.Provider value={beaconState}>
+      <TourContext.Provider value={tourState}>
         <GlobalStore>
           <Tabs />
         </GlobalStore>
-      </BeaconContext.Provider>
+      </TourContext.Provider>
     </NavigationContainer>
   );
 };
@@ -204,4 +171,4 @@ export const NavigationTheme = {
 
 export default App;
 
-export { BeaconContext };
+export { TourContext};

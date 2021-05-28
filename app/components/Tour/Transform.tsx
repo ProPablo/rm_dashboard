@@ -24,7 +24,9 @@ export default class Transform extends React.Component {
     panOffset: Animated.ValueXY;
     panRef = React.createRef<PanGestureHandler>();
     pinchRef = React.createRef<PinchGestureHandler>();
-    
+
+    invertedScale: Animated.AnimatedDivision;
+
     panScaleX: Animated.AnimatedMultiplication;
     panScaleY: Animated.AnimatedMultiplication;
 
@@ -34,13 +36,13 @@ export default class Transform extends React.Component {
         /* Pinching */
         this.baseScale = new Animated.Value(1);
         this.pinchScale = new Animated.Value(1);
-        
+
         this.scale = Animated.multiply(this.baseScale, this.pinchScale);
         this.lastScale = 1;
         this.panOffset = new Animated.ValueXY();
-
-        this.panScaleX = Animated.multiply(this.scale, this.panOffset.x);
-        this.panScaleY = Animated.multiply(this.scale, this.panOffset.y);
+        this.invertedScale = Animated.divide(1, this.scale);
+        this.panScaleX = Animated.multiply(this.invertedScale, this.panOffset.x);
+        this.panScaleY = Animated.multiply(this.invertedScale, this.panOffset.y);
 
         this.onPinchGestureEvent = Animated.event(
             [{ nativeEvent: { scale: this.pinchScale } }],
@@ -70,6 +72,7 @@ export default class Transform extends React.Component {
             this.baseScale.setValue(this.lastScale);
             this.pinchScale.setValue(1);
         }
+
     };
 
     onPanHandlerStateChange = () => {
@@ -77,6 +80,7 @@ export default class Transform extends React.Component {
     }
 
     render() {
+
         return (
             <View>
                 <PanGestureHandler onGestureEvent={this.onPanGestureEvent} onHandlerStateChange={this.onPanHandlerStateChange} ref={this.panRef} maxPointers={2} avgTouches>
@@ -91,7 +95,7 @@ export default class Transform extends React.Component {
                                 style={[
                                     {
                                         // transform: [ { scale: this.scale }, { translateX: this.panOffset.x }, { translateY: this.panOffset.y }],
-                                        transform: [ { scale: this.scale }, { translateX: this.panScaleX }, { translateY: this.panScaleY }],
+                                        transform: [{ scale: this.scale }, { translateX: this.panScaleX }, { translateY: this.panScaleY }],
                                     },
                                 ]}
                             >
