@@ -1,7 +1,7 @@
 import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './HomeScreen';
-import TourScreen, { BeaconVideo } from "../Tour/TourScreen";
+import TourScreen from "../Tour/TourScreen";
 import { HeaderIcon } from '../../lib/styles';
 
 export type HomeStackParams = {
@@ -22,7 +22,7 @@ export const HomeStack: React.FC = () => {
                 options={{
                     headerLeft: props => <HeaderIcon />
                 }} />
-            <Stack.Screen name="TourScreen" component={BeaconVideo} />
+            <Stack.Screen name="TourScreen" component={TourScreen} />
         </Stack.Navigator>
     )
 }

@@ -27,13 +27,14 @@ import {
   Colors,
   Header
 } from 'react-native/Libraries/NewAppScreen';
-import { BleManager } from 'react-native-ble-plx';
+
 import { ArtefactStack } from './components/Artefacts/ArtefactStack';
-import { TourStack } from './components/Tour/TourStack'; 
+import { TourStack } from './components/Tour/TourStack';
 import { ExhibitionStack } from './components/Exhibitions/ExhibitionStack';
 import { HomeStack } from './components/Home/HomeStack';
 import { StoreStack } from './components/Store/StoreStack';
 import { GlobalStore } from './store';
+import Tour from './components/Tour';
 
 
 const icons: Record<string, string> = {
@@ -80,59 +81,23 @@ function Tabs() {
 
 
 const App = () => {
-  const manager = useRef<BleManager | null>(null);
+
 
   const isDarkMode = useColorScheme() === 'dark';
 
-  const [tourState, setTour] = useState<BeaconContextValue>({ beaconMAC: null, isBLEnabled: false});
-
-  const scanAndConnect = () => {
-    manager.current?.startDeviceScan(null, null, (error, device) => {
-      // console.log("inside", { device });
-      if (device) {
-        setTour({ ...tourState, beaconMAC: device.id});
-      }
-    });
-  }
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
   //TODO create Hook for BT updates
-  useEffect(() => {
-    requestLocationPermission()
-      .then(() => {
-        manager.current = new BleManager();
-        manager.current?.startDeviceScan(null, null, (error, device) => {
-          // TODO display error
-          // console.log({ device, error });
-          if (device) {
-            setTour({ ...tourState, beaconMAC: device.id });
-          }
-        });
-
-        const subscription = manager.current.onStateChange((state => {
-          console.log("BLE Manager online");
-          if (state === 'PoweredOn') {
-            console.log("Starting scanning");
-            scanAndConnect();
-            subscription.remove();
-          }
-        }));
-      })
-    return () => {
-      // manager.current?.stopDeviceScan();
-      // manager.current?.destroy();
-    }
-  }, [])
 
   return (
     <NavigationContainer theme={NavigationTheme}>
-      <TourContext.Provider value={tourState}>
+      <Tour>
         <GlobalStore>
           <Tabs />
         </GlobalStore>
-      </TourContext.Provider>
+      </Tour>
     </NavigationContainer>
   );
 };
@@ -170,5 +135,3 @@ export const NavigationTheme = {
 
 
 export default App;
-
-export { TourContext};
