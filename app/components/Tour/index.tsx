@@ -76,16 +76,17 @@ const Tour: React.FC = ({ children }) => {
   const manager = useRef<BleManager | null>(null);
   // TODO handle islocation
   const [tourState, setTour] = useState<TourContextValue>({ beaconMAC: null, isBLEnabled: true });
-  const scanAndConnect = () => {
-    manager.current?.startDeviceScan(null, null, (error, device) => {
-      // console.log("inside", { device });
-      if (device) {
-        setTour({ ...tourState, beaconMAC: device.id });
-      }
-    });
-  }
+  // const scanAndConnect = () => {
+  //   manager.current?.startDeviceScan(null, null, (error, device) => {
+  //     console.log("inside", { device });
+  //     if (device) {
+  //       setTour({ ...tourState, beaconMAC: device.id });
+  //     }
+  //   });
+  // }
 
   useEffect(() => {
+    console.log("Starting beacon functionality");
     requestLocationPermission()
       .then(() => {
         manager.current = new BleManager();
@@ -97,14 +98,14 @@ const Tour: React.FC = ({ children }) => {
           }
         });
 
-        const subscription = manager.current.onStateChange((state => {
-          console.log("BLE Manager online");
-          if (state === 'PoweredOn') {
-            console.log("Starting scanning");
-            scanAndConnect();
-            subscription.remove();
-          }
-        }));
+        // const subscription = manager.current.onStateChange((state => {
+        //   console.log("BLE Manager online");
+        //   if (state === 'PoweredOn') {
+        //     console.log("Starting scanning");
+        //     // scanAndConnect();
+        //     subscription.remove();
+        //   }
+        // }));
       })
     return () => {
       // manager.current?.stopDeviceScan();

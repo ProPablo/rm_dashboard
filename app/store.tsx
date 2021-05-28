@@ -9,7 +9,7 @@ import { baseURL, request } from "./lib/controllers";
 export interface ActionContextValue {
   reload: () => void,
   cacheImages?: null,
-  isLoading?: boolean
+  isLoading: boolean
 }
 // @ts-ignore
 const GlobalActionContext = createContext<ActionContextValue>();
@@ -75,10 +75,12 @@ export const GlobalStore: React.FC = ({ children }) => {
         // TODO inform user of failure and retry in setTimeout
       }
       finally {
+        console.log("Done loading");
         setisLoading(false);
       }
-
-    }
+    
+    },
+    isLoading
   }), []);
 
   useEffect(() => {

@@ -15,7 +15,6 @@ const ArtefactListView = ({ artefact }: Props) => {
             <Card containerStyle={globalStyle.containerStyle} wrapperStyle={globalStyle.wrapperStyle}>
                 <Card.Title style={globalStyle.text}>{artefact.name}</Card.Title>
                 <Text style={globalStyle.text}>{artefact.description}</Text>
-                <Card.Divider />
                 <Card.Image source={{
                     uri: artefact.thumbnail, 
                 }}/>

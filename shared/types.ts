@@ -2,11 +2,11 @@ export interface Artefact {
   id: number,
   name: string,
   description: string,
-  acquisitionDate: Date,
+  acquisitionDate: string,
   thumbnail: string,
   coordX: number,
   coordY: number,
-  zoneid: number,
+  zoneId: number,
   priority: number,
   Media: ArtefactMediaSmall,
 }
@@ -70,8 +70,8 @@ export interface Exhibition {
   priceAdult: number,
   priceConcession: number,
   priceChild: number,
-  startDate: Date, 
-  finishDate: Date,
+  startDate: string, 
+  finishDate: string,
   thumbnail: string
 }
 

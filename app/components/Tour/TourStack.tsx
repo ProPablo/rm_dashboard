@@ -6,20 +6,18 @@ import { HeaderIcon } from '../../lib/styles';
 import ArtefactDetailScreen from '../Artefacts/ArtefactDetailScreen';
 
 export type TourStackParams = {
+    Artefacts: {screen: string, params: {artefactId: number | string} },
+    // ArtefactDetails: { artefactId: number | string },
     TourScreen: undefined,
-    ArtefactDetails: { artefactId: number | string },
 }
 
 const Stack = createStackNavigator<TourStackParams>();
 
 export const TourStack: React.FC = () => {
     return (
-        <Stack.Navigator
-            screenOptions={{
-                headerShown: false,
-            }}>
-            <Stack.Screen name="TourScreen" component={TourScreen} />
-            <Stack.Screen name="ArtefactDetails" component={ArtefactDetailScreen} />
+        <Stack.Navigator>
+            <Stack.Screen options={{headerShown: false}} name="TourScreen" component={TourScreen} />
+            {/* <Stack.Screen name="ArtefactDetails" component={ArtefactDetailScreen} /> */}
         </Stack.Navigator>
     )
 }

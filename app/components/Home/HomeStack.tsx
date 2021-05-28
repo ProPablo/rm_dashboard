@@ -5,8 +5,8 @@ import TourScreen from "../Tour/TourScreen";
 import { HeaderIcon } from '../../lib/styles';
 
 export type HomeStackParams = {
-    HomeScreen: undefined;
-    TourScreen: undefined;
+    Tour: {screen: string},
+    HomeScreen: undefined,
 }
 
 const Stack = createStackNavigator<HomeStackParams>();
@@ -22,7 +22,6 @@ export const HomeStack: React.FC = () => {
                 options={{
                     headerLeft: props => <HeaderIcon />
                 }} />
-            <Stack.Screen name="TourScreen" component={TourScreen} />
         </Stack.Navigator>
     )
 }

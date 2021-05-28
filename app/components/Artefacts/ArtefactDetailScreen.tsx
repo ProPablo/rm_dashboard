@@ -1,5 +1,5 @@
 import { RouteProp } from '@react-navigation/native';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
     Dimensions, Image,
     StyleSheet, Text, View
@@ -7,13 +7,18 @@ import {
 import { globalStyle } from '../../lib/styles';
 import { MEDIA_URL } from '../../lib/controllers';
 import { ArtefactsContext } from '../../store';
+import { ZonesContext } from '../../store';
 // import CustomCarousel from './ArtefactDetailCarousel';
 // import ArtefactsContext from './ArtefactsContext';
 import { ArtefactStackParams } from './ArtefactStack';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import VideoPlayer from '../Home/VideoComponent';
-import { ArtefactMediaSmall } from '@shared/types';
+//import VideoPlayer from '../Home/VideoComponent';
+// @ts-ignore
+import VideoPlayer from 'react-native-video-controls';
+import { Artefact, ArtefactMediaSmall, ZoneConsumable } from '@shared/types';
 import { ScrollView } from 'react-native-gesture-handler';
+
+
 // import VideoTest from '../Home/VideoTest';
 
 
@@ -25,6 +30,7 @@ interface Props {
 
 
 export const ConditionalMediaRender = (props: { artefactMedia: ArtefactMediaSmall }) => {
+
     switch (+props.artefactMedia.type) {
         case 0:
             return (
@@ -37,13 +43,18 @@ export const ConditionalMediaRender = (props: { artefactMedia: ArtefactMediaSmal
         case 1:
             return (
                 <View style={styles.video}>
-                    {/* <VideoPlayer src={`http://192.168.0.130:3001/public/beast-1620568996607.mp4`} /> */}
-                    <VideoPlayer src={`${MEDIA_URL}/${props.artefactMedia.src}`} />
+                    <VideoPlayer
+                        source={{ uri: `${MEDIA_URL}/${props.artefactMedia.src}` }}
+                        disableFullScreen={true}
+                        disableBack={true}
+                        disableVolume={true}
+                        tapAnywhereToPause={true}
+                    />
                 </View>
             )
         default:
             return (
-                <div>Unknown Type</div>
+                <View><Text>Unknown Type</Text></View>
             )
     }
 }
@@ -51,26 +62,45 @@ export const ConditionalMediaRender = (props: { artefactMedia: ArtefactMediaSmal
 const ArtefactDetailScreen: React.FC<Props> = ({ route }) => {
     const { artefactId } = route.params;
     const artefacts = useContext(ArtefactsContext);
+    const zones = useContext(ZonesContext);
 
-    //console.log("artefacts from deatil scrren", artefacts);
-    const artefact = artefacts?.find((item) => item.id === artefactId);
+    const [imageDimens, setimageDimens] = useState({ width: 0, height: 0 });
+
+    const [artefact, setArtefact] = useState<Artefact | undefined>(undefined);
+    const [zone, setZone] = useState<ZoneConsumable | undefined>(undefined);
+    useEffect(() => {
+        const artefact = artefacts?.find((item) => item.id === artefactId);
+        if (artefact) {
+            console.log(imageDimens);
+            console.log("penile");
+            Image.getSize(artefact?.thumbnail, (width, height) => {
+                const newWidth = Math.round(dimensions.width * 15 / 16);
+                setimageDimens({ width: newWidth, height: height * (newWidth / width) });
+            });
+        }
+        setZone(zones.find((z) => z.id === artefact?.zoneId));
+        setArtefact(artefact);
+
+    }, [artefacts, zones]);
+   
     return (
         <View style={styles.pageContainer}>
 
             {artefact &&
                 <ScrollView>
-                    <View style={[globalStyle.imageShadow, globalStyle.shadow]}>
-                        <Image source={{
-                            uri: artefact.thumbnail,
-                        }} style={[styles.image]} />
-                    </View>
-
-                    <View style={[globalStyle.shadow, styles.viewDescr]}>
+                    {artefact.thumbnail &&
+                        <View style={[globalStyle.imageShadow]}>
+                            <Image source={{
+                                uri: artefact.thumbnail,
+                            }} style={[imageDimens]} />
+                        </View>
+                    }
+                    <View style={[styles.viewDescr]}>
                         <Text selectable style={styles.textName}> {artefact.name}</Text>
                         <Text style={styles.textDescr}>{artefact.description}</Text>
-                        <Text style={styles.textDescr}>{artefact.name} was acquired on {artefact.acquisitionDate} and can be and can be located in {artefact.zoneid}</Text>
+                        <Text style={styles.textDescr}>{artefact.name} was acquired on {new Date(artefact?.acquisitionDate).toDateString()} and can be located in {zone?.name}</Text>
                     </View>
-                    {artefact.Media && 
+                    {artefact.Media &&
                         <ConditionalMediaRender artefactMedia={artefact.Media} />
                     }
                 </ScrollView>
@@ -90,13 +120,15 @@ const styles = StyleSheet.create({
     },
 
     image: {
+        flex: 1,
         width: Math.round(dimensions.width * 15 / 16),
-        height: 200,
         borderRadius: 10,
         marginBottom: 10,
     },
+
     video: {
         height: 450,
+        borderRadius: 10,
     },
 
     textName: {

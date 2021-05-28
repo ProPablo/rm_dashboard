@@ -64,6 +64,11 @@ export default class Transform extends React.Component {
         this.pinchRef = React.createRef();
     }
 
+    componentDidMount() {
+        this.baseScale.setValue(0.15);
+        this.panOffset.setValue({y: -200, x: 0});
+    }
+
     onPinchHandlerStateChange = (event: any) => {
         // When pinching ends, set overallscale to current stored scale
         // Basescale is there for when not pinching 

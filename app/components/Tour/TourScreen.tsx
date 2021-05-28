@@ -8,6 +8,7 @@ import { Text } from 'react-native-elements';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { ZonesContext, BeaconsContext, ArtefactsContext } from '../../store';
 import { TourStackParams } from './TourStack';
+import { ArtefactStackParams } from '../Artefacts/ArtefactStack'
 import Transform from './Transform';
 import VideoComponent from '../Home/VideoComponent';
 import { FAB } from 'react-native-elements';
@@ -40,7 +41,7 @@ export const TourContent = ({ navigation }: TourContentProps) => {
     const [currentZone, setZone] = useState<ZoneConsumable | undefined>(undefined);
 
     const [paused, setPaused] = useState(true);
-    
+
     function handlePause() {
         setPaused(true);
         console.log("bruh pause")
@@ -81,32 +82,32 @@ export const TourContent = ({ navigation }: TourContentProps) => {
 
     function tourActionOnPress() {
         if (!currentArtefact) return;
-        navigation.navigate("ArtefactDetails", {
-            artefactId: currentArtefact.id
+        navigation.navigate("Artefacts", {
+            screen: "ArtefactDetails", 
+            params: {
+                artefactId: currentArtefact.id
+            }
         });
     }
-
-    console.log(paused);
     return (
         <View style={styles.videoBottomSheetStyle}>
-            <Text> {currentZone?.name} </Text>
+            <Text style={styles.textName}> {currentZone?.name} </Text>
             { currentArtefact &&
                 <View style={styles.video}>
                     <VideoPlayer
-                        source={{ uri: `${MEDIA_URL}/public/TESTVIDEO-1621074980606.mp4` }}
+                        source={{ uri: `${MEDIA_URL}/${currentArtefact.Media.src}` }}
                         disableFullScreen={true}
                         disableBack={true}
                         disableVolume={true}
-                        disablePlayPause={paused}
                         tapAnywhereToPause={true}
                         paused={paused}
-                        onPause={handlePause} 
+                        onPause={handlePause}
                         onPlay={handlePlay}
-                        />
-                    <Button onPress={tourActionOnPress} title="Go to Artefact" />
+                    />
+                    <Button onPress={tourActionOnPress} title="Go to Artefact" color="#7A0600" />
                 </View>
             }
-            <Text> {currentZone?.description} </Text>
+            <Text style={styles.textDescr}> {currentZone?.description} </Text>
         </View>
     );
 }
@@ -140,13 +141,18 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
 }
 
 const styles = StyleSheet.create({
-    listItem: {
-        padding: 2,
-        margin: 2,
+    textName: {
+        fontSize: 27,
+        textAlign: 'center',
+        fontFamily: 'Roboto'
     },
 
-    image: {
+    textDescr: {
+        fontSize: 15,
+        textAlign: 'center',
+        fontFamily: 'Roboto'
     },
+
     text: {
         color: '#fff',
         textAlign: 'center',
@@ -167,13 +173,13 @@ const styles = StyleSheet.create({
     },
 
     video: {
-        height: 450,
+        height: 400,
     },
 
     bottomSheetStyle: {
         backgroundColor: "#F3E1C7",
         padding: 16,
-        height: 450,
+        height: 550,
     },
 
     wrapperStyle: {
