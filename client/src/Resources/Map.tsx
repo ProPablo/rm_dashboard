@@ -1,16 +1,52 @@
-import React from 'react'
+import React, { useRef, useState } from 'react'
 import { Title } from 'react-admin'
+import { useDrag, useGesture } from 'react-use-gesture'
+import floorPlan from '../floorplan.jpg';
 
 export interface MapProps {
 
 }
 
-export const Map = (props: MapProps) => {
+const MAP_ZOOM_SCALE = 0.001;
 
+export const Map = (props: MapProps) => {
+  const [{ xOffset, yOffset }, setOffset] = useState({ xOffset: 0, yOffset: 0 });
+  const [zoom, setZoom] = useState(1);
+  const mapRef = useRef(null);
+
+  const bind = useGesture(
+    {
+      onDrag: ({ down, movement: [mx, my] }) => {
+        setOffset({ xOffset: down ? mx : 0, yOffset: down ? my : 0 });
+      },
+      onWheel: ({ wheeling, movement: [_, y] }) => {
+        console.log(y);
+        // Negative y = bigger
+        if (wheeling) {
+          setZoom(zoom + (-y * MAP_ZOOM_SCALE) );
+        }
+      }
+    }
+  )
+
+  const style = {
+    transform: `scale(${zoom})`,
+    top: `${yOffset}px`,
+    left: `${xOffset}px`
+  };
   return (
-    <div>
+    <div className="map-container">
       <Title title="Map" />
-      <div style={{ backgroundColor: "red", padding: 100, borderRadius: "50%" }} />
+      <div
+        className="movable map-main"
+      >
+        <img
+          style={style}
+          {...bind()}
+          src={floorPlan}
+          draggable="false"
+          className="map-image" />
+      </div>
     </div>
   )
 }

@@ -11,17 +11,9 @@ export interface Props {
     children: React.ReactNode
 }
 
-export default class Transform extends React.Component {
 
-    // _baseScale = new Animated.Value(1);
-    // _pinchScale = new Animated.Value(1);
-    // _scale = Animated.multiply(this._baseScale, this._pinchScale);
-    // _lastScale = 1;
-    // _onPinchGestureEvent = Animated.event(
-    //     [{ nativeEvent: { scale: this._pinchScale } }],
-    //     { useNativeDriver: true }
-    // );
-    // panOffset = new Animated.ValueXY();
+// TODO: Maybe use reanimated instead if low performance 
+export default class Transform extends React.Component {
 
     onPinchGestureEvent: (...args: any[]) => void;
     onPanGestureEvent: (...args: any[]) => void;
@@ -32,15 +24,25 @@ export default class Transform extends React.Component {
     panOffset: Animated.ValueXY;
     panRef = React.createRef<PanGestureHandler>();
     pinchRef = React.createRef<PinchGestureHandler>();
+
+    invertedScale: Animated.AnimatedDivision;
+
+    panScaleX: Animated.AnimatedMultiplication;
+    panScaleY: Animated.AnimatedMultiplication;
+
     constructor(props: Props) {
         super(props);
 
         /* Pinching */
         this.baseScale = new Animated.Value(1);
         this.pinchScale = new Animated.Value(1);
+
         this.scale = Animated.multiply(this.baseScale, this.pinchScale);
         this.lastScale = 1;
         this.panOffset = new Animated.ValueXY();
+        this.invertedScale = Animated.divide(1, this.scale);
+        this.panScaleX = Animated.multiply(this.invertedScale, this.panOffset.x);
+        this.panScaleY = Animated.multiply(this.invertedScale, this.panOffset.y);
 
         this.onPinchGestureEvent = Animated.event(
             [{ nativeEvent: { scale: this.pinchScale } }],
@@ -62,51 +64,28 @@ export default class Transform extends React.Component {
         this.pinchRef = React.createRef();
     }
 
+    componentDidMount() {
+        this.baseScale.setValue(0.15);
+        this.panOffset.setValue({y: -200, x: 0});
+    }
+
     onPinchHandlerStateChange = (event: any) => {
+        // When pinching ends, set overallscale to current stored scale
+        // Basescale is there for when not pinching 
         if (event.nativeEvent.oldState === State.ACTIVE) {
             this.lastScale *= event.nativeEvent.scale;
             this.baseScale.setValue(this.lastScale);
             this.pinchScale.setValue(1);
         }
+
     };
-
-
 
     onPanHandlerStateChange = () => {
         this.panOffset.extractOffset();
     }
 
-    // const panResponder = useRef(
-    //     PanResponder.create({
-    //         onMoveShouldSetPanResponder: () => true,
-    //         onPanResponderGrant: () => {
-    //             pan.setOffset({
-    //                 x: pan.x._value,
-    //                 y: pan.y._value
-    //             });
-    //         },
-    //         onPanResponderMove: (event, gestureState) => {
-    //             const touches = event.nativeEvent.touches;
-
-    //             if (touches.length >= 2) {
-    //                 // We have a pinch-to-zoom movement
-    //                 // Track locationX/locationY to know by how much the user moved their fingers
-    //Distance between fingers (1/Math.sqr((ax-bx)**2 + (ay-by)**2)* scale ) if scale>minScale = minscale; 
-
-    //             } else {
-    //                 // We have a regular scroll movement
-    //                 Animated.event([
-    //                     null,
-    //                     { dx: pan.x, dy: pan.y }
-    //                 ]) ({});
-    //             }
-    //         },
-    //         onPanResponderRelease: () => {
-    //             pan.flattenOffset();
-    //         }
-    //     })
-    // ).current;
     render() {
+
         return (
             <View>
                 <PanGestureHandler onGestureEvent={this.onPanGestureEvent} onHandlerStateChange={this.onPanHandlerStateChange} ref={this.panRef} maxPointers={2} avgTouches>
@@ -120,7 +99,8 @@ export default class Transform extends React.Component {
                             <Animated.View
                                 style={[
                                     {
-                                        transform: [{ perspective: 200 }, { scale: this.scale }, { translateX: this.panOffset.x }, { translateY: this.panOffset.y }],
+                                        // transform: [ { scale: this.scale }, { translateX: this.panOffset.x }, { translateY: this.panOffset.y }],
+                                        transform: [{ scale: this.scale }, { translateX: this.panScaleX }, { translateY: this.panScaleY }],
                                     },
                                 ]}
                             >

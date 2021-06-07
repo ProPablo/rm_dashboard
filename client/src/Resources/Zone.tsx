@@ -10,7 +10,7 @@ export const ZoneCreate = (props: CreateProps) => (
   <Create actions={<ResourceActions />} {...props}>
     <SimpleForm>
       <TextInput source="name" />
-      <TextInput source="description" />
+      <TextInput multiline source="description" />
     </SimpleForm>
   </Create>
 )
@@ -95,11 +95,12 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
         else notify("Completed reordering");
       })
       .catch((e) => {
-        notify('Error: comment not approved', 'warning')
+        notify('Error: reordering not approved, network connection missing', 'warning')
       })
       .finally(() => {
         setLoading(false);
-        refresh();
+        // Right now refresh makes it so that some flicking goes on
+        // refresh();
       });
   }
 
@@ -151,7 +152,7 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
                           {...provided.dragHandleProps}>
                           <TableCell><NumberField record={data[id]} source="id" /></TableCell>
                           <TableCell> <TextField record={data[id]} source="name" /> </TableCell>
-                          <TableCell>  <TextField record={data[id]} source="description" /> </TableCell>
+                          <TableCell>  <TextField record={data[id]} source="media.src" /> </TableCell>
                         </TableRow>
                       )}
                     </Draggable>

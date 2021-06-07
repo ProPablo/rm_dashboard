@@ -9,7 +9,7 @@ export const StoreItemCreate = (props: CreateProps) => (
   <Create actions={<ResourceActions />} {...props}>
     <SimpleForm>
       <TextInput source="name" />
-      <TextInput source="description" />
+      <TextInput multiline source="description" />
       <NumberInput source="cost" />
       <BooleanInput source="inStock" />
       <ImageInput source="InputMedia" label="Related pictures" accept="image/*">
@@ -24,7 +24,7 @@ export const StoreItemEdit = (props: EditProps) => (
     <SimpleForm>
       <TextInput disabled source="id" />
       <TextInput source="name" />
-      <TextInput source="description" />
+      <TextInput multiline source="description" />
       <NumberInput source="cost" />
       <BooleanInput source="inStock" />
       <DateInput disabled source="createdAt" />

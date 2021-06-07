@@ -9,8 +9,10 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import { Slider } from 'react-native-elements';
 
 import Video, { OnLoadData, OnProgressData } from 'react-native-video';
+import { getFloat } from '../../lib/helper';
 
 export interface VideoPlayerProps {
     src: string
@@ -71,47 +73,47 @@ export default class VideoPlayer extends Component<VideoPlayerProps, VideoPlayer
 
     getCurrentTimePercentage() {
         if (this.state.currentTime > 0) {
-            // @ts-ignore
-            return parseFloat(this.state.currentTime) / parseFloat(this.state.duration);
+            return getFloat(this.state.currentTime) / getFloat(this.state.duration);
         }
         return 0;
     };
+    
 
-    renderRateControl(rate: any) {
-        const isSelected = (this.state.rate === rate);
+    // renderRateControl(rate: any) {
+    //     const isSelected = (this.state.rate === rate);
 
-        return (
-            <TouchableOpacity onPress={() => { this.setState({ rate }) }}>
-                <Text style={[styles.controlOption, { fontWeight: isSelected ? 'bold' : 'normal' }]}>
-                    {rate}x
-          </Text>
-            </TouchableOpacity>
-        );
-    }
+    //     return (
+    //         <TouchableOpacity onPress={() => { this.setState({ rate }) }}>
+    //             <Text style={[styles.controlOption, { fontWeight: isSelected ? 'bold' : 'normal' }]}>
+    //                 {rate}x
+    //       </Text>
+    //         </TouchableOpacity>
+    //     );
+    // }
 
-    renderResizeModeControl(resizeMode: resizeMode) {
-        const isSelected = (this.state.resizeMode === resizeMode);
+    // renderResizeModeControl(resizeMode: resizeMode) {
+    //     const isSelected = (this.state.resizeMode === resizeMode);
 
-        return (
-            <TouchableOpacity onPress={() => { this.setState({ resizeMode }) }}>
-                <Text style={[styles.controlOption, { fontWeight: isSelected ? 'bold' : 'normal' }]}>
-                    {resizeMode}
-                </Text>
-            </TouchableOpacity>
-        )
-    }
+    //     return (
+    //         <TouchableOpacity onPress={() => { this.setState({ resizeMode }) }}>
+    //             <Text style={[styles.controlOption, { fontWeight: isSelected ? 'bold' : 'normal' }]}>
+    //                 {resizeMode}
+    //             </Text>
+    //         </TouchableOpacity>
+    //     )
+    // }
 
-    renderVolumeControl(volume: any) {
-        const isSelected = (this.state.volume === volume);
+    // renderVolumeControl(volume: any) {
+    //     const isSelected = (this.state.volume === volume);
 
-        return (
-            <TouchableOpacity onPress={() => { this.setState({ volume }) }}>
-                <Text style={[styles.controlOption, { fontWeight: isSelected ? 'bold' : 'normal' }]}>
-                    {volume * 100}%
-          </Text>
-            </TouchableOpacity>
-        )
-    }
+    //     return (
+    //         <TouchableOpacity onPress={() => { this.setState({ volume }) }}>
+    //             <Text style={[styles.controlOption, { fontWeight: isSelected ? 'bold' : 'normal' }]}>
+    //                 {volume * 100}%
+    //       </Text>
+    //         </TouchableOpacity>
+    //     )
+    // }
 
     render() {
         const flexCompleted = this.getCurrentTimePercentage() * 100;
@@ -119,7 +121,7 @@ export default class VideoPlayer extends Component<VideoPlayerProps, VideoPlayer
         console.log("src", this.props.src);
         return (
 
-            <View style={styles.container}>
+            <View style={[styles.container, { height: this.props.height }]}>
                 <TouchableOpacity
                     style={styles.fullScreen}
                     onPress={() => this.setState({ paused: !this.state.paused })}
@@ -130,8 +132,9 @@ export default class VideoPlayer extends Component<VideoPlayerProps, VideoPlayer
                         // source={{ uri: 'http://www.youtube.com/api/manifest/dash/id/bf5bb2419360daf1/source/youtube?as=fmp4_audio_clear,fmp4_sd_hd_clear&sparams=ip,ipbits,expire,source,id,as&ip=0.0.0.0&ipbits=0&expire=19000000000&signature=51AF5F39AB0CEC3E5497CD9C900EBFEAECCCB5C7.8506521BFC350652163895D4C26DEE124209AA9E&key=ik0', type: 'mpd' }}
                         source={{ uri: this.props.src }}
                         // source={{ uri: "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4" }}
-                        controls
+                        // controls
                         style={styles.fullScreen}
+                        controls={true}
                         rate={this.state.rate}
                         paused={this.state.paused}
                         volume={this.state.volume}
@@ -148,8 +151,19 @@ export default class VideoPlayer extends Component<VideoPlayerProps, VideoPlayer
 
                 </TouchableOpacity>
 
+                {/* <View style={{ flex: 1, alignItems: 'stretch', justifyContent: 'flex-end' }}>
+                    <Slider
+                        maximumValue={this.state.duration}
+                        step={0.1}
+                        value={getFloat(this.state.currentTime)}
+                        onValueChange={( currentTime ) => this.setState({ currentTime })}
+                        
+                    />
+                    <Text>Value: {this.state.currentTime}</Text>
+                </View> */}
+
                 <View style={styles.controls}>
-                    <View style={styles.generalControls}>
+                    {/* <View style={styles.generalControls}>
                         <View style={styles.rateControl}>
                             {this.renderRateControl(0.25)}
                             {this.renderRateControl(0.5)}
@@ -169,7 +183,7 @@ export default class VideoPlayer extends Component<VideoPlayerProps, VideoPlayer
                             {this.renderResizeModeControl('contain')}
                             {this.renderResizeModeControl('stretch')}
                         </View>
-                    </View>
+                    </View> */}
 
                     <View>
                         <View style={styles.progress}>
@@ -242,14 +256,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    controlOption: {
-        alignSelf: 'center',
-        fontSize: 11,
-        color: 'white',
-        paddingLeft: 2,
-        paddingRight: 2,
-        lineHeight: 12,
     },
     // trackingControls: {
 

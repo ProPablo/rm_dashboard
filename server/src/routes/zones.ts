@@ -3,7 +3,7 @@ import { BaseEntity, getConnection, getRepository, SelectQueryBuilder } from 'ty
 import { Artefact } from '../entity/Artefact';
 import { createSchema, editSchema, Zone } from '../entity/Zone';
 import { HTTPException } from '../Errors';
-import { createListQuery, IDLookup } from '../helperFunctions'
+import { createListQuery, IDLookup, idParams } from '../helperFunctions'
 const zoneRouter = Router();
 
 
@@ -23,6 +23,7 @@ zoneRouter.get('/app', async (req, res) => {
   const zones = await Zone.getRepository()
     .createQueryBuilder("z")
     .leftJoinAndSelect("z.Artefacts", "a")
+    .orderBy({ "a.priority": "DESC" })
     .getMany();
   // Non destructive map mutating list of zones
   zones.forEach(zone => zone.Artefacts = zone.Artefacts.map(x => x.id) as any);
@@ -99,11 +100,12 @@ zoneRouter.post('/:id/reorder', async (req, res) => {
 // })
 
 zoneRouter.delete('/:id', async (req, res) => {
-
+  let { id }: idParams = req.params;
+  id = Number.parseInt(id);
   await Artefact.createQueryBuilder()
     .update()
     .set({ priority: -1 })
-    .where("zoneId = :id")
+    .where("zoneId = :id", { id })
     .execute();
 
   res.json(await Zone.delete({ id: Number.parseInt(req.params.id) }));

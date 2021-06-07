@@ -9,7 +9,7 @@ import { baseURL, request } from "./lib/controllers";
 export interface ActionContextValue {
   reload: () => void,
   cacheImages?: null,
-  isLoading?: boolean
+  isLoading: boolean
 }
 // @ts-ignore
 const GlobalActionContext = createContext<ActionContextValue>();
@@ -37,6 +37,7 @@ ExhibitionsContext.displayName = "ExhibitionsContext";
 
 
 export const GlobalStore: React.FC = ({ children }) => {
+  // TODO: Possibly memoize into dictionary
   const [artefacts, setArtefacts] = useState<Artefact[]>([]);
   const [storeItems, setStoreItems] = useState<StoreItem[]>([]);
   const [exhibitions, setExhibitions] = useState<Exhibition[]>([]);
@@ -74,10 +75,12 @@ export const GlobalStore: React.FC = ({ children }) => {
         // TODO inform user of failure and retry in setTimeout
       }
       finally {
+        console.log("Done loading");
         setisLoading(false);
       }
-
-    }
+    
+    },
+    isLoading
   }), []);
 
   useEffect(() => {

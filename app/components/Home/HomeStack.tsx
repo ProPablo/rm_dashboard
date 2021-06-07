@@ -1,12 +1,12 @@
 import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from './HomeScreen';
-import TourScreen, { BeaconVideo } from "./TourScreen";
-import { ActionBarIcon } from '../../lib/styles';
+import TourScreen from "../Tour/TourScreen";
+import { HeaderIcon } from '../../lib/styles';
 
 export type HomeStackParams = {
-    HomeScreen: undefined;
-    TourScreen: undefined;
+    Tour: {screen: string},
+    HomeScreen: undefined,
 }
 
 const Stack = createStackNavigator<HomeStackParams>();
@@ -18,13 +18,10 @@ export const HomeStack: React.FC = () => {
                 headerTitle: ""
             }}>
             {/* TODO: make back button that navigates back to  */}
-            {/* @ts-ignore */}
             <Stack.Screen name="HomeScreen" component={HomeScreen}
                 options={{
-                    headerLeft: props => <ActionBarIcon />
+                    headerLeft: props => <HeaderIcon />
                 }} />
-            {/* @ts-ignore */}
-            <Stack.Screen name="TourScreen" component={BeaconVideo} />
         </Stack.Navigator>
     )
 }

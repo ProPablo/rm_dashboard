@@ -2,7 +2,7 @@ import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack';
 import ExhibitionDetailScreen from "./ExhibitionDetailsScreen";
 import ExhibitionScreen from './ExhibitionScreen';
-import { ActionBarIcon } from '../../lib/styles';
+import { HeaderIcon } from '../../lib/styles';
 
 export type ExhibitionStackParams = {
     ExhibitionScreen: undefined;
@@ -21,7 +21,7 @@ export const ExhibitionStack: React.FC = () => {
             {/* TODO: make back button that navigates back to  */}
             <Stack.Screen name="ExhibitionScreen" component={ExhibitionScreen}
                 options={{
-                    headerLeft: props => <ActionBarIcon/>
+                    headerLeft: props => <HeaderIcon/>
                 }} />
             <Stack.Screen name="ExhibitionDetailScreen" component={ExhibitionDetailScreen} />
         </Stack.Navigator>
