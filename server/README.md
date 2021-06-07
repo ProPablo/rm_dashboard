@@ -1,7 +1,16 @@
-# Awesome Project Build with TypeORM
+# Backend Server (Codebase 1)
+Uses TypeORM and JOI for entity management based database creation. 
 
-Steps to run this project:
+## Instructions
+* Start up docker db
+* `npm i`
+* `npm i -g nodemon`
+* `npm run dev`
 
-1. Run `npm i` command
-2. Setup database settings inside `ormconfig.json` file
-3. Run `npm start` command
+## Docker Instructions
+1. Make folder containing .yml and .env
+2. Delete Docker instance if exists (w/ sudo in Linux or just deleting it through Windows)
+3. cd to the aforementioned folder 
+4. Ensure that no instances of msql are taking up port 3306
+5. run command docker-compose up -d
+

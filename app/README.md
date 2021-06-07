@@ -1,4 +1,4 @@
-# Codebase2_GT
+# App (Codebase 2)
 Mobile Frontend Developed by QUT Capstone Project team Green Tigers.
 Developed in React Native, here are some common issues/ instructions on how to setup the Codebase.
 
