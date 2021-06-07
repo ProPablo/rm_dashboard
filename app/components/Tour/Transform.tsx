@@ -66,6 +66,8 @@ export default class Transform extends React.Component {
 
     componentDidMount() {
         this.baseScale.setValue(0.15);
+        this.lastScale = 0.15;
+        this.pinchScale.setValue(1);
         this.panOffset.setValue({y: -200, x: 0});
     }
 

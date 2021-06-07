@@ -5,7 +5,6 @@ Run server and client together for development and assign appropriate dotENV. De
 * Important note when deploying, the ssh key must have a trailing newline in it 
 * Ensure that `chmod +X -R public/` is run on the public folder so that nginx can serve the files without any issues
 * Also add the overall folder into /var/www/ to oblige with linux philosophy
-* To generate an APK for Android phones run, react-native run-android --variant=release when building the React Native application
 * When using Swagger authentication insert "Bearer <INSERT TOKEN\>" to ensure that all API testing functionality is usable 
 
 # Docker Instructions
