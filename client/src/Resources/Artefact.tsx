@@ -16,7 +16,7 @@ export const ArtefactCreate = (props: CreateProps) => (
       <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined}>
         <SelectInput optionText="name" />
       </ReferenceInput>
-      <ImageInput source="Media" label="Thumbnail" accept="image/*" maxSize={1000000}>
+      <ImageInput source="InputMedia" label="Thumbnail" accept="image/*" maxSize={1000000}>
         <ImageField source="src" title="title" />
       </ImageInput>
     </SimpleForm>

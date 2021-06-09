@@ -10,7 +10,7 @@ export const editSchema = Joi.object({
   createdAt: Joi.date().strip(),
   updatedAt: Joi.date().strip(),
   name: Joi.string().min(3).max(30),
-  thumbnail: Joi.binary(),
+  thumbnail: Joi.binary().allow(null),
   description: Joi.string().allow(null),
   coordX: Joi.number(),
   coordY: Joi.number(),
