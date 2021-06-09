@@ -43,7 +43,6 @@ const ExhibitionsScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   function filterData() {
-    console.log("Filteering data");
     const reg = RegExp(searchTerm, 'gi' );
     setfiltered(exhibitions?.filter((item)=> (item.name + item.organiser + item.description).match(reg)));
   }
@@ -59,7 +58,8 @@ const ExhibitionsScreen: React.FC<Props> = ({ navigation }) => {
         <View style={styles.searchInputs}>
           <TextInput
             style={styles.search}
-            placeholder={ "Search Exhibitions" }
+            placeholder={`Search ${exhibitions?.length} Exhibitions`}
+            placeholderTextColor={"#000000"}
             onChangeText={searchTerm => setsearchTerm(searchTerm)}
           />
         </View>
@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
   },
   search: {
       flex: 8,
+      color: "#000000",
       marginBottom: 20,
       borderColor: "#ffa616",
       borderBottomWidth: 3,

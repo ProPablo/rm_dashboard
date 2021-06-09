@@ -39,7 +39,6 @@ const ArtefactsScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   function filterData() {
-    console.log("Filteering data");
     const reg = RegExp(searchTerm, 'gi');
     setfiltered(artefacts?.filter((item) => (item.name || "" + item.description).match(reg)));
   }
@@ -55,6 +54,7 @@ const ArtefactsScreen: React.FC<Props> = ({ navigation }) => {
           <TextInput
             style={styles.search}
             placeholder={`Search ${artefacts?.length} Artefacts`}
+            placeholderTextColor={"#000000"}
             onChangeText={searchTerm => setsearchTerm(searchTerm)}
           />
         </View>
@@ -86,6 +86,7 @@ const styles = StyleSheet.create({
   },
   search: {
     flex: 8,
+    color: "#000000",
     marginBottom: 20,
     borderColor: "#ffa616",
     borderBottomWidth: 3,

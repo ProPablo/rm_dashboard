@@ -44,7 +44,6 @@ const StoreScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   function filterData() {
-    console.log("Filteering data");
     const reg = RegExp(searchTerm, 'gi' );
     setfiltered(storeItems?.filter((item)=> (item.name + item.description + item.cost).match(reg)));
   }
@@ -59,7 +58,9 @@ const StoreScreen: React.FC<Props> = ({ navigation }) => {
         <View style={styles.searchInputs}>
           <TextInput
             style={styles.search}
-            placeholder={ "Search Merchandise"}
+            placeholder={`Search ${storeItems?.length} Store Items`}
+            placeholderTextColor={"#000000"}
+            
             onChangeText={searchTerm => setsearchTerm(searchTerm)}
           />
         </View>
@@ -92,6 +93,7 @@ const styles = StyleSheet.create({
   },
   search: {
       flex: 8,
+      color: "#000000",
       marginBottom: 20,
       borderColor: "#ffa616",
       borderBottomWidth: 3,
