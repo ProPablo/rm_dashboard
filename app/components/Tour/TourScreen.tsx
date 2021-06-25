@@ -74,6 +74,7 @@ export const TourContent = ({ navigation }: TourContentProps) => {
                     artefactIndex++;
                 }
                 if (foundArtefact) {
+                    console.log(foundArtefact);
                     setArtefact(foundArtefact);
                 }
             }

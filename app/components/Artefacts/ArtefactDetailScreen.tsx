@@ -71,8 +71,6 @@ const ArtefactDetailScreen: React.FC<Props> = ({ route }) => {
     useEffect(() => {
         const artefact = artefacts?.find((item) => item.id === artefactId);
         if (artefact) {
-            console.log(imageDimens);
-            console.log("penile");
             Image.getSize(artefact?.thumbnail, (width, height) => {
                 const newWidth = Math.round(dimensions.width * 15 / 16);
                 setimageDimens({ width: newWidth, height: height * (newWidth / width) });

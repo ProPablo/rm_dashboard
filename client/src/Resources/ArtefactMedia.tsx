@@ -16,7 +16,6 @@ const VideoField = (filefield: FileFieldProps) => {
 }
 
 const conditionalMediaInput = (formData: any) => {
-  // console.log(formData);
   switch (formData.type) {
     case 0:
       return (
