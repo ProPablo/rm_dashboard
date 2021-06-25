@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Button, Create, CreateProps, Datagrid, DateField, DateInput, Edit, EditProps, Error, FormTab, List, ListControllerProps, ListProps, NumberField, ReferenceManyField, SimpleForm, TabbedForm, TextField, TextInput, useListContext, useNotify, useRefresh } from 'react-admin';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
 import '../App.css';
+import { useListStyles } from '../AppTheme';
 import { SERVER_URL } from '../constants';
 import { ResourceActions } from '../helper';
 
@@ -14,6 +15,7 @@ export const ZoneCreate = (props: CreateProps) => (
     </SimpleForm>
   </Create>
 )
+
 
 const reorder = (list: Array<any>, startIndex: number, endIndex: number) => {
   const result = Array.from(list);
@@ -37,7 +39,24 @@ export interface PriorityTableProps /*extends ListControllerProps */ {
 
 const DEBOUNCE_TIMER = 2000;
 
+export const ZoneBeaconsTable = () => {
+  const { ids } = useListContext();
+
+  if (ids.length == 0) {
+    return <div>No beacons found</div>;
+  }
+
+  return (
+    <Datagrid rowClick="edit">
+      <TextField source="name" />
+      <TextField label="MAC Address" source="macAddress" />
+    </Datagrid>
+  )
+}
+
 export const ZoneArtefactsTable = (props: PriorityTableProps) => {
+  const classes = useListStyles();
+
   const { ids, data } = useListContext();
   // const { ids, data } = props;
   const refresh = useRefresh();
@@ -121,6 +140,10 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
     );
     setState({ ...state, idList });
   }
+  if (ids.length == 0) {
+    return <div>No artefacts found</div>;
+  }
+
 
   return (
     <div>
@@ -128,16 +151,17 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
       {/* <Error error="bruh" /> */}
       {/* <div style={{ fontSize: "20px" }}>{state.tableEnabled ? "Enabled" : "Not Enabled"}</div> */}
       {/* Table */}
+
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="list">
           {provided => (
-            <Table /*contentEditable={state.tableEnabled} */
+            <Table stickyHeader/*contentEditable={state.tableEnabled} */
               ref={provided.innerRef} {...provided.droppableProps}>
-              <TableHead>
-                <TableRow>
-                  <TableCell >Id</TableCell>
-                  <TableCell >Name</TableCell>
-                  <TableCell >Media</TableCell>
+              <TableHead >
+                <TableRow >
+                  <TableCell>Id</TableCell>
+                  <TableCell className={classes.tableHeadName} padding="checkbox">Name</TableCell>
+                  <TableCell className={classes.tableHeadMedia}>Media</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -151,8 +175,8 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}>
                           <TableCell><NumberField record={data[id]} source="id" /></TableCell>
-                          <TableCell> <TextField record={data[id]} source="name" /> </TableCell>
-                          <TableCell>  <TextField record={data[id]} source="media.src" /> </TableCell>
+                          <TableCell className={classes.tableHeadName} padding="checkbox"> <TextField record={data[id]} source="name" /> </TableCell>
+                          <TableCell className={classes.tableHeadMedia}>  <TextField record={data[id]} source="media.src" /> </TableCell>
                         </TableRow>
                       )}
                     </Draggable>
@@ -165,13 +189,12 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
           )}
         </Droppable>
       </DragDropContext >
-      <Button label="Confirm Sort" onClick={handleSortClick} disabled={loading} />
+      <Button label="Confirm Sort" onClick={handleSortClick} disabled={loading} className={classes.zoneButton}/>
     </div>
   )
 }
 
 export const ZoneEdit = (props: EditProps) => {
-  const refresh = useRefresh();
   return (
     <Edit actions={<ResourceActions />} undoable={false} {...props}>
 
@@ -182,23 +205,16 @@ export const ZoneEdit = (props: EditProps) => {
           <TextInput source="description" />
           <DateInput disabled source="createdAt" />
           <DateInput disabled source="updatedAt" />
-
-
         </FormTab>
-        <FormTab label="Relations">
 
+        <FormTab label="Relations">
+          {/* {formData.src && !!!formData.InputMedia && <img src={`${MEDIA_URL}/${formData.src}`} />} */}
           <ReferenceManyField label="ARTEFACTS" reference="artefacts" target="zoneId" source="id" sort={{ field: "priority", order: "DESC" }}>
-            {/* <Datagrid rowClick="edit">
-            <TextField source="Name" />
-            <TextField source="Description" />
-          </Datagrid> */}
             <ZoneArtefactsTable parentId={props.id} parentPath={props.basePath} />
           </ReferenceManyField>
           <ReferenceManyField label="BEACONS" reference="beacons" target="zoneId">
-            <Datagrid rowClick="edit">
-              <TextField source="name" />
-              <TextField label="MAC Address" source="macAddress" />
-            </Datagrid>
+            
+            <ZoneBeaconsTable/>
           </ReferenceManyField>
         </FormTab>
 
