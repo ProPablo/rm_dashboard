@@ -17,8 +17,12 @@ export const Map = (props: MapProps) => {
   const bind = useGesture(
     {
       onDrag: ({ down, movement: [mx, my] }) => {
-        setOffset({ xOffset: down ? mx : 0, yOffset: down ? my : 0 });
+        if (down) setOffset({ xOffset: down ? mx : 0, yOffset: down ? my : 0 });
       },
+      // onDragEnd: ({ down, movement: [mx, my] }) => {
+      //   setOffset({ xOffset: down ? mx : 0, yOffset: down ? my : 0 });
+      // }, 
+      
       onWheel: ({ wheeling, movement: [_, y] }) => {
         console.log(y);
         // Negative y = bigger
