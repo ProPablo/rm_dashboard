@@ -45,6 +45,7 @@ const useStyles = makeStyles(theme => ({
     position: "absolute"
   },
   mapImage: {
+    left: 0,
     width: "100%",
     height: "auto",
   }
@@ -87,8 +88,8 @@ export const Map = (props: MapProps) => {
   };
   const movableStyle = {
     transform: `scale(${zoom}) translate(-50%, -50%)`,
-    top: `${(current.y + offset.y)/zoom}px`,
-    left: `${(current.x + offset.x)/zoom}px`
+    top: `${(current.y + offset.y)}px`,
+    left: `${(current.x + offset.x)}px`
   }
 
   return (
@@ -96,13 +97,14 @@ export const Map = (props: MapProps) => {
       <Title title="Map" />
       <div
         className={clsx(styles.mapMain, styles.movableHolder)}
+        {...bind()}
+        style={style}
       >
         <div className={clsx(styles.circle, styles.movable)}
-          style={movableStyle}
+          // style={movableStyle}
         />
         <img
-          style={style}
-          {...bind()}
+          // style={style}
           src={floorPlan}
           draggable="false"
           className={clsx(styles.mapImage, styles.movable)} >
