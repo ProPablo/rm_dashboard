@@ -55,17 +55,17 @@ export const GlobalStore: React.FC = ({ children }) => {
       setisLoading(true);
       try {
         console.log("Getting payloads");
+        
         const artefactResults = await request<Artefact[]>(`${baseURL}/artefacts`);
         const storeItemResults = await request<StoreItem[]>(`${baseURL}/storeItems`);
         const exhibitionResults = await request<Exhibition[]>(`${baseURL}/exhibitions`);
         const zoneResults = await request<ZoneConsumable[]>(`${baseURL}/zones/app`);
         const beaconResults = await request<Beacon[]>(`${baseURL}/beacons`);
-
         // if production / logger
         // console.log(artefactResults);
         // console.log(storeItemResults);
         // console.log(exhibitionResults);
-        // console.log(beaconResults);
+        console.log(beaconResults);
         // console.log(zoneResults);
         setArtefacts(artefactResults);
         setStoreItems(storeItemResults);
@@ -91,7 +91,7 @@ export const GlobalStore: React.FC = ({ children }) => {
       delete val.thumbnail;
       acc[val.id] = val;
       return acc;
-    }, {})
+    }, {}),
   }), [artefacts, zones])
 
   useEffect(() => {

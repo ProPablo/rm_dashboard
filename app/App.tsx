@@ -93,11 +93,11 @@ const App = () => {
 
   return (
     <NavigationContainer theme={NavigationTheme}>
-      <Tour>
-        <GlobalStore>
+      <GlobalStore>
+        <Tour>
           <Tabs />
-        </GlobalStore>
-      </Tour>
+        </Tour>
+      </GlobalStore>
     </NavigationContainer>
   );
 };

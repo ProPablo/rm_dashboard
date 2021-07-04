@@ -2,7 +2,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
     Button,
-    Image, StyleSheet, View
+    Image, StyleSheet, ToastAndroid, View
 } from 'react-native';
 import { Text } from 'react-native-elements';
 import BottomSheet from 'reanimated-bottom-sheet';
@@ -28,19 +28,27 @@ interface TourScreenProps {
 
 interface TourContentProps {
     navigation: NavigationProp,
+    zone: ZoneConsumable
 }
 
-export const TourContent = ({ navigation }: TourContentProps) => {
+export const TourContent = ({ navigation, zone }: TourContentProps) => {
 
     const tourContext = useContext(TourContext);
 
     const zones = useContext(ZonesContext);
-    const beacons = useContext(BeaconsContext);
+
     const artefacts = useContext(ArtefactsContext);
     const memo = useContext(MemoizedContext);
     const globalActionContext = useContext(GlobalActionContext);
     const [currentArtefact, setArtefact] = useState<Artefact | undefined>(undefined);
     const [currentZone, setZone] = useState<ZoneConsumable | undefined>(undefined);
+    const beacons = useContext(BeaconsContext);
+    const [hasPlayed, setHasPlayed] = useState(false);
+    
+    useEffect(()=> {
+        console.log("zone changed");
+        setHasPlayed(false);
+    }, [zone]);
 
     const [paused, setPaused] = useState(true);
 
@@ -72,8 +80,10 @@ export const TourContent = ({ navigation }: TourContentProps) => {
     }
 
     useEffect(() => {
+        ToastAndroid.show("Bruh", ToastAndroid.SHORT);
 
-        const { beaconMAC, isBLEnabled } = tourContext;
+        const { beaconMAC, isBLEnabled, beaconList } = tourContext;
+        console.log(beaconList);
         const { isLoading } = globalActionContext;
         if (!isBLEnabled || !beaconMAC || isLoading) return;
         // console.log(beaconMAC);
@@ -81,6 +91,7 @@ export const TourContent = ({ navigation }: TourContentProps) => {
 
         if (beacon) {
             console.log("beacon", beacon);
+            // handle zone on parent
             const newZone = zones.find((z) => z.id === beacon.zoneId)
 
             if (newZone && newZone.id != currentZone?.id) {
@@ -91,7 +102,6 @@ export const TourContent = ({ navigation }: TourContentProps) => {
                     console.log("foundArtefact");
                     if (currentArtefact) {
                         // display notification
-
                     }
                     else {
                         setArtefact(foundArtefact);
@@ -113,7 +123,7 @@ export const TourContent = ({ navigation }: TourContentProps) => {
     }
     function handleVideoEnd() {
         console.log("videoEnd");
-        if (currentZone) findArtefact(currentZone);
+        // if (currentZone) findArtefact(currentZone);
     }
     return (
         <View style={styles.videoBottomSheetStyle}>
@@ -149,6 +159,9 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
     const handlePopUp = () => {
         // @ts-ignore
         sheetRef.current?.snapTo(0);
+    }
+    const swappedZones = () => {
+        
     }
 
     const sheetRef = useRef(null);
