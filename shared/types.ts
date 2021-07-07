@@ -78,9 +78,12 @@ export interface Exhibition {
 
 export type artefactLookup = Record<number, Artefact>
 
-// export type beaconLookup = Record<string, Beacon>
+export type zonesLookup = Record<number, ZoneConsumable>
+
+export type beaconLookup = Record<string, Beacon>
 
 export interface Memo {
   artefacts: artefactLookup,
+  zones: zonesLookup
   // beacons: beaconLookup
 }

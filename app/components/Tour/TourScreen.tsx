@@ -19,6 +19,7 @@ import VideoPlayer from 'react-native-video-controls';
 import { Artefact, ZoneConsumable, Beacon, ArtefactMediaSmall } from "@shared/types";
 import { MEDIA_URL } from '../../lib/controllers';
 import { globalStyle } from '../../lib/styles';
+import { useMemo } from 'react';
 type NavigationProp = StackNavigationProp<TourStackParams>;
 
 
@@ -28,24 +29,18 @@ interface TourScreenProps {
 
 interface TourContentProps {
     navigation: NavigationProp,
-    zone: ZoneConsumable
+    zone?: ZoneConsumable
 }
 
 export const TourContent = ({ navigation, zone }: TourContentProps) => {
-
-    const tourContext = useContext(TourContext);
-
-    const zones = useContext(ZonesContext);
-
-    const artefacts = useContext(ArtefactsContext);
     const memo = useContext(MemoizedContext);
+
     const globalActionContext = useContext(GlobalActionContext);
-    const [currentArtefact, setArtefact] = useState<Artefact | undefined>(undefined);
-    const [currentZone, setZone] = useState<ZoneConsumable | undefined>(undefined);
+    // const [currentArtefact, setArtefact] = useState<Artefact | undefined>(undefined);
     const beacons = useContext(BeaconsContext);
     const [hasPlayed, setHasPlayed] = useState(false);
-    
-    useEffect(()=> {
+
+    useEffect(() => {
         console.log("zone changed");
         setHasPlayed(false);
     }, [zone]);
@@ -62,10 +57,10 @@ export const TourContent = ({ navigation, zone }: TourContentProps) => {
         console.log("bruh play")
     }
 
-    function findArtefact(zone: ZoneConsumable): Artefact | undefined {
+    const currentArtefact: Artefact | undefined = useMemo(()=> {
         let artefactIndex = 0;
         let foundArtefact: Artefact | undefined;
-        // if (!zone) return;
+        if (!zone) return;
         while (artefactIndex < zone.Artefacts.length) {
             const artefactId = zone.Artefacts[artefactIndex];
             // const artefact = artefacts.find((a) => a.id === artefactId);
@@ -77,40 +72,35 @@ export const TourContent = ({ navigation, zone }: TourContentProps) => {
             artefactIndex++;
         }
         return foundArtefact;
-    }
+    },[memo])
 
-    useEffect(() => {
-        ToastAndroid.show("Bruh", ToastAndroid.SHORT);
+    // useEffect(() => {
+    //     const { isLoading } = globalActionContext;
+    //     if (!isBLEnabled || !beaconMAC || isLoading) return;
+    //     // console.log(beaconMAC);
+    //     const beacon = beacons.find((b) => b.macAddress === beaconMAC);
 
-        const { beaconMAC, isBLEnabled, beaconList } = tourContext;
-        console.log(beaconList);
-        const { isLoading } = globalActionContext;
-        if (!isBLEnabled || !beaconMAC || isLoading) return;
-        // console.log(beaconMAC);
-        const beacon = beacons.find((b) => b.macAddress === beaconMAC);
+    //     if (beacon) {
+    //         console.log("beacon", beacon);
+    //         // handle zone on parent
 
-        if (beacon) {
-            console.log("beacon", beacon);
-            // handle zone on parent
-            const newZone = zones.find((z) => z.id === beacon.zoneId)
 
-            if (newZone && newZone.id != currentZone?.id) {
-                setZone(newZone);
-                const foundArtefact = findArtefact(newZone);
-                console.log(memo.artefacts)
-                if (foundArtefact) {
-                    console.log("foundArtefact");
-                    if (currentArtefact) {
-                        // display notification
-                    }
-                    else {
-                        setArtefact(foundArtefact);
-                    }
+    //         if (zone && zone.id != currentZone?.id) {
+    //             const foundArtefact = findArtefact(newZone);
+    //             console.log(memo.artefacts)
+    //             if (foundArtefact) {
+    //                 console.log("foundArtefact");
+    //                 if (currentArtefact) {
+    //                     // display notification
+    //                 }
+    //                 else {
+    //                     setArtefact(foundArtefact);
+    //                 }
 
-                }
-            }
-        }
-    }, [tourContext, zones, beacons, artefacts]);
+    //             }
+    //         }
+    //     }
+    // }, [tourContext, zones, beacons, artefacts]);
 
     function tourActionOnPress() {
         if (!currentArtefact) return;
@@ -127,7 +117,7 @@ export const TourContent = ({ navigation, zone }: TourContentProps) => {
     }
     return (
         <View style={styles.videoBottomSheetStyle}>
-            <Text style={styles.textName}> {currentZone?.name} </Text>
+            
             {currentArtefact &&
                 <View style={styles.video}>
                     <VideoPlayer
@@ -144,15 +134,26 @@ export const TourContent = ({ navigation, zone }: TourContentProps) => {
                     <Button onPress={tourActionOnPress} title="Go to Artefact" color="#7A0600" />
                 </View>
             }
-            <Text style={styles.textDescr}> {currentZone?.description} </Text>
+            
         </View>
     );
 }
 
 const TourScreen = (props: { navigation: NavigationProp }) => {
+    const tourContext = useContext(TourContext);
+    const memo = useContext(MemoizedContext);
+    const currentZone = useMemo(() => {
+        const { zones } = memo;
+        const { beaconList } = tourContext;
+        if (beaconList.length) {
+            const beacon = beaconList[0];
+            return zones[beacon.zoneId]
+        }
+
+    }, [memo, tourContext])
     const renderContent = () => (
         <View style={styles.bottomSheetStyle}>
-            <TourContent {...props} />
+            <TourContent zone={currentZone} {...props} />
         </View>
     )
 
@@ -161,12 +162,14 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
         sheetRef.current?.snapTo(0);
     }
     const swappedZones = () => {
-        
+
     }
 
     const sheetRef = useRef(null);
     return (
         <View style={styles.containerStyle}>
+            <Text style={styles.textName}> {currentZone ? currentZone.name : "No Zone Found/ Entered"} </Text>
+            <Text style={styles.textDescr}> {currentZone?.description} </Text>
             <BottomSheet
                 ref={sheetRef}
                 snapPoints={[550, 300, 0]}

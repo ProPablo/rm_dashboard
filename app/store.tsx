@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { Artefact, ZoneConsumable, Beacon, ArtefactMediaSmall, StoreItem, Exhibition, Memo, artefactLookup } from "@shared/types";
+import { Artefact, ZoneConsumable, Beacon, ArtefactMediaSmall, StoreItem, Exhibition, Memo, artefactLookup, zonesLookup } from "@shared/types";
 import { baseURL, request } from "./lib/controllers";
 // export interface artefactsContextValue {
 //   artefacts: IArtefact[];
@@ -55,7 +55,7 @@ export const GlobalStore: React.FC = ({ children }) => {
       setisLoading(true);
       try {
         console.log("Getting payloads");
-        
+
         const artefactResults = await request<Artefact[]>(`${baseURL}/artefacts`);
         const storeItemResults = await request<StoreItem[]>(`${baseURL}/storeItems`);
         const exhibitionResults = await request<Exhibition[]>(`${baseURL}/exhibitions`);
@@ -92,6 +92,11 @@ export const GlobalStore: React.FC = ({ children }) => {
       acc[val.id] = val;
       return acc;
     }, {}),
+    zones: zones.reduce((acc: zonesLookup, val) => {
+      acc[val.id] = val;
+      return acc
+    }, {}),
+    
   }), [artefacts, zones])
 
   useEffect(() => {

@@ -78,10 +78,7 @@ function Tabs() {
 }
 
 
-
-
 const App = () => {
-
 
   const isDarkMode = useColorScheme() === 'dark';
 
