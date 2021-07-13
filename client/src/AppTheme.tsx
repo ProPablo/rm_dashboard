@@ -21,10 +21,8 @@ export const useAppBarStyles = makeStyles({
         textOverflow: 'ellipsis',
         overflow: 'hidden',
         backgroundImage: 'url(https://www.redlandmuseum.org.au/wp-content/uploads/2012/10/redland-museum-logo-wide.png) , linear-gradient(90deg, rgba(249,2,2,1) 0%, rgba(121,9,1,1) 0%, rgba(229,208,173,1) 84%)',
-        //backgroundImage: 'url(https://www.redlandmuseum.org.au/wp-content/uploads/2012/10/redland-museum-logo-wide.png)',
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'min(auto 50vh)',
-        //backgroundSize: 'auto',
         backgroundPosition: '75% 75%',
         color: 'Black',
         textAlign: 'left',
@@ -34,9 +32,7 @@ export const useAppBarStyles = makeStyles({
         WebkitTextStrokeColor: '#f4bd42'
     },
     tabTitle: {
-        backgroundColor: '#92202b',
-        //backgroundImage: 'radial-gradient(circle, rgba(122,6,0,1) 0%, rgba(243,225,199,1) 11%, rgba(243,225,199,1) 100%, rgba(122,6,0,1) 100%);',
-        backgroundPosition: 'right',
+        backgroundColor: '#92202b',backgroundPosition: 'right',
         color: 'White',
         paddingTop: '10px',
         paddingBottom: '10px',
@@ -54,6 +50,11 @@ export const useListStyles = makeStyles({
     content: {
         backgroundColor: '#F2F3F8',
     },
+    thumbnail: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
+    },
     headerCell: {
         root: {
             backgroundColor: '#F2F3F8'
@@ -65,8 +66,32 @@ export const useListStyles = makeStyles({
         width: '6vh'
     },
     editImage: {
-        height: '30vh',
         width: '30vh'
+    },
+    mediaImage: {
+        width: '40vh'
+    },
+    button: {
+        backgroundColor: '#A20C02',
+        color: '#FFFFFF',
+        '&:hover': {
+            background: '#710801'
+        },
+        marginBottom: "20px"
+    },
+    zoneButton: {
+        backgroundColor: '#A20C02',
+        color: '#FFFFFF',
+        '&:hover': {
+            background: '#710801'
+        },
+        marginTop: "20px"
+    },
+    tableHeadName: {
+        paddingRight: "2vw"
+    },
+    tableHeadMedia: {
+        paddingRight: "2vw"
     }
 });
 
@@ -195,6 +220,20 @@ export const redlandTheme: any = ({
                 alignItems: "center",
                 justifyContent: "center",
             }
+        },
+
+        RaImageInput: {
+            removeButton: {
+                opacity: "100%",
+                paddingLeft: "2%"
+            }
+        },
+
+        MuiIconButton: {
+            root: {
+                padding: "5px"
+            }
         }
+
     },
 });
