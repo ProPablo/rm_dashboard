@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import React, { createContext, Dispatch, SetStateAction, useContext, useEffect, useMemo, useState } from "react";
 import { Artefact, ZoneConsumable, Beacon, ArtefactMediaSmall, StoreItem, Exhibition, Memo, artefactLookup, zonesLookup } from "@shared/types";
 import { baseURL, request } from "./lib/controllers";
 // export interface artefactsContextValue {
@@ -9,7 +9,9 @@ import { baseURL, request } from "./lib/controllers";
 export interface ActionContextValue {
   reload: () => void,
   cacheImages?: null,
-  isLoading: boolean
+  isLoading: boolean,
+  isBLEnabled: boolean,
+  setBLEnabled?: Dispatch<SetStateAction<boolean>>
 }
 // @ts-ignore
 const GlobalActionContext = createContext<ActionContextValue>();
@@ -46,7 +48,7 @@ export const GlobalStore: React.FC = ({ children }) => {
   const [exhibitions, setExhibitions] = useState<Exhibition[]>([]);
   const [zones, setZones] = useState<ZoneConsumable[]>([]);
   const [beacons, setBeacons] = useState<Beacon[]>([]);
-
+  const [isBLEnabled, setBLEnabled] = useState(false);
   const [isLoading, setisLoading] = useState(false);
 
   // console.log("rerender store");
@@ -83,7 +85,9 @@ export const GlobalStore: React.FC = ({ children }) => {
       }
 
     },
-    isLoading
+    isLoading,
+    isBLEnabled,
+    setBLEnabled
   }), []);
 
   const memoValue: Memo = useMemo(() => ({
