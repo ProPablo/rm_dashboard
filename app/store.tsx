@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { Artefact, ZoneConsumable, Beacon, ArtefactMediaSmall, StoreItem, Exhibition } from "@shared/types";
+import { Artefact, ZoneConsumable, Beacon, ArtefactMediaSmall, StoreItem, Exhibition, Memo, artefactLookup, zonesLookup } from "@shared/types";
 import { baseURL, request } from "./lib/controllers";
 // export interface artefactsContextValue {
 //   artefacts: IArtefact[];
@@ -35,6 +35,9 @@ StoreItemsContext.displayName = "StoreItemsContext";
 const ExhibitionsContext = createContext<Exhibition[]>();
 ExhibitionsContext.displayName = "ExhibitionsContext";
 
+// @ts-ignore
+const MemoizedContext = createContext<Memo>();
+MemoizedContext.displayName = "ExhibitionsContext";
 
 export const GlobalStore: React.FC = ({ children }) => {
   // TODO: Possibly memoize into dictionary
@@ -52,17 +55,17 @@ export const GlobalStore: React.FC = ({ children }) => {
       setisLoading(true);
       try {
         console.log("Getting payloads");
+
         const artefactResults = await request<Artefact[]>(`${baseURL}/artefacts`);
         const storeItemResults = await request<StoreItem[]>(`${baseURL}/storeItems`);
         const exhibitionResults = await request<Exhibition[]>(`${baseURL}/exhibitions`);
         const zoneResults = await request<ZoneConsumable[]>(`${baseURL}/zones/app`);
         const beaconResults = await request<Beacon[]>(`${baseURL}/beacons`);
-
         // if production / logger
         // console.log(artefactResults);
         // console.log(storeItemResults);
         // console.log(exhibitionResults);
-        // console.log(beaconResults);
+        console.log(beaconResults);
         // console.log(zoneResults);
         setArtefacts(artefactResults);
         setStoreItems(storeItemResults);
@@ -78,10 +81,23 @@ export const GlobalStore: React.FC = ({ children }) => {
         console.log("Done loading");
         setisLoading(false);
       }
-    
+
     },
     isLoading
   }), []);
+
+  const memoValue: Memo = useMemo(() => ({
+    artefacts: artefacts.reduce((acc: artefactLookup, val) => {
+      delete val.thumbnail;
+      acc[val.id] = val;
+      return acc;
+    }, {}),
+    zones: zones.reduce((acc: zonesLookup, val) => {
+      acc[val.id] = val;
+      return acc
+    }, {}),
+    
+  }), [artefacts, zones])
 
   useEffect(() => {
     globalValue.reload();
@@ -89,20 +105,22 @@ export const GlobalStore: React.FC = ({ children }) => {
 
   return (
     <GlobalActionContext.Provider value={globalValue}>
-      <ArtefactsContext.Provider value={artefacts}>
-        <ZonesContext.Provider value={zones}>
-          <BeaconsContext.Provider value={beacons}>
-            <StoreItemsContext.Provider value={storeItems}>
-              <ExhibitionsContext.Provider value={exhibitions}>
-                {children}
-              </ExhibitionsContext.Provider>
-            </StoreItemsContext.Provider>
-          </BeaconsContext.Provider>
-        </ZonesContext.Provider>
-      </ArtefactsContext.Provider>
+      <MemoizedContext.Provider value={memoValue}>
+        <ArtefactsContext.Provider value={artefacts}>
+          <ZonesContext.Provider value={zones}>
+            <BeaconsContext.Provider value={beacons}>
+              <StoreItemsContext.Provider value={storeItems}>
+                <ExhibitionsContext.Provider value={exhibitions}>
+                  {children}
+                </ExhibitionsContext.Provider>
+              </StoreItemsContext.Provider>
+            </BeaconsContext.Provider>
+          </ZonesContext.Provider>
+        </ArtefactsContext.Provider>
+      </MemoizedContext.Provider>
     </GlobalActionContext.Provider>
   )
 }
 
 
-export { ArtefactsContext, ZonesContext, BeaconsContext, StoreItemsContext, ExhibitionsContext, GlobalActionContext };
+export { ArtefactsContext, ZonesContext, BeaconsContext, StoreItemsContext, ExhibitionsContext, GlobalActionContext, MemoizedContext };

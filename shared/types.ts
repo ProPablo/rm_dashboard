@@ -3,7 +3,7 @@ export interface Artefact {
   name: string,
   description: string,
   acquisitionDate: string,
-  thumbnail: string,
+  thumbnail?: string,
   coordX: number,
   coordY: number,
   zoneId: number,
@@ -41,6 +41,7 @@ export interface Beacon {
   coordX: number,
   coordY: number,
   zoneId: number,
+  rssi?: number
 }
 
 // export interface inputBeacon {
@@ -59,7 +60,7 @@ export interface StoreItem {
   description: string,
   cost: number, 
   inStock: boolean,
-  thumbnail: string,
+  thumbnail?: string,
 }
 
 export interface Exhibition {
@@ -72,8 +73,17 @@ export interface Exhibition {
   priceChild: number,
   startDate: string, 
   finishDate: string,
-  thumbnail: string
+  thumbnail?: string
 }
 
+export type artefactLookup = Record<number, Artefact>
 
+export type zonesLookup = Record<number, ZoneConsumable>
 
+export type beaconLookup = Record<string, Beacon>
+
+export interface Memo {
+  artefacts: artefactLookup,
+  zones: zonesLookup
+  // beacons: beaconLookup
+}

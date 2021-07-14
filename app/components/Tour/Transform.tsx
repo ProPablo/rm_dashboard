@@ -89,7 +89,7 @@ export default class Transform extends React.Component {
     render() {
 
         return (
-            <View>
+            <View style={styles.transformView}>
                 <PanGestureHandler onGestureEvent={this.onPanGestureEvent} onHandlerStateChange={this.onPanHandlerStateChange} ref={this.panRef} maxPointers={2} avgTouches>
                     <Animated.View>
                         <PinchGestureHandler
@@ -123,5 +123,10 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         height: 150,
         width: 150,
-    }
+    },
+    transformView: {
+        flex:3,
+        justifyContent: "center",
+        backgroundColor:"#00FF00"
+    },
 })

@@ -1,4 +1,6 @@
-import React, { createContext, useEffect, useRef, useState } from 'react';
+import { Beacon } from '@shared/types';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { useCallback } from 'react';
 import {
   PermissionsAndroid,
   SafeAreaView,
@@ -12,17 +14,21 @@ import {
   ToastAndroid
 } from 'react-native';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
-import { BleManager } from 'react-native-ble-plx';
+import { BleManager, Device } from 'react-native-ble-plx';
+import { BeaconsContext } from '../../store';
 // const allPerms = [PermissionsAndroid.PERMISSIONS.BLUETOOTH, PermissionsAndroid.PERMISSIONS.BLUETOOTH_ADMIN, PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION];
 
 
 export interface TourContextValue {
+  beaconList: Beacon[],
   beaconMAC: string | null,
   isBLEnabled: boolean,
 }
 
-const TourContext = createContext<TourContextValue>({ beaconMAC: null, isBLEnabled: false });
-TourContext.displayName = "BeaconContext";
+
+// const TourContext = createContext<TourContextValue>({ beaconList: [], beaconMAC: null, isBLEnabled: false });
+const TourContext = createContext<Beacon[]>([]);
+TourContext.displayName = "TourContext";
 
 
 const requestLocationPermission = async () => {
@@ -75,7 +81,40 @@ export const isLocationEnabled = () => {
 const Tour: React.FC = ({ children }) => {
   const manager = useRef<BleManager | null>(null);
   // TODO handle islocation
-  const [tourState, setTour] = useState<TourContextValue>({ beaconMAC: null, isBLEnabled: true });
+  // const [tourState, setTour] = useState<TourContextValue>({ beaconList: [], beaconMAC: null, isBLEnabled: true });
+  const [beaconsList, setBeacons] = useState<Beacon[]>([]);
+  const [foundBeacon, setBeacon] = useState<Device | null>(null);
+  const beacons = useContext(BeaconsContext);
+
+  useEffect(() => {
+    if (!foundBeacon) return;
+
+    const beacon = beacons.find((b) => b.macAddress === foundBeacon.id);
+    if (beacon) {
+      // null assertion says object will not be null
+      beacon.rssi = foundBeacon.rssi!;
+      setBeacons((oldList) => {
+        const newList = [...oldList];
+        
+        const existing = oldList.findIndex(b => b.id === beacon.id)
+        console.log({ existing, newList, oldList })
+        if (existing != -1) {
+          newList.splice(existing, 1, beacon);
+        }
+        else {
+          newList.push(beacon);
+        }
+        
+        newList.sort((a, b) => a.rssi! - b.rssi!);
+        console.log(newList, { foundBeacon })
+        return newList;
+      })
+
+      // setTour({ ...tourState, beaconMAC: foundBeacon.id});
+    }
+
+  }, [foundBeacon]);
+
   // const scanAndConnect = () => {
   //   manager.current?.startDeviceScan(null, null, (error, device) => {
   //     console.log("inside", { device });
@@ -84,6 +123,13 @@ const Tour: React.FC = ({ children }) => {
   //     }
   //   });
   // }
+  const onBeaconDetect = (device: Device) => {
+    console.log("new device", beacons);
+
+
+  }
+
+  const memoBeacon = useCallback(onBeaconDetect, [beacons]);
 
   useEffect(() => {
     console.log("Starting beacon functionality");
@@ -91,11 +137,15 @@ const Tour: React.FC = ({ children }) => {
       .then(() => {
         manager.current = new BleManager();
         manager.current?.startDeviceScan(null, null, (error, device) => {
+          if (error) {
+            console.log(error);
+            return;
+          }
           // TODO display error
           // console.log({ device, error });
-          if (device) {
-            setTour({ ...tourState, beaconMAC: device.id });
-          }
+          if (!device) return;
+          setBeacon(device);
+          // setTour({ ...tourState, beaconMAC: device.id });
         });
 
         // const subscription = manager.current.onStateChange((state => {
@@ -112,10 +162,10 @@ const Tour: React.FC = ({ children }) => {
       // manager.current?.destroy();
     }
   }, [])
-  
+
 
   return (
-    <TourContext.Provider value={tourState}>
+    <TourContext.Provider value={beaconsList}>
       {children}
     </TourContext.Provider>
   )
