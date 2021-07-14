@@ -25,8 +25,10 @@ export interface TourContextValue {
   isBLEnabled: boolean,
 }
 
-const TourContext = createContext<TourContextValue>({ beaconList: [], beaconMAC: null, isBLEnabled: false });
-TourContext.displayName = "BeaconContext";
+
+// const TourContext = createContext<TourContextValue>({ beaconList: [], beaconMAC: null, isBLEnabled: false });
+const TourContext = createContext<Beacon[]>([]);
+TourContext.displayName = "TourContext";
 
 
 const requestLocationPermission = async () => {
@@ -79,7 +81,7 @@ export const isLocationEnabled = () => {
 const Tour: React.FC = ({ children }) => {
   const manager = useRef<BleManager | null>(null);
   // TODO handle islocation
-  const [tourState, setTour] = useState<TourContextValue>({ beaconList: [], beaconMAC: null, isBLEnabled: true });
+  // const [tourState, setTour] = useState<TourContextValue>({ beaconList: [], beaconMAC: null, isBLEnabled: true });
   const [beaconsList, setBeacons] = useState<Beacon[]>([]);
   const [foundBeacon, setBeacon] = useState<Device | null>(null);
   const beacons = useContext(BeaconsContext);
@@ -108,7 +110,7 @@ const Tour: React.FC = ({ children }) => {
         return newList;
       })
 
-      setTour({ ...tourState, beaconMAC: foundBeacon.id});
+      // setTour({ ...tourState, beaconMAC: foundBeacon.id});
     }
 
   }, [foundBeacon]);
@@ -143,7 +145,7 @@ const Tour: React.FC = ({ children }) => {
           // console.log({ device, error });
           if (!device) return;
           setBeacon(device);
-          setTour({ ...tourState, beaconMAC: device.id });
+          // setTour({ ...tourState, beaconMAC: device.id });
         });
 
         // const subscription = manager.current.onStateChange((state => {
@@ -163,7 +165,7 @@ const Tour: React.FC = ({ children }) => {
 
 
   return (
-    <TourContext.Provider value={tourState}>
+    <TourContext.Provider value={beaconsList}>
       {children}
     </TourContext.Provider>
   )

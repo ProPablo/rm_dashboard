@@ -57,7 +57,7 @@ export const TourContent = ({ navigation, zone }: TourContentProps) => {
         console.log("bruh play")
     }
 
-    const currentArtefact: Artefact | undefined = useMemo(()=> {
+    const currentArtefact: Artefact | undefined = useMemo(() => {
         let artefactIndex = 0;
         let foundArtefact: Artefact | undefined;
         if (!zone) return;
@@ -72,7 +72,7 @@ export const TourContent = ({ navigation, zone }: TourContentProps) => {
             artefactIndex++;
         }
         return foundArtefact;
-    },[memo])
+    }, [memo])
 
     // useEffect(() => {
     //     const { isLoading } = globalActionContext;
@@ -117,7 +117,7 @@ export const TourContent = ({ navigation, zone }: TourContentProps) => {
     }
     return (
         <View style={styles.videoBottomSheetStyle}>
-            
+
             {currentArtefact &&
                 <View style={styles.video}>
                     <VideoPlayer
@@ -134,23 +134,24 @@ export const TourContent = ({ navigation, zone }: TourContentProps) => {
                     <Button onPress={tourActionOnPress} title="Go to Artefact" color="#7A0600" />
                 </View>
             }
-            
         </View>
     );
 }
 
 const TourScreen = (props: { navigation: NavigationProp }) => {
-    const tourContext = useContext(TourContext);
+    const beaconList = useContext(TourContext);
     const memo = useContext(MemoizedContext);
     const currentZone = useMemo(() => {
         const { zones } = memo;
-        const { beaconList } = tourContext;
+
+        console.log({ currentZone })
         if (beaconList.length) {
             const beacon = beaconList[0];
-            return zones[beacon.zoneId]
+            const foundZone = zones[beacon.zoneId];
+            console.log({foundZone});
+            return foundZone;
         }
-
-    }, [memo, tourContext])
+    }, [memo, beaconList])
     const renderContent = () => (
         <View style={styles.bottomSheetStyle}>
             <TourContent zone={currentZone} {...props} />
@@ -161,22 +162,21 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
         // @ts-ignore
         sheetRef.current?.snapTo(0);
     }
-    const swappedZones = () => {
-
-    }
 
     const sheetRef = useRef(null);
     return (
         <View style={styles.containerStyle}>
-            <Text style={styles.textName}> {currentZone ? currentZone.name : "No Zone Found/ Entered"} </Text>
-            <Text style={styles.textDescr}> {currentZone?.description} </Text>
+            <View style={styles.zoneView}>
+                <Text style={styles.textName}> {currentZone ? currentZone.name : "No Zone Found/ Entered"} </Text>
+                <Text style={styles.textDescr}> {currentZone?.description} </Text>
+            </View>
             <BottomSheet
                 ref={sheetRef}
                 snapPoints={[550, 300, 0]}
                 borderRadius={20}
                 renderContent={renderContent}
             />
-            <Transform><Image source={require('./floorplan.jpg')} /></Transform>
+            <Transform ><Image source={require('./floorplan.jpg')} /></Transform>
             <FAB color="#7A0600" onPress={handlePopUp} placement="right" icon={<Icon name="chevron-up" size={23} color="white" />} />
 
         </View>
@@ -188,6 +188,10 @@ const styles = StyleSheet.create({
         fontSize: 27,
         textAlign: 'center',
         fontFamily: 'Roboto'
+    },
+    zoneView: {
+        backgroundColor: "#FF0000",
+        flex:1
     },
 
     textDescr: {
@@ -205,7 +209,6 @@ const styles = StyleSheet.create({
     containerStyle: {
         flex: 1,
         alignItems: "center",
-        justifyContent: "center",
         backgroundColor: "#FDF3BF",
     },
 
@@ -225,9 +228,7 @@ const styles = StyleSheet.create({
         height: 550,
     },
 
-    wrapperStyle: {
-
-    }
+    
 });
 
 export default TourScreen;
