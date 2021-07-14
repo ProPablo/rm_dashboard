@@ -23,7 +23,7 @@ const ConditionalMediaInput = (formData: any) => {
     case 0:
       return (
         <div>
-          <ImageInput /*placeholder={<p>placeholder</p>}*/ source="InputMedia" labelSingle="Drag an Image into here" accept="image/*" multiple={false}  >
+          <ImageInput /*placeholder={<p>placeholder</p>}*/ source="InputMedia" labelSingle={formData.src && !!!formData.InputMedia ? "Replace image" : "Drag an image into here"} accept="image/*" multiple={false}  >
             <ImageField source="src" title="title" />
           </ImageInput>
           {formData.src && !!!formData.InputMedia && <img className={classes.mediaImage} src={`${MEDIA_URL}/${formData.src}`} />}
@@ -32,7 +32,7 @@ const ConditionalMediaInput = (formData: any) => {
     case 1:
       return (
         <div>
-          <FileInput source="InputMedia" labelSingle="Drag a Video into here" accept="video/*" multiple={false}>
+          <FileInput source="InputMedia" labelSingle={formData.src && !!!formData.InputMedia ? "Replace video" : "Drag a video into here"} accept="video/*" multiple={false}>
             {/* <video src={`${MEDIA_URL}/${formData.src}`} controls /> */}
             {/* <FileField source="src" title="title" /> */}
             <VideoField />

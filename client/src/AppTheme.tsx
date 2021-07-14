@@ -55,6 +55,10 @@ export const useListStyles = makeStyles({
         flexDirection: 'column',
         alignItems: 'center'
     },
+    thumbnailHead: {
+        fontSize: '18px',
+        color: '#808080'
+    },
     headerCell: {
         root: {
             backgroundColor: '#F2F3F8'
@@ -161,7 +165,13 @@ export const redlandTheme: any = ({
             root: {
                 backgroundColor: '#F2F3F8',
                 textAlign: 'center',
-
+                
+            }
+        },
+        MuiCard: {
+            root: {
+                paddingLeft: "3vw",
+                paddingRight: "3vw"
             }
         },
         RaToolbar: {

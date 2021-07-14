@@ -41,9 +41,12 @@ artefactMediaRouter.post('/', upload.single('file'), async (req, res, next) => {
       res.json(await ArtefactMedia.create(req.body as Object).save());
     }
     catch (e) {
-      console.log("error", e);
+      console.log("error", e.code);
       // delete the file 
       await unlink(req.file.path);
+      if (e.code == "ER_DUP_ENTRY") {
+          throw new HTTPException(409, "Artefact already has attached media")
+      }
       throw new HTTPException(400, e.message);
     }
   }
