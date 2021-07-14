@@ -33,7 +33,9 @@ storeItemRouter.put('/:id', async (req, res) => {
   const { id } = req.params;
   
   const value = await editSchema.validateAsync(req.body);
-  res.json(await StoreItem.save({ id: Number.parseInt(id), ...value }));
+  const returnObj = await StoreItem.save({ id: Number.parseInt(id), ...value })
+  returnObj.thumbnail = returnObj.thumbnail?.toString();
+  res.json(returnObj);
 })
 
 storeItemRouter.delete('/:id', async (req, res) => {

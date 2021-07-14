@@ -38,6 +38,7 @@ artefactMediaRouter.post('/', upload.single('file'), async (req, res, next) => {
       req.body.type = MediaType[req.body.type];
 
     try {
+      console.log(req.body);
       res.json(await ArtefactMedia.create(req.body as Object).save());
     }
     catch (e) {

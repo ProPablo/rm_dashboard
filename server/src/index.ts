@@ -15,9 +15,9 @@ import { storeItemRouter } from "./routes/storeItem";
 import { artefactMediaRouter } from "./routes/artefactMedias";
 import { zoneRouter } from "./routes/zones";
 import swaggerDoc from './swagger.json';
+import { RMLogger } from "./Logger";
 
 const isDevelopment = process.env.NODE_ENV === "development";
-
 
 createConnection({
   "type": "mysql",
@@ -27,7 +27,8 @@ createConnection({
   "password": process.env.DB_PASSWORD,
   "database": process.env.DB_NAME,
   "synchronize": true,
-  "logging": isDevelopment ? true : ["error", "warn", "info",],
+  // "logging": isDevelopment ? true : ["error", "warn", "info",], 
+  "logger": new RMLogger(true),
   "entities": [
     __dirname + "/entity/**.{ts,js}" // TODO: clarity change import each entity
   ],

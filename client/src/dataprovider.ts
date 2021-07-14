@@ -26,39 +26,6 @@ const convertFileToBase64 = (file: any) => new Promise((resolve, reject) => {
 
 export const builtDataProvider: DataProvider = {
   ...dataProvider,
-  update: (resource, params) => {
-    // fallback to the default implementation
-    if (!params.data.InputMedia) return dataProvider.update(resource, params);
-
-    // This is for remaining base64 implementations
-    if (resource !== 'artefactmedia') {
-      console.log("GOT params data", params.data);
-      return convertFileToBase64(params.data.InputMedia)
-        .then(base64String => {
-          delete params.data.InputMedia;
-          return dataProvider.update(resource, {
-            ...params,
-            data: {
-              ...params.data,
-              thumbnail: base64String
-            }
-          })
-        })
-    }
-
-    console.log("printing param data artefactmedia", params.data);
-    const formData = new FormData();
-    formData.append('type', params.data.type);
-    formData.append('title', params.data.title);
-    formData.append('artefactId', params.data.artefactId);
-    formData.append('file', params.data.InputMedia.rawFile);
-
-    return httpClient(`${SERVER_URL}/artefactmedia/${params.data.id}`, {
-      method: "PUT",
-      body: formData,
-    }).then(({ json }) => { if (json) return { data: json }; throw new Error("No response") })
-  },
-
   create: (resource, params) => {
     if (!params.data.InputMedia) return dataProvider.create(resource, params);
 
@@ -80,7 +47,8 @@ export const builtDataProvider: DataProvider = {
     console.log("printing param data artefactmedia", params.data);
     const formData = new FormData();
     formData.append('type', params.data.type);
-    formData.append('title', params.data.title);
+    if (params.data.title) formData.append('title', params.data.title);
+    else if (params.data.InputMedia.rawFile.name) formData.append('title', params.data.InputMedia.rawFile.name);
     formData.append('artefactId', params.data.artefactId);
     formData.append('file', params.data.InputMedia.rawFile);
 
@@ -88,5 +56,37 @@ export const builtDataProvider: DataProvider = {
       method: "POST",
       body: formData,
     }).then(({ json }) => { if (json) return { data: json }; throw new Error("No response") })
-  }
+  },
+  update: (resource, params) => {
+    // fallback to the default implementation
+    if (!params.data.InputMedia) return dataProvider.update(resource, params);
+
+    // This is for remaining base64 implementations
+    if (resource !== 'artefactmedia') {
+      return convertFileToBase64(params.data.InputMedia)
+        .then(base64String => {
+          delete params.data.InputMedia;
+          return dataProvider.update(resource, {
+            ...params,
+            data: {
+              ...params.data,
+              thumbnail: base64String
+            }
+          })
+        })
+    }
+
+    console.log("printing param data artefactmedia", params.data);
+    const formData = new FormData();
+    formData.append('type', params.data.type);
+    formData.append('title', params.data.title);
+
+    formData.append('artefactId', params.data.artefactId);
+    formData.append('file', params.data.InputMedia.rawFile);
+
+    return httpClient(`${SERVER_URL}/artefactmedia/${params.data.id}`, {
+      method: "PUT",
+      body: formData,
+    }).then(({ json }) => { if (json) return { data: json }; throw new Error("No response") })
+  },
 }

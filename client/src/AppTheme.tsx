@@ -168,12 +168,12 @@ export const redlandTheme: any = ({
                 
             }
         },
-        MuiCard: {
-            root: {
-                paddingLeft: "3vw",
-                paddingRight: "3vw"
-            }
-        },
+        // MuiCard: {
+        //     root: {
+        //         paddingLeft: "3vw",
+        //         paddingRight: "3vw"
+        //     }
+        // },
         RaToolbar: {
             toolbar: {
                 backgroundColor: '#F2F3F8',
@@ -242,6 +242,13 @@ export const redlandTheme: any = ({
         MuiIconButton: {
             root: {
                 padding: "5px"
+            }
+        },
+
+        MuiFormControlLabel: {
+            root: {
+                marginRight: "0px",
+                marginLeft: "0px"
             }
         }
 
