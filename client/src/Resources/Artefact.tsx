@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChipField, Create, CreateProps, Datagrid, DateField, DateInput, Edit, EditProps, FormDataConsumer, FunctionField, ImageField, ImageInput, List, NumberField, NumberInput, ReferenceField, ReferenceInput, ReferenceManyField, SelectInput, SimpleForm, SingleFieldList, TextField, TextInput } from 'react-admin';
+import { ChipField, Create, CreateProps, Datagrid, DateField, DateInput, DeleteButton, Edit, EditProps, FormDataConsumer, FunctionField, ImageField, ImageInput, List, NumberField, NumberInput, ReferenceField, ReferenceInput, ReferenceManyField, SelectInput, SimpleForm, SingleFieldList, TextField, TextInput } from 'react-admin';
 import '../App.css';
 import { useListStyles } from '../AppTheme';
 import { ConditionalThumbnailEdit, ResourceActions } from '../helper';
@@ -23,9 +23,11 @@ export const ArtefactCreate = (props: CreateProps) => (
   </Create>
 );
 
+
+
 export const ArtefactEdit = (props: EditProps) => {
   const classes = useListStyles();
-
+  
   return (
     <Edit actions={<ResourceActions />} undoable={false} {...props}>
       <SimpleForm>

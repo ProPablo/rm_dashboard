@@ -1,5 +1,6 @@
 import React, { FC, memo } from "react";
 import { Create, CreateProps, DateInput, Edit, EditProps, FileFieldProps, FileInput, FormDataConsumer, ImageField, ImageInput, ReferenceInput, SelectInput, SimpleForm, TextInput, useRecordContext } from "react-admin";
+import { useListStyles } from "../AppTheme";
 import { MEDIA_URL } from "../constants";
 import { ResourceActions } from "../helper";
 
@@ -15,7 +16,9 @@ const VideoField = (filefield: FileFieldProps) => {
   )
 }
 
-const conditionalMediaInput = (formData: any) => {
+const ConditionalMediaInput = (formData: any) => {
+  // console.log(formData);
+  const classes = useListStyles();
   switch (formData.type) {
     case 0:
       return (
@@ -23,7 +26,7 @@ const conditionalMediaInput = (formData: any) => {
           <ImageInput /*placeholder={<p>placeholder</p>}*/ source="InputMedia" labelSingle="Drag an Image into here" accept="image/*" multiple={false}  >
             <ImageField source="src" title="title" />
           </ImageInput>
-          {formData.src && !!!formData.InputMedia && <img src={`${MEDIA_URL}/${formData.src}`} />}
+          {formData.src && !!!formData.InputMedia && <img className={classes.mediaImage} src={`${MEDIA_URL}/${formData.src}`} />}
         </div>
       )
     case 1:
@@ -41,15 +44,16 @@ const conditionalMediaInput = (formData: any) => {
 }
 
 export const ConditionalMediaRender = (formdata: any) => {
+  const classes = useListStyles();
   if (!formdata.Media) return (
-    <div>Does not exist</div>
+    <div></div>
   )
 
   switch (formdata.Media.type) {
     case 0:
       return (
         <div>
-          <img src={`${MEDIA_URL}/${formdata.Media.src}`} />
+          <img className={classes.editImage} src={`${MEDIA_URL}/${formdata.Media.src}`} />
 
         </div>
       )
@@ -87,7 +91,7 @@ export const ArtefactMediaEdit = (props: EditProps) => {
         <DateInput disabled source="updatedAt" />
         <FormDataConsumer>
           {({ formData, ...rest }) => (
-            conditionalMediaInput(formData)
+            ConditionalMediaInput(formData)
           )}
         </FormDataConsumer>
 
@@ -109,7 +113,7 @@ export const ArtefactMediaCreate = (props: CreateProps) => (
 
       <FormDataConsumer>
         {({ formData, ...rest }) => (
-          conditionalMediaInput(formData)
+          ConditionalMediaInput(formData)
         )}
       </FormDataConsumer>
 
