@@ -14,8 +14,8 @@ import {
   ToastAndroid
 } from 'react-native';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
-import { BleManager, Device } from 'react-native-ble-plx';
-import { BeaconsContext } from '../../store';
+import { BleError, BleManager, Device } from 'react-native-ble-plx';
+import { BeaconsContext, GlobalActionContext } from '../../store';
 // const allPerms = [PermissionsAndroid.PERMISSIONS.BLUETOOTH, PermissionsAndroid.PERMISSIONS.BLUETOOTH_ADMIN, PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION];
 
 
@@ -49,6 +49,13 @@ const requestLocationPermission = async () => {
     );
     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
       console.log("GOT PERMS");
+      // isLocationEnabled();
+      await RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
+        interval: 10000,
+        fastInterval: 5000,
+      });
+      console.log("wowow finished")
+
       return true;
     } else {
       // permission denied
@@ -70,6 +77,7 @@ export const isLocationEnabled = () => {
     fastInterval: 5000,
   })
     .then((data) => {
+      console.log("Done with bullshit")
     })
     .catch((err) => {
       console.log("location services not turned on successfully");
@@ -78,13 +86,16 @@ export const isLocationEnabled = () => {
     });
 }
 
+export const manager = new BleManager();
+
 const Tour: React.FC = ({ children }) => {
-  const manager = useRef<BleManager | null>(null);
+  // const manager = useRef<BleManager | null>(null);
   // TODO handle islocation
   // const [tourState, setTour] = useState<TourContextValue>({ beaconList: [], beaconMAC: null, isBLEnabled: true });
   const [beaconsList, setBeacons] = useState<Beacon[]>([]);
   const [foundBeacon, setBeacon] = useState<Device | null>(null);
   const beacons = useContext(BeaconsContext);
+  const { setBLEnabled } = useContext(GlobalActionContext);
 
   useEffect(() => {
     if (!foundBeacon) return;
@@ -95,71 +106,67 @@ const Tour: React.FC = ({ children }) => {
       beacon.rssi = foundBeacon.rssi!;
       setBeacons((oldList) => {
         const newList = [...oldList];
-        
         const existing = oldList.findIndex(b => b.id === beacon.id)
-        console.log({ existing, newList, oldList })
+
         if (existing != -1) {
           newList.splice(existing, 1, beacon);
         }
         else {
           newList.push(beacon);
         }
-        
         newList.sort((a, b) => a.rssi! - b.rssi!);
-        console.log(newList, { foundBeacon })
+        // console.log({oldList, newList});
         return newList;
       })
-
-      // setTour({ ...tourState, beaconMAC: foundBeacon.id});
     }
 
   }, [foundBeacon]);
 
-  // const scanAndConnect = () => {
-  //   manager.current?.startDeviceScan(null, null, (error, device) => {
-  //     console.log("inside", { device });
-  //     if (device) {
-  //       setTour({ ...tourState, beaconMAC: device.id });
-  //     }
-  //   });
-  // }
-  const onBeaconDetect = (device: Device) => {
-    console.log("new device", beacons);
-
-
+  const onBeacon = (error: BleError | null, device: Device | null) => {
+    if (error) {
+      if (error.message == "BluetoothLE is powered off") {
+        console.log(error);
+        setBLEnabled(false);
+      }
+      return;
+    }
+    if (!device) return;
+    setBeacon(device);
   }
 
-  const memoBeacon = useCallback(onBeaconDetect, [beacons]);
+  const initProcess = async () => {
+    console.log("starting eat ass")
+
+    await requestLocationPermission();
+    // await manager.enable(); //awaiting doesnt actually wait cringe
+    manager.enable();
+    manager.startDeviceScan(null, null, onBeacon);
+    console.log("diggers")
+  }
+
 
   useEffect(() => {
-    console.log("Starting beacon functionality");
-    requestLocationPermission()
-      .then(() => {
-        manager.current = new BleManager();
-        manager.current?.startDeviceScan(null, null, (error, device) => {
-          if (error) {
-            console.log(error);
-            return;
-          }
-          // TODO display error
-          // console.log({ device, error });
-          if (!device) return;
-          setBeacon(device);
-          // setTour({ ...tourState, beaconMAC: device.id });
-        });
+    initProcess();
+    // requestLocationPermission()
+    //   .then(() => {
+    
+    //     // TODO fix for ios
+    const subscription = manager.onStateChange((state => {
+      console.log("BLE Manager online");
+      if (state === 'PoweredOn') {
+        console.log("Starting scanning");
+        manager.startDeviceScan(null, null, onBeacon);
+        subscription.remove();
+      }
+      else {
+        console.log("Not online");
+      }
+    }));
 
-        // const subscription = manager.current.onStateChange((state => {
-        //   console.log("BLE Manager online");
-        //   if (state === 'PoweredOn') {
-        //     console.log("Starting scanning");
-        //     // scanAndConnect();
-        //     subscription.remove();
-        //   }
-        // }));
-      })
+    // })
     return () => {
-      // manager.current?.stopDeviceScan();
-      // manager.current?.destroy();
+      manager.stopDeviceScan();
+      manager.destroy();
     }
   }, [])
 

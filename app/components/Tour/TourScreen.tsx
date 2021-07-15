@@ -144,7 +144,6 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
     const currentZone = useMemo(() => {
         const { zones } = memo;
 
-        console.log({ currentZone })
         if (beaconList.length) {
             const beacon = beaconList[0];
             const foundZone = zones[beacon.zoneId];
