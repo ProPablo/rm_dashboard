@@ -11,7 +11,7 @@ export interface ActionContextValue {
   cacheImages?: null,
   isLoading: boolean,
   isBLEnabled: boolean,
-  setBLEnabled?: Dispatch<SetStateAction<boolean>>
+  setBLEnabled: Dispatch<SetStateAction<boolean>>
 }
 // @ts-ignore
 const GlobalActionContext = createContext<ActionContextValue>();
@@ -67,7 +67,7 @@ export const GlobalStore: React.FC = ({ children }) => {
         // console.log(artefactResults);
         // console.log(storeItemResults);
         // console.log(exhibitionResults);
-        console.log(beaconResults);
+        // console.log(beaconResults);
         // console.log(zoneResults);
         setArtefacts(artefactResults);
         setStoreItems(storeItemResults);
