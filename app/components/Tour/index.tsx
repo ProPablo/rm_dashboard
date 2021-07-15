@@ -97,7 +97,7 @@ const Tour: React.FC = ({ children }) => {
         const newList = [...oldList];
         
         const existing = oldList.findIndex(b => b.id === beacon.id)
-        console.log({ existing, newList, oldList })
+        // console.log({ existing, newList, oldList })
         if (existing != -1) {
           newList.splice(existing, 1, beacon);
         }
@@ -106,7 +106,7 @@ const Tour: React.FC = ({ children }) => {
         }
         
         newList.sort((a, b) => a.rssi! - b.rssi!);
-        console.log(newList, { foundBeacon })
+        // console.log(newList, { foundBeacon })
         return newList;
       })
 

@@ -28,7 +28,7 @@ import {
   Header
 } from 'react-native/Libraries/NewAppScreen';
 
-import { ArtefactStack } from './components/Artefacts/ArtefactStack';
+import { ZoneStack } from './components/Artefacts/ZoneStack';
 import { TourStack } from './components/Tour/TourStack';
 import { ExhibitionStack } from './components/Exhibitions/ExhibitionStack';
 import { HomeStack } from './components/Home/HomeStack';
@@ -39,7 +39,7 @@ import Tour from './components/Tour';
 
 const icons: Record<string, string> = {
   Home: "home",
-  Artefacts: "bank",
+  Zones: "bank",
   Tour: "map-marker",
   Exhibitions: "info-circle",
   Store: "shopping-cart"
@@ -47,7 +47,7 @@ const icons: Record<string, string> = {
 
 const sizes: Record<string, number> = {
   Home: 25,
-  Artefacts: 20,
+  Zones: 20,
   Tour: 20,
   Exhibitions: 25,
   Store: 25,
@@ -68,7 +68,7 @@ function Tabs() {
         activeTintColor: "#A20C02",
       }}>
       <Tab.Screen name="Home" component={HomeStack} />
-      <Tab.Screen name="Artefacts" component={ArtefactStack} />
+      <Tab.Screen name="Zones" component={ZoneStack} />
       <Tab.Screen name="Tour" component={TourStack} />
       <Tab.Screen name="Exhibitions" component={ExhibitionStack} />
       <Tab.Screen name="Store" component={StoreStack} />
