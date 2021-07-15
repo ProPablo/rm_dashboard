@@ -20,7 +20,9 @@ export const editSchema = Joi.object({
 })
 
 export const createSchema = editSchema.concat(Joi.object({
-  name: Joi.required(),
+  name: Joi.string().required().messages({
+    'any.required': "Name field cannot be empty"
+  }),
 }));
 
 export interface inputArtefact {

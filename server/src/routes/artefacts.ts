@@ -67,6 +67,7 @@ artefactRouter.get('/:id', async (req, res) => {
 
 artefactRouter.post('/', async (req, res) => {
   const value: Object = await createSchema.validateAsync(req.body);
+  // React admin doesnt really use this value
   res.json(await Artefact.create(value).save());
 })
 
@@ -74,7 +75,10 @@ artefactRouter.put('/:id', async (req, res) => {
   const { id } = req.params;
   const value = await editSchema.validateAsync(req.body); // .optional()
   // res.json(await Artefact.update({ id: Number.parseInt(id) }, { ...req.body }));
-  res.json(await Artefact.save({ id: Number.parseInt(id), ...req.body }));
+  // req.body.thumbnail = Buffer.from(req.body.thumbnail) //THis is what breaks RA when the JOI object is sent back
+  const returnObj = await Artefact.save({ id: Number.parseInt(id), ...value })
+  returnObj.thumbnail = returnObj.thumbnail?.toString(); 
+  res.json(returnObj);
 })
 
 artefactRouter.delete('/:id', async (req, res) => {
