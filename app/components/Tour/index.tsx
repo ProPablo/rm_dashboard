@@ -107,7 +107,6 @@ const Tour: React.FC = ({ children }) => {
       setBeacons((oldList) => {
         const newList = [...oldList];
         const existing = oldList.findIndex(b => b.id === beacon.id)
-
         if (existing != -1) {
           newList.splice(existing, 1, beacon);
         }

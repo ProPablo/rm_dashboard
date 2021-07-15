@@ -10,7 +10,7 @@ import { ArtefactsContext } from '../../store';
 import { ZonesContext } from '../../store';
 // import CustomCarousel from './ArtefactDetailCarousel';
 // import ArtefactsContext from './ArtefactsContext';
-import { ArtefactStackParams } from './ArtefactStack';
+import { ZoneStackParams } from './ZoneStack';
 import Icon from 'react-native-vector-icons/FontAwesome';
 //import VideoPlayer from '../Home/VideoComponent';
 // @ts-ignore
@@ -22,7 +22,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 // import VideoTest from '../Home/VideoTest';
 
 
-type ArtefactStackRoute = RouteProp<ArtefactStackParams, 'ArtefactDetails'>
+type ArtefactStackRoute = RouteProp<ZoneStackParams, 'ArtefactDetails'>
 
 interface Props {
     route: ArtefactStackRoute
@@ -39,7 +39,7 @@ export const ConditionalMediaRender = (props: { artefactMedia: ArtefactMediaSmal
                         uri: `${MEDIA_URL}/${props.artefactMedia.src}`,
                     }} style={[styles.image]} />
                 </View>
-            )// http://192.168.0.130:3001/public\beast-1620568996607.mp4
+            )
         case 1:
             return (
                 <View style={styles.video}>
@@ -73,7 +73,7 @@ const ArtefactDetailScreen: React.FC<Props> = ({ route }) => {
         if (artefact) {
             if (artefact.thumbnail) {
                 Image.getSize(artefact?.thumbnail, (width, height) => {
-                    const newWidth = Math.round(dimensions.width * 15 / 16);
+                    const newWidth = Math.round(dimensions.width * 5/8);
                     setimageDimens({ width: newWidth, height: height * (newWidth / width) });
                 });
             }
@@ -92,13 +92,13 @@ const ArtefactDetailScreen: React.FC<Props> = ({ route }) => {
                         <View style={[globalStyle.imageShadow]}>
                             <Image source={{
                                 uri: artefact.thumbnail,
-                            }} style={[imageDimens]} />
+                            }} style={[imageDimens, styles.image]} />
                         </View>
                     }
                     <View style={[styles.viewDescr]}>
                         <Text selectable style={styles.textName}> {artefact.name}</Text>
                         <Text style={styles.textDescr}>{artefact.description}</Text>
-                        <Text style={styles.textDescr}>{artefact.name} was acquired on {new Date(artefact?.acquisitionDate).toDateString()} and can be located in {zone?.name}</Text>
+                        <Text style={styles.textDescr}>{artefact.name} is located in {zone?.name} and was acquired on {new Date(artefact?.acquisitionDate).toDateString()}</Text>
                     </View>
                     {artefact.Media &&
                         <ConditionalMediaRender artefactMedia={artefact.Media} />
@@ -129,6 +129,8 @@ const styles = StyleSheet.create({
     video: {
         height: 450,
         borderRadius: 10,
+        borderWidth: 10, 
+        borderColor: 'black'
     },
 
     textName: {
