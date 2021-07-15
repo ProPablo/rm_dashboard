@@ -1,11 +1,12 @@
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Create, CreateProps, Datagrid, DateField, DateInput, Edit, EditProps, Error, FormTab, List, ListControllerProps, ListProps, NumberField, ReferenceManyField, SimpleForm, TabbedForm, TextField, TextInput, useListContext, useNotify, useRefresh } from 'react-admin';
+import { Button, Create, CreateProps, Datagrid, DateField, DateInput, Edit, EditProps, Error, FormTab, Identifier, List, ListControllerProps, ListProps, NumberField, ReferenceManyField, SimpleForm, TabbedForm, TextField, TextInput, useListContext, useNotify, useRefresh } from 'react-admin';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
 import '../App.css';
 import { useListStyles } from '../AppTheme';
 import { SERVER_URL } from '../constants';
 import { ResourceActions } from '../helper';
+import { useForm } from 'react-final-form';
 
 export const ZoneCreate = (props: CreateProps) => (
   <Create actions={<ResourceActions />} {...props}>
@@ -54,51 +55,44 @@ export const ZoneBeaconsTable = () => {
   )
 }
 
+function usePrevious(value: any) {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+}
+
 export const ZoneArtefactsTable = (props: PriorityTableProps) => {
   const classes = useListStyles();
 
-  const { ids, data } = useListContext();
-  // const { ids, data } = props;
-  const refresh = useRefresh();
-  const [state, setState] = useState<PriorityTableState>({ idList: ids, tableEnabled: false });
+  const listContext = useListContext();
+  const { data } = listContext;
+
+  const [idList, setIdList] = useState<Identifier[]>([]);
   const [loading, setLoading] = useState(false);
   const notify = useNotify();
 
-  const enableTable = () => {
-    setState({ ...state, tableEnabled: true })
-  }
+  const prev: any = usePrevious(listContext);
 
-  let oldIds = useRef(new Array<any>());
-  let debounceTimer = useRef<any>(null);
-  useEffect(() => {
-    // debounceTimer.current = setTimeout(enableTable, DEBOUNCE_TIMER);
-    return () => {
-      // clearTimeout(debounceTimer.current);
-    }
-  }, [])
-
-  console.log("oldids", oldIds);
   // Use external state or ref from parent to retain 
   useEffect(() => {
-    // let diffed = false;
-    // for (let i = 0; i < ids.length; i++) {
-    //   if (ids[i] == oldIds.current[i]) continue;
-    //   diffed = true;
-    //   break;
-    // }
-    // if (!diffed) return;
-    // if (loading) return;
-    console.log("refreshing idlist", ids, oldIds.current);
 
-    // clearTimeout(debounceTimer.current);
-    // debounceTimer.current = setTimeout(enableTable, DEBOUNCE_TIMER);
-    oldIds.current = ids;
-    setState({ ...state, idList: ids });
-  }, [ids]);
+    console.log("reloading ", { listContext, prev })
+    const { ids } = listContext;
+    if (prev && listContext.ids.every((id, index) => id == prev.ids[index])) {
+      console.log("Dey same")
+    }
+    else {
+      setIdList(ids);
+    }
 
-  function handleSortClick() {
+  }, [listContext]);
+
+  const handleSortClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+    e.preventDefault()
     setLoading(true);
-    const body = JSON.stringify({ ordering: state.idList });
+    const body = JSON.stringify({ ordering: idList });
     const headers = new Headers({ 'content-type': 'application/json' });
     const authString = localStorage.getItem('auth');
     if (!authString) {
@@ -123,7 +117,6 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
       });
   }
 
-  // console.log(data, ids, state);
   function onDragEnd(result: DropResult) {
     if (!result.destination) {
       return;
@@ -133,14 +126,14 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
       return;
     }
 
-    const idList = reorder(
-      state.idList,
+    setIdList(reorder(
+      idList,
       result.source.index,
       result.destination.index
-    );
-    setState({ ...state, idList });
+    ));
+    // setState({ ...state, idList });
   }
-  if (ids.length == 0) {
+  if (listContext.ids.length == 0) {
     return <div>No artefacts found</div>;
   }
 
@@ -166,7 +159,7 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
               </TableHead>
               <TableBody>
                 {
-                  state.idList.map((id, index) =>
+                  idList.map((id, index) =>
                     // Tbal Row Conditional styles based on isDragging @ react beautiful dnd
                     <Draggable draggableId={id.toString()} index={index} key={id}>
                       {provided => (
@@ -189,7 +182,7 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
           )}
         </Droppable>
       </DragDropContext >
-      <Button label="Confirm Sort" onClick={handleSortClick} disabled={loading} className={classes.zoneButton}/>
+      <Button label="Confirm Sort" onClick={handleSortClick} disabled={loading} className={classes.zoneButton} />
     </div>
   )
 }
@@ -213,8 +206,8 @@ export const ZoneEdit = (props: EditProps) => {
             <ZoneArtefactsTable parentId={props.id} parentPath={props.basePath} />
           </ReferenceManyField>
           <ReferenceManyField label="BEACONS" reference="beacons" target="zoneId">
-            
-            <ZoneBeaconsTable/>
+
+            <ZoneBeaconsTable />
           </ReferenceManyField>
         </FormTab>
 
