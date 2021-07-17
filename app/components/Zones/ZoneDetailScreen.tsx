@@ -45,14 +45,14 @@ const ZoneArtefactsListView = ({ artefactId }: ArtefactProps) => {
     )
 }
 
-const ZoneDetailScreen: React.FC<Props> = ({ route, navigation }) => {
+export const ZoneDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     const { zoneId } = route.params;
     const { zones } = useContext(MemoizedContext);
 
     const [zone, setZone] = useState<ZoneConsumable | undefined>(undefined);
 
     function actionOnRow(item: number) {
-        navigation.navigate("ArtefactDetails", {
+        navigation.push("ArtefactDetails", {
           artefactId: item
         })
     };
@@ -119,9 +119,7 @@ const styles = StyleSheet.create({
     },
 
     viewDescr: {
-        backgroundColor: '#FDF3BF',
+        backgroundColor: '#F7EECA',
         paddingTop: 15,
     }
 });
-
-export default ZoneDetailScreen;

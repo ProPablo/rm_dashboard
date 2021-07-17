@@ -4,7 +4,7 @@ import ArtefactDetailsScreen from "./ArtefactDetailScreen";
 import ZonesScreen from './ZonesScreen';
 import { Image } from 'react-native-elements';
 import { HeaderIcon } from '../../lib/styles';
-import ZoneDetailScreen from './ZoneDetailScreen';
+import { ZoneDetailScreen } from './ZoneDetailScreen';
 
 export type ZoneStackParams = {
     ZonesScreen: undefined;
@@ -16,17 +16,17 @@ const Stack = createStackNavigator<ZoneStackParams>();
 
 export const ZoneStack: React.FC = () => {
     return (
-        <Stack.Navigator 
+        <Stack.Navigator
             screenOptions={{
                 headerTitle: ""
             }}>
             {/* TODO: make back button that navigates back to  */}
             <Stack.Screen name="ZonesScreen" component={ZonesScreen}
                 options={{
-                    headerLeft: props => <HeaderIcon/>
+                    headerLeft: props => <HeaderIcon />
                 }} />
-            <Stack.Screen name="ZoneDetails" component={ZoneDetailScreen}/>
-            <Stack.Screen name="ArtefactDetails" component={ArtefactDetailsScreen}/>
+            <Stack.Screen name="ZoneDetails" component={ZoneDetailScreen} />
+            <Stack.Screen name="ArtefactDetails" component={ArtefactDetailsScreen} />
         </Stack.Navigator>
     )
 }

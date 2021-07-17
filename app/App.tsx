@@ -28,7 +28,7 @@ import {
   Header
 } from 'react-native/Libraries/NewAppScreen';
 
-import { ZoneStack } from './components/Artefacts/ZoneStack';
+import { ZoneStack } from './components/Zones/ZoneStack';
 import { TourStack } from './components/Tour/TourStack';
 import { ExhibitionStack } from './components/Exhibitions/ExhibitionStack';
 import { HomeStack } from './components/Home/HomeStack';
