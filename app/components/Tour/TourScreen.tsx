@@ -39,12 +39,13 @@ export const TourContent = ({ navigation, zone }: TourContentProps) => {
     // const [currentArtefact, setArtefact] = useState<Artefact | undefined>(undefined);
     const beacons = useContext(BeaconsContext);
     const [hasPlayed, setHasPlayed] = useState(false);
+    const [paused, setPaused] = useState(false);
 
     useEffect(() => {
+        console.log({zone})
         setHasPlayed(false);
     }, [zone]);
 
-    const [paused, setPaused] = useState(true);
 
     function handlePause() {
         setPaused(true);
@@ -71,7 +72,7 @@ export const TourContent = ({ navigation, zone }: TourContentProps) => {
             artefactIndex++;
         }
         return foundArtefact;
-    }, [memo])
+    }, [memo, zone])
     // function tourActionOnPress() {
     //     if (!currentArtefact) return;
     //     navigation.navigate("Artefacts", {
