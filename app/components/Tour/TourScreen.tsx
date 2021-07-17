@@ -1,14 +1,13 @@
 import { StackNavigationProp } from '@react-navigation/stack';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
-    Button,
     Image, Pressable, StyleSheet, ToastAndroid, View
 } from 'react-native';
-import { Card, Text } from 'react-native-elements';
+import { Text, Button } from 'react-native-elements';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { ZonesContext, BeaconsContext, ArtefactsContext, MemoizedContext, GlobalActionContext } from '../../store';
 import { TourStackParams } from './TourStack';
-import { ArtefactStackParams } from '../Artefacts/ArtefactStack'
+import { ZoneStackParams } from '../Artefacts/ZoneStack'
 import Transform from './Transform';
 import VideoComponent from '../Home/VideoComponent';
 import { FAB } from 'react-native-elements';
@@ -90,6 +89,7 @@ export const TourContent = ({ navigation, zone }: TourContentProps) => {
         <View style={styles.videoBottomSheetStyle}>
 
             {currentArtefact &&
+            <View>
                 <View style={styles.video}>
                     <VideoPlayer
                         source={{ uri: `${MEDIA_URL}/${currentArtefact.Media.src}` }}
@@ -102,8 +102,10 @@ export const TourContent = ({ navigation, zone }: TourContentProps) => {
                         onPlay={handlePlay}
                         onEnd={handleVideoEnd}
                     />
-                    {/* <Button onPress={tourActionOnPress} title="Go to Artefact" color="#7A0600" /> */}
                 </View>
+                {/* <Button buttonStyle={{backgroundColor: "#7A0600"}} onPress={tourActionOnPress} title="Go to Artefact" /> */}
+            </View>
+                
             }
         </View>
     );
@@ -209,7 +211,11 @@ const styles = StyleSheet.create({
     },
 
     video: {
-        height: 400,
+        height: 450,
+        borderTopLeftRadius: 10,
+        borderTopRightRadius: 10,
+        borderWidth: 10, 
+        borderColor: 'black'
     },
 
     bottomSheetStyle: {

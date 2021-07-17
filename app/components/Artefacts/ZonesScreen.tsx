@@ -1,24 +1,13 @@
-import React, { useState, useEffect, useContext } from 'react';
-
 import { StackNavigationProp } from '@react-navigation/stack';
-
+import React, { useContext, useEffect, useState } from 'react';
 import {
-  ScrollView,
-  TextInput,
-  Switch,
-  View,
-  Text,
-  TouchableWithoutFeedback,
-  FlatList,
-  StyleSheet, Pressable, Button
+  FlatList, Pressable, StyleSheet, TextInput, View
 } from 'react-native';
-import { ArtefactStackParams } from './ArtefactStack';
-import ArtefactListView from './ArtefactListView';
-import { ArtefactsContext } from '../../store';
-import { Card, Icon } from 'react-native-elements';
+import { ZonesContext } from '../../store';
+import { ZoneStackParams } from './ZoneStack';
+import ZoneListView from './ZoneListView';
 
-
-type NavigationProp = StackNavigationProp<ArtefactStackParams>
+type NavigationProp = StackNavigationProp<ZoneStackParams>
 
 // Refactor to create own Searchable List component
 
@@ -26,26 +15,26 @@ interface Props {
   navigation: NavigationProp
 }
 
-const ArtefactsScreen: React.FC<Props> = ({ navigation }) => {
+const ZonesScreen: React.FC<Props> = ({ navigation }) => {
 
   const [searchTerm, setsearchTerm] = useState("");
-  const artefacts = useContext(ArtefactsContext);
-  const [filtered, setfiltered] = useState(artefacts);
+  const zones = useContext(ZonesContext);
+  const [filtered, setfiltered] = useState(zones);
 
   function actionOnRow(item: number) {
-    navigation.navigate("ArtefactDetails", {
-      artefactId: item
+    navigation.navigate("ZoneDetails", {
+      zoneId: item
     })
   };
 
   function filterData() {
     const reg = RegExp(searchTerm, 'gi');
-    setfiltered(artefacts?.filter((item) => (item.name || "" + item.description).match(reg)));
+    setfiltered(zones?.filter((item) => (item.name || "" + item.description).match(reg)));
   }
 
   useEffect(() => {
     filterData();
-  }, [artefacts, searchTerm]);
+  }, [zones, searchTerm]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -53,7 +42,7 @@ const ArtefactsScreen: React.FC<Props> = ({ navigation }) => {
         <View style={styles.searchInputs}>
           <TextInput
             style={styles.search}
-            placeholder={`Search ${artefacts?.length} Artefacts`}
+            placeholder={`Search ${zones?.length} Zones`}
             placeholderTextColor={"#000000"}
             onChangeText={searchTerm => setsearchTerm(searchTerm)}
           />
@@ -63,8 +52,7 @@ const ArtefactsScreen: React.FC<Props> = ({ navigation }) => {
           data={filtered}
           renderItem={({ item, index }) => (
             <Pressable onPress={() => actionOnRow(item.id)}>
-              <ArtefactListView artefact={item} />
-              {/* <Text style={styles.listItem}>{item.Name}</Text> */}
+              <ZoneListView zone={item} />
             </Pressable>
           )}
           keyExtractor={(item) => item.id.toString()}
@@ -118,4 +106,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default ArtefactsScreen;
+export default ZonesScreen;

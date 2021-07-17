@@ -1,27 +1,33 @@
 import React from 'react';
-import { ChipField, Create, CreateProps, Datagrid, DateField, DateInput, DeleteButton, Edit, EditProps, FormDataConsumer, FunctionField, ImageField, ImageInput, List, NumberField, NumberInput, ReferenceField, ReferenceInput, ReferenceManyField, SelectInput, SimpleForm, SingleFieldList, TextField, TextInput } from 'react-admin';
+import { ChipField, Create, CreateProps, Datagrid, DateField, DateInput, DeleteButton, Edit, EditProps, FormDataConsumer, FunctionField, ImageField, ImageInput, List, NumberField, NumberInput, ReferenceField, ReferenceInput, ReferenceManyField, SelectInput, SimpleForm, SingleFieldList, TextField, TextInput, useNotify } from 'react-admin';
 import '../App.css';
 import { useListStyles } from '../AppTheme';
 import { ConditionalThumbnailEdit, ResourceActions } from '../helper';
 import { ConditionalMediaRender } from './ArtefactMedia';
 
-export const ArtefactCreate = (props: CreateProps) => (
-  <Create actions={<ResourceActions />} {...props}>
-    <SimpleForm>
-      <TextInput source="name" />
-      <TextInput multiline source="description" />
-      <NumberInput source="coordX" />
-      <NumberInput source="coordY" />
-      <DateInput source="acquisitionDate" />
-      <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined}>
-        <SelectInput optionText="name" />
-      </ReferenceInput>
-      <ImageInput source="InputMedia" label="Thumbnail" accept="image/*" maxSize={1000000}>
-        <ImageField source="src" title="title" />
-      </ImageInput>
-    </SimpleForm>
-  </Create>
-);
+export const ArtefactCreate = (props: CreateProps) => {
+  const classes = useListStyles();
+  const notify = useNotify();  
+  const OnBadThumbnail = () => {
+      notify("Invalid thumbnail, size limit may be exceeded");
+  }
+  return (
+    <Create actions={<ResourceActions />} {...props}>
+        <SimpleForm>
+        <TextInput source="name" />
+        <TextInput multiline source="description" />
+        <NumberInput source="coordX" />
+        <NumberInput source="coordY" />
+        <DateInput source="acquisitionDate" />
+        <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined}>
+            <SelectInput optionText="name" />
+        </ReferenceInput>
+        <ImageInput source="InputMedia" label="Thumbnail" accept="image/*" maxSize={1000000} options={{onDropRejected: OnBadThumbnail}}>
+            <ImageField source="src" title="title" className={classes.editImage}/>
+        </ImageInput>
+        </SimpleForm>
+    </Create>
+  )};
 
 
 

@@ -17,8 +17,12 @@ export const editSchema = Joi.object({
 })
 
 export const createSchema = editSchema.concat(Joi.object({
-  name: Joi.required(),
-  macAddress: Joi.required(),
+  name: Joi.string().required().messages({
+    'any.required': "Name field cannot be empty"
+  }),
+  macAddress: Joi.string().required().messages({
+    'any.required': "MAC Address field cannot be empty"
+  }),
   visits: Joi.forbidden(),
 }));
 

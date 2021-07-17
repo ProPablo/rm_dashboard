@@ -33,7 +33,10 @@ exhibitionRouter.put('/:id', async (req, res) => {
   const { id } = req.params;
 
   const value = await editSchema.validateAsync(req.body);
-  res.json(await Exhibition.save({ id: Number.parseInt(id), ...value }));
+
+  const returnObj = await Exhibition.save({ id: Number.parseInt(id), ...value })
+  returnObj.thumbnail = returnObj.thumbnail?.toString();
+  res.json(returnObj);
 })
 
 exhibitionRouter.delete('/:id', async (req, res) => {

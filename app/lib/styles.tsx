@@ -20,6 +20,17 @@ export const globalStyle = StyleSheet.create({
         elevation: 4,
     },
 
+    image: {
+        borderRadius: 10,
+    },
+
+    video: {
+        height: 450,
+        borderRadius: 10,
+        borderWidth: 10, 
+        borderColor: 'black'
+    },
+
     imageShadow: {
         borderColor: '#000'
     },

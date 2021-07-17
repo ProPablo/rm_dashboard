@@ -92,7 +92,7 @@ export const GlobalStore: React.FC = ({ children }) => {
 
   const memoValue: Memo = useMemo(() => ({
     artefacts: artefacts.reduce((acc: artefactLookup, val) => {
-      delete val.thumbnail;
+      // delete val.thumbnail;
       acc[val.id] = val;
       return acc;
     }, {}),
