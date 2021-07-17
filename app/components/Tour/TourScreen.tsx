@@ -1,13 +1,14 @@
 import { StackNavigationProp } from '@react-navigation/stack';
+import { StackActions, CommonActions, Route } from '@react-navigation/native';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
-    Image, StyleSheet, ToastAndroid, View
+    Image, Pressable, StyleSheet, ToastAndroid, View
 } from 'react-native';
 import { Text, Button } from 'react-native-elements';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { ZonesContext, BeaconsContext, ArtefactsContext, MemoizedContext, GlobalActionContext } from '../../store';
 import { TourStackParams } from './TourStack';
-import { ZoneStackParams } from '../Artefacts/ZoneStack'
+import { ZoneStackParams } from '../Zones/ZoneStack'
 import Transform from './Transform';
 import VideoComponent from '../Home/VideoComponent';
 import { FAB } from 'react-native-elements';
@@ -19,6 +20,7 @@ import { Artefact, ZoneConsumable, Beacon, ArtefactMediaSmall } from "@shared/ty
 import { MEDIA_URL } from '../../lib/controllers';
 import { globalStyle } from '../../lib/styles';
 import { useMemo } from 'react';
+import { useCallback } from 'react';
 type NavigationProp = StackNavigationProp<TourStackParams>;
 
 
@@ -38,13 +40,13 @@ export const TourContent = ({ navigation, zone }: TourContentProps) => {
     // const [currentArtefact, setArtefact] = useState<Artefact | undefined>(undefined);
     const beacons = useContext(BeaconsContext);
     const [hasPlayed, setHasPlayed] = useState(false);
+    const [paused, setPaused] = useState(false);
 
     useEffect(() => {
-        console.log("zone changed");
+        console.log({ zone })
         setHasPlayed(false);
     }, [zone]);
 
-    const [paused, setPaused] = useState(true);
 
     function handlePause() {
         setPaused(true);
@@ -71,45 +73,8 @@ export const TourContent = ({ navigation, zone }: TourContentProps) => {
             artefactIndex++;
         }
         return foundArtefact;
-    }, [memo])
+    }, [memo, zone])
 
-    // useEffect(() => {
-    //     const { isLoading } = globalActionContext;
-    //     if (!isBLEnabled || !beaconMAC || isLoading) return;
-    //     // console.log(beaconMAC);
-    //     const beacon = beacons.find((b) => b.macAddress === beaconMAC);
-
-    //     if (beacon) {
-    //         console.log("beacon", beacon);
-    //         // handle zone on parent
-
-
-    //         if (zone && zone.id != currentZone?.id) {
-    //             const foundArtefact = findArtefact(newZone);
-    //             console.log(memo.artefacts)
-    //             if (foundArtefact) {
-    //                 console.log("foundArtefact");
-    //                 if (currentArtefact) {
-    //                     // display notification
-    //                 }
-    //                 else {
-    //                     setArtefact(foundArtefact);
-    //                 }
-
-    //             }
-    //         }
-    //     }
-    // }, [tourContext, zones, beacons, artefacts]);
-
-    function tourActionOnPress() {
-        if (!currentArtefact) return;
-        navigation.navigate("Artefacts", {
-            screen: "ArtefactDetails",
-            params: {
-                artefactId: currentArtefact.id
-            }
-        });
-    }
     function handleVideoEnd() {
         console.log("videoEnd");
         // if (currentZone) findArtefact(currentZone);
@@ -118,23 +83,23 @@ export const TourContent = ({ navigation, zone }: TourContentProps) => {
         <View style={styles.videoBottomSheetStyle}>
 
             {currentArtefact &&
-            <View>
-                <View style={styles.video}>
-                    <VideoPlayer
-                        source={{ uri: `${MEDIA_URL}/${currentArtefact.Media.src}` }}
-                        disableFullScreen={true}
-                        disableBack={true}
-                        disableVolume={true}
-                        tapAnywhereToPause={true}
-                        paused={paused}
-                        onPause={handlePause}
-                        onPlay={handlePlay}
-                        onEnd={handleVideoEnd}
-                    />
+                <View>
+                    <View style={styles.video}>
+                        <VideoPlayer
+                            source={{ uri: `${MEDIA_URL}/${currentArtefact.Media.src}` }}
+                            disableFullScreen={true}
+                            disableBack={true}
+                            disableVolume={true}
+                            tapAnywhereToPause={true}
+                            paused={paused}
+                            onPause={handlePause}
+                            onPlay={handlePlay}
+                            onEnd={handleVideoEnd}
+                        />
+                    </View>
+                    {/* <Button buttonStyle={{backgroundColor: "#7A0600"}} onPress={tourActionOnPress} title="Go to Artefact" /> */}
                 </View>
-                <Button buttonStyle={{backgroundColor: "#7A0600"}} onPress={tourActionOnPress} title="Go to Artefact" />
-            </View>
-                
+
             }
         </View>
     );
@@ -143,16 +108,21 @@ export const TourContent = ({ navigation, zone }: TourContentProps) => {
 const TourScreen = (props: { navigation: NavigationProp }) => {
     const beaconList = useContext(TourContext);
     const memo = useContext(MemoizedContext);
+    const transfromRef = useRef<Transform>(null);
+    const sheetRef = useRef(null);
+
     const currentZone = useMemo(() => {
         const { zones } = memo;
-
+        // console.log(beaconList);
         if (beaconList.length) {
+            // React unsorts in intermediate stages such as passing thrrough props
+            beaconList.sort((a, b) => b.rssi! - a.rssi!);
             const beacon = beaconList[0];
             const foundZone = zones[beacon.zoneId];
-            console.log({foundZone});
             return foundZone;
         }
     }, [memo, beaconList])
+
     const renderContent = () => (
         <View style={styles.bottomSheetStyle}>
             <TourContent zone={currentZone} {...props} />
@@ -164,39 +134,100 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
         sheetRef.current?.snapTo(0);
     }
 
-    const sheetRef = useRef(null);
+    // const handlreReset
+    // function tourActionOnPress() {
+    //     if (!currentArtefact) return;
+    //     navigation.navigate("Artefacts", {
+    //         screen: "ArtefactDetails",
+    //         params: {
+    //             artefactId: currentArtefact.id
+    //         }
+    //     });
+    // }
+
+    const zoneTitleOnPress = () => {
+        if (!currentZone) return;
+        console.log("bruh", { currentZone });
+
+        props.navigation.push("ZoneDetails", {zoneId: currentZone.id})
+
+
+        // props.navigation.dispatch((state) => {
+        //     return CommonActions.reset({
+        //         // ...state,
+        //         index: 1,
+        //         routes: [
+        //             {
+        //                 name: "Tour"
+        //             },
+        //             {
+        //                 name: "Zones"
+        //             },
+        //             {
+        //                 name: "Zones",
+        //                 screen: "ZoneDetails",
+        //                 params: {
+        //                     zoneId: currentZone.id
+        //                 }
+        //             }
+        //         ]
+        //     })
+        // })
+
+        // props.navigation.push("Zones", {
+        //     screen: "ZoneDetails",
+        //     params: {
+        //         zoneId: currentZone.id
+        //     }
+        // });
+
+        // props.navigation.navigate("Zones", {
+        //     screen: "ZoneDetails",
+        //     params: {
+        //         zoneId: currentZone.id
+        //     }
+        // });
+    };
+
     return (
         <View style={styles.containerStyle}>
-            <View style={styles.zoneView}>
-                <Text style={styles.textName}> {currentZone ? currentZone.name : "No Zone Found / Entered"} </Text>
-                <Text style={styles.textDescr}> {currentZone?.description} </Text>
-            </View>
+            {/* <Card containerStyle={globalStyle.containerStyle} wrapperStyle={globalStyle.wrapperStyle}>
+                <Card.Title style={globalStyle.text}>{artefact.name}</Card.Title>
+                <Text style={globalStyle.text}>{artefact.description}</Text>
+
+            </Card> */}
+
+            <Pressable onPress={zoneTitleOnPress}>
+                <View style={globalStyle.zoneContainer}>
+                    <Text style={styles.textName}> {currentZone ? currentZone.name : "No Zone Found / Entered"}</Text>
+                </View>
+            </Pressable>
+
             <BottomSheet
                 ref={sheetRef}
                 snapPoints={[550, 300, 0]}
                 borderRadius={20}
                 renderContent={renderContent}
             />
-            <Transform ><Image source={require('./floorplan.jpg')} /></Transform>
+            <Transform style={styles.transformView} ref={transfromRef}><Image source={require('./floorplan.jpg')} /></Transform>
             <FAB color="#7A0600" onPress={handlePopUp} placement="right" icon={<Icon name="chevron-up" size={23} color="white" />} />
+            <FAB color="#7A0600" onPress={() => transfromRef.current?.resetTransform()} placement="left" icon={<Icon name="map" size={23} color="white" />} />
 
         </View>
+
     );
 }
 
 const styles = StyleSheet.create({
     textName: {
         fontSize: 27,
+        color: "#FFFFFF",
         textAlign: 'center',
         fontFamily: 'Roboto'
     },
-    zoneView: {
-        backgroundColor: "#FF0000",
-        flex:1
-    },
-
     textDescr: {
         fontSize: 15,
+        color: "#FFFFFF",
         textAlign: 'center',
         fontFamily: 'Roboto'
     },
@@ -209,7 +240,6 @@ const styles = StyleSheet.create({
 
     containerStyle: {
         flex: 1,
-        alignItems: "center",
         backgroundColor: "#FDF3BF",
     },
 
@@ -221,9 +251,8 @@ const styles = StyleSheet.create({
 
     video: {
         height: 450,
-        borderTopLeftRadius: 10,
-        borderTopRightRadius: 10,
-        borderWidth: 10, 
+        borderRadius: 10,
+        borderWidth: 10,
         borderColor: 'black'
     },
 
@@ -232,8 +261,16 @@ const styles = StyleSheet.create({
         padding: 16,
         height: 550,
     },
+    transformView: {
+        zIndex: -20,
+        flex: 1,
+        // paddingTop: "80%",
+        justifyContent: "center",
+        alignItems: "center",
+        // backgroundColor:"#00FF00"
+    },
 
-    
+
 });
 
 export default TourScreen;

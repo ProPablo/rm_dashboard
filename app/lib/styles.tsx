@@ -32,8 +32,7 @@ export const globalStyle = StyleSheet.create({
     },
 
     imageShadow: {
-        borderColor: '#000',
-        borderRadius: 20,
+        borderColor: '#000'
     },
 
     listItem: {
@@ -55,6 +54,14 @@ export const globalStyle = StyleSheet.create({
         shadowRadius: 5,
         elevation: 4,
     },
+
+    zoneContainer: {
+        margin: 10,
+        padding: 10,
+        borderRadius: 10,
+        backgroundColor: '#A20C02'
+    },
+
 
     wrapperStyle: {
 

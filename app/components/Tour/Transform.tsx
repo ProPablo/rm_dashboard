@@ -1,5 +1,6 @@
 import React from 'react'
-import { StyleSheet, Text, View, Animated } from 'react-native';
+import { StyleSheet, Text, View, Animated, StyleProp } from 'react-native';
+import { FAB, Icon } from 'react-native-elements';
 import { PinchGestureHandler, PanGestureHandler, State } from 'react-native-gesture-handler';
 
 const minScale = 0.5;
@@ -8,12 +9,13 @@ const maxScale = 2;
 const USE_NATIVE_DRIVER = true;
 
 export interface Props {
-    children: React.ReactNode
+    children: React.ReactNode,
+    style?: any,
+
 }
 
-
 // TODO: Maybe use reanimated instead if low performance 
-export default class Transform extends React.Component {
+export default class Transform extends React.Component<Props> {
 
     onPinchGestureEvent: (...args: any[]) => void;
     onPanGestureEvent: (...args: any[]) => void;
@@ -65,10 +67,16 @@ export default class Transform extends React.Component {
     }
 
     componentDidMount() {
+        this.resetTransform();
+    }
+
+    resetTransform() {
+        console.log("nigga balls")
         this.baseScale.setValue(0.15);
         this.lastScale = 0.15;
         this.pinchScale.setValue(1);
-        this.panOffset.setValue({y: -200, x: 0});
+        this.panOffset.setValue({ y: 0, x: 0 });
+        this.panOffset.setOffset({ x: 0, y: 0 });
     }
 
     onPinchHandlerStateChange = (event: any) => {
@@ -89,7 +97,7 @@ export default class Transform extends React.Component {
     render() {
 
         return (
-            <View style={styles.transformView}>
+            <View style={this.props.style}>
                 <PanGestureHandler onGestureEvent={this.onPanGestureEvent} onHandlerStateChange={this.onPanHandlerStateChange} ref={this.panRef} maxPointers={2} avgTouches>
                     <Animated.View>
                         <PinchGestureHandler
@@ -116,17 +124,3 @@ export default class Transform extends React.Component {
     }
 
 }
-
-const styles = StyleSheet.create({
-    box: {
-        backgroundColor: "blue",
-        borderRadius: 5,
-        height: 150,
-        width: 150,
-    },
-    transformView: {
-        flex:3,
-        justifyContent: "center",
-        backgroundColor:"#00FF00"
-    },
-})
