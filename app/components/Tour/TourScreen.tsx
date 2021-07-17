@@ -2,9 +2,9 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
     Button,
-    Image, StyleSheet, ToastAndroid, View
+    Image, Pressable, StyleSheet, ToastAndroid, View
 } from 'react-native';
-import { Text } from 'react-native-elements';
+import { Card, Text } from 'react-native-elements';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { ZonesContext, BeaconsContext, ArtefactsContext, MemoizedContext, GlobalActionContext } from '../../store';
 import { TourStackParams } from './TourStack';
@@ -41,7 +41,6 @@ export const TourContent = ({ navigation, zone }: TourContentProps) => {
     const [hasPlayed, setHasPlayed] = useState(false);
 
     useEffect(() => {
-        console.log("zone changed");
         setHasPlayed(false);
     }, [zone]);
 
@@ -73,44 +72,15 @@ export const TourContent = ({ navigation, zone }: TourContentProps) => {
         }
         return foundArtefact;
     }, [memo])
-
-    // useEffect(() => {
-    //     const { isLoading } = globalActionContext;
-    //     if (!isBLEnabled || !beaconMAC || isLoading) return;
-    //     // console.log(beaconMAC);
-    //     const beacon = beacons.find((b) => b.macAddress === beaconMAC);
-
-    //     if (beacon) {
-    //         console.log("beacon", beacon);
-    //         // handle zone on parent
-
-
-    //         if (zone && zone.id != currentZone?.id) {
-    //             const foundArtefact = findArtefact(newZone);
-    //             console.log(memo.artefacts)
-    //             if (foundArtefact) {
-    //                 console.log("foundArtefact");
-    //                 if (currentArtefact) {
-    //                     // display notification
-    //                 }
-    //                 else {
-    //                     setArtefact(foundArtefact);
-    //                 }
-
-    //             }
+    // function tourActionOnPress() {
+    //     if (!currentArtefact) return;
+    //     navigation.navigate("Artefacts", {
+    //         screen: "ArtefactDetails",
+    //         params: {
+    //             artefactId: currentArtefact.id
     //         }
-    //     }
-    // }, [tourContext, zones, beacons, artefacts]);
-
-    function tourActionOnPress() {
-        if (!currentArtefact) return;
-        navigation.navigate("Artefacts", {
-            screen: "ArtefactDetails",
-            params: {
-                artefactId: currentArtefact.id
-            }
-        });
-    }
+    //     });
+    // }
     function handleVideoEnd() {
         console.log("videoEnd");
         // if (currentZone) findArtefact(currentZone);
@@ -131,7 +101,7 @@ export const TourContent = ({ navigation, zone }: TourContentProps) => {
                         onPlay={handlePlay}
                         onEnd={handleVideoEnd}
                     />
-                    <Button onPress={tourActionOnPress} title="Go to Artefact" color="#7A0600" />
+                    {/* <Button onPress={tourActionOnPress} title="Go to Artefact" color="#7A0600" /> */}
                 </View>
             }
         </View>
@@ -141,13 +111,15 @@ export const TourContent = ({ navigation, zone }: TourContentProps) => {
 const TourScreen = (props: { navigation: NavigationProp }) => {
     const beaconList = useContext(TourContext);
     const memo = useContext(MemoizedContext);
+    const transfromRef = useRef<Transform>(null);
     const currentZone = useMemo(() => {
         const { zones } = memo;
-
+        // console.log(beaconList);
         if (beaconList.length) {
+            // React unsorts in intermediate stages such as passing thrrough props
+            beaconList.sort((a, b) => b.rssi! - a.rssi!);
             const beacon = beaconList[0];
             const foundZone = zones[beacon.zoneId];
-            console.log({foundZone});
             return foundZone;
         }
     }, [memo, beaconList])
@@ -162,39 +134,58 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
         sheetRef.current?.snapTo(0);
     }
 
+    // const handlreReset
+
+    function zoneTitleOnPress() {
+        if (!currentZone) return;
+        console.log(currentZone.id)
+        props.navigation.navigate("Zones", {
+            screen: "ZoneDetails",
+            params: {
+                zoneId: currentZone.id
+            }
+        });
+    }
     const sheetRef = useRef(null);
     return (
         <View style={styles.containerStyle}>
-            <View style={styles.zoneView}>
-                <Text style={styles.textName}> {currentZone ? currentZone.name : "No Zone Found/ Entered"} </Text>
-                <Text style={styles.textDescr}> {currentZone?.description} </Text>
-            </View>
+            {/* <Card containerStyle={globalStyle.containerStyle} wrapperStyle={globalStyle.wrapperStyle}>
+                <Card.Title style={globalStyle.text}>{artefact.name}</Card.Title>
+                <Text style={globalStyle.text}>{artefact.description}</Text>
+
+            </Card> */}
+
+            <Pressable onPress={zoneTitleOnPress}>
+                <View style={globalStyle.zoneContainer}>
+                    <Text style={styles.textName}> {currentZone ? currentZone.name : "No Zone Found / Entered"}</Text>
+                </View>
+            </Pressable>
+            
             <BottomSheet
                 ref={sheetRef}
                 snapPoints={[550, 300, 0]}
                 borderRadius={20}
                 renderContent={renderContent}
             />
-            <Transform ><Image source={require('./floorplan.jpg')} /></Transform>
+            <Transform style={styles.transformView} ref={transfromRef}><Image source={require('./floorplan.jpg')} /></Transform>
             <FAB color="#7A0600" onPress={handlePopUp} placement="right" icon={<Icon name="chevron-up" size={23} color="white" />} />
+            <FAB color="#7A0600" onPress={()=> transfromRef.current?.resetTransform()} placement="left" icon={<Icon name="map" size={23} color="white" />} />
 
         </View>
+       
     );
 }
 
 const styles = StyleSheet.create({
     textName: {
         fontSize: 27,
+        color: "#FFFFFF",
         textAlign: 'center',
         fontFamily: 'Roboto'
     },
-    zoneView: {
-        backgroundColor: "#FF0000",
-        flex:1
-    },
-
     textDescr: {
         fontSize: 15,
+        color: "#FFFFFF",
         textAlign: 'center',
         fontFamily: 'Roboto'
     },
@@ -207,7 +198,6 @@ const styles = StyleSheet.create({
 
     containerStyle: {
         flex: 1,
-        alignItems: "center",
         backgroundColor: "#FDF3BF",
     },
 
@@ -225,6 +215,13 @@ const styles = StyleSheet.create({
         backgroundColor: "#F3E1C7",
         padding: 16,
         height: 550,
+    },
+    transformView: {
+        flex: 1,
+        // paddingTop: "80%",
+        justifyContent: "center",
+        alignItems: "center",
+        // backgroundColor:"#00FF00"
     },
 
     

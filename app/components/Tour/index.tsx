@@ -54,7 +54,6 @@ const requestLocationPermission = async () => {
         interval: 10000,
         fastInterval: 5000,
       });
-      console.log("wowow finished")
 
       return true;
     } else {
@@ -114,8 +113,6 @@ const Tour: React.FC = ({ children }) => {
         else {
           newList.push(beacon);
         }
-        newList.sort((a, b) => a.rssi! - b.rssi!);
-        // console.log({oldList, newList});
         return newList;
       })
     }
