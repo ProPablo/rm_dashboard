@@ -13,28 +13,24 @@ export interface ActionContextValue {
   isBLEnabled: boolean,
   setBLEnabled: Dispatch<SetStateAction<boolean>>
 }
+
 // @ts-ignore
 const GlobalActionContext = createContext<ActionContextValue>();
 GlobalActionContext.displayName = "GLOBALCONTEXT";
 
-// @ts-ignore
-const ArtefactsContext = createContext<Artefact[]>();
+const ArtefactsContext = createContext<Artefact[]>([]);
 ArtefactsContext.displayName = "ArtefactsContext";
 
-// @ts-ignore
-const ZonesContext = createContext<ZoneConsumable[]>();
+const ZonesContext = createContext<ZoneConsumable[]>([]);
 ZonesContext.displayName = "ZoneContext";
 
-// @ts-ignore
-const BeaconsContext = createContext<Beacon[]>();
+const BeaconsContext = createContext<Beacon[]>([]);
 BeaconsContext.displayName = "BeaconContext";
 
-// @ts-ignore
-const StoreItemsContext = createContext<StoreItem[]>();
+const StoreItemsContext = createContext<StoreItem[]>([]);
 StoreItemsContext.displayName = "StoreItemsContext";
 
-// @ts-ignore
-const ExhibitionsContext = createContext<Exhibition[]>();
+const ExhibitionsContext = createContext<Exhibition[]>([]);
 ExhibitionsContext.displayName = "ExhibitionsContext";
 
 // @ts-ignore

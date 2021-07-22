@@ -20,7 +20,7 @@ const Stack = createStackNavigator<TourStackParams>();
 export const TourStack: React.FC = () => {
     // Detatch makes it so that other screen is rendered in the background
     return (
-        <Stack.Navigator>
+        <Stack.Navigator screenOptions={{}}>
             <Stack.Screen options={{ headerShown: false,  }} name="TourScreen" component={TourScreen} />
             <Stack.Screen options={{ detachPreviousScreen: false, headerTitle: "" }} name="ZoneDetails" component={ZoneDetailScreen} />
             <Stack.Screen 
