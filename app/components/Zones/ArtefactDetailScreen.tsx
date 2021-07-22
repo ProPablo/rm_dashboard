@@ -88,17 +88,18 @@ const ArtefactDetailScreen: React.FC<Props> = ({ route }) => {
 
             {artefact &&
                 <ScrollView>
-                    {artefact.thumbnail &&
-                        <View style={[globalStyle.imageShadow]}>
-                            <Image source={{
-                                uri: artefact.thumbnail,
-                            }} style={[imageDimens, styles.image]} />
-                        </View>
-                    }
+                    
                     <View style={[styles.viewDescr]}>
                         <Text selectable style={styles.textName}> {artefact.name}</Text>
-                        <Text style={styles.textDescr}>{artefact.description}</Text>
-                        <Text style={styles.textDescr}>{artefact.name} is located in {zone?.name} and was acquired on {new Date(artefact?.acquisitionDate).toDateString()}</Text>
+                            {artefact.thumbnail &&
+                                <View style={[globalStyle.imageShadow]}>
+                                    <Image source={{
+                                        uri: artefact.thumbnail,
+                                    }} style={[imageDimens, styles.image]} />
+                                </View>
+                            }
+                        <Text selectable style={styles.textDescr}>{artefact.description}</Text>
+                        <Text selectable style={styles.textDescr}>{artefact.name} is located in {zone?.name} and was acquired on {new Date(artefact?.acquisitionDate).toDateString()}</Text>
                     </View>
                     {artefact.Media &&
                         <ConditionalMediaRender artefactMedia={artefact.Media} />
@@ -115,6 +116,7 @@ const styles = StyleSheet.create({
     pageContainer: {
         alignContent: 'center',
         padding: 10,
+        paddingBottom: 0,
         flex: 1,
         backgroundColor: '#F7EECA',
     },
@@ -127,6 +129,7 @@ const styles = StyleSheet.create({
     },
 
     video: {
+        marginTop: 10,
         height: 450,
         borderRadius: 10,
         borderWidth: 10, 
@@ -134,19 +137,24 @@ const styles = StyleSheet.create({
     },
 
     textName: {
-        fontSize: 30,
+        fontSize: 27,
+        marginBottom: 15,
+        padding: 7,  
         textAlign: 'center',
-        fontFamily: 'Roboto'
+        fontFamily: 'Roboto',
+        borderRadius: 5,
+        backgroundColor: '#E2C9A2',
+    
     },
 
     textDescr: {
+        padding: 10,
         fontSize: 15,
         textAlign: 'center',
         fontFamily: 'Roboto'
     },
 
     viewDescr: {
-        backgroundColor: '#FDF3BF',
         paddingTop: 15,
     }
 });

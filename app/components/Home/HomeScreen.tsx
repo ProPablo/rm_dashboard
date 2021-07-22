@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
     tourContainerStyle: {
         alignItems: "center",
         borderRadius: 10,
-        backgroundColor: '#27d85c',
+        backgroundColor: '#79C062',
     },
 
     wrapperStyle: {
