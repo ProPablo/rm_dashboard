@@ -7,5 +7,5 @@ import { TourList } from "./Resources/Tour";
 export default [
     <Route exact path="/tour" component={TourList} />,
     <Route exact path="/about" component={AboutPage} />,
-    <Route exact path="/map" component={Map} />
+    <Route exact path="/map" component={Map} />,
 ];
