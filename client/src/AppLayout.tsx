@@ -7,24 +7,33 @@ import { MenuItemLink, getResources } from 'react-admin';
 // import { withRouter } from 'react-router-dom';
 import MapIcon from '@material-ui/icons/Map';
 import AboutIcon from '@material-ui/icons/Info';
+import DirectionsIcon from '@material-ui/icons/Directions';
 import { useAppBarStyles } from './AppTheme';
 
 const Menu = ({ onMenuClick, logout }: MenuProps) => {
     const isXSmall = useMediaQuery((theme: any) => theme.breakpoints.down('xs'));
     const open = useSelector((state: any) => state.admin.ui.sidebarOpen);
     const resources = useSelector(getResources);
+    const menuItems = resources.map(resource => (
+        <MenuItemLink
+            key={resource.name}
+            to={`/${resource.name}`}
+            primaryText={resource.options && resource.options.label || resource.name}
+            leftIcon={createElement(resource.icon)}
+            onClick={onMenuClick}
+            sidebarIsOpen={open}
+        />
+    ))
+    menuItems.splice(3,0,<MenuItemLink
+        to="/tour"
+        primaryText="Tour"
+        leftIcon={<DirectionsIcon />}
+        onClick={onMenuClick}
+        sidebarIsOpen={open}
+    />)
     return (
         <div>
-            {resources.map(resource => (
-                <MenuItemLink
-                    key={resource.name}
-                    to={`/${resource.name}`}
-                    primaryText={resource.options && resource.options.label || resource.name}
-                    leftIcon={createElement(resource.icon)}
-                    onClick={onMenuClick}
-                    sidebarIsOpen={open}
-                />
-            ))}
+            {menuItems}
             <MenuItemLink
                 to="/map"
                 primaryText="Map"

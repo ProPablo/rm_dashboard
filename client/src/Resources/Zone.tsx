@@ -5,7 +5,7 @@ import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautif
 import '../App.css';
 import { useListStyles } from '../AppTheme';
 import { SERVER_URL } from '../constants';
-import { ResourceActions } from '../helper';
+import { reorder, ResourceActions, usePrevious } from '../helper';
 import { useForm } from 'react-final-form';
 
 export const ZoneCreate = (props: CreateProps) => (
@@ -16,14 +16,6 @@ export const ZoneCreate = (props: CreateProps) => (
     </SimpleForm>
   </Create>
 )
-
-
-const reorder = (list: Array<any>, startIndex: number, endIndex: number) => {
-  const result = Array.from(list);
-  const [removed] = result.splice(startIndex, 1);
-  result.splice(endIndex, 0, removed);
-  return result;
-};
 
 export interface PriorityTableState {
   idList: Array<any>,
@@ -55,13 +47,7 @@ export const ZoneBeaconsTable = () => {
   )
 }
 
-function usePrevious(value: any) {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = value;
-  });
-  return ref.current;
-}
+
 
 export const ZoneArtefactsTable = (props: PriorityTableProps) => {
   const classes = useListStyles();
@@ -112,8 +98,6 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
       })
       .finally(() => {
         setLoading(false);
-        // Right now refresh makes it so that some flicking goes on
-        // refresh();
       });
   }
 
@@ -154,7 +138,7 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
                 <TableRow >
                   <TableCell>Id</TableCell>
                   <TableCell className={classes.tableHeadName} padding="checkbox">Name</TableCell>
-                  <TableCell className={classes.tableHeadMedia}>Media</TableCell>
+                  {/* <TableCell className={classes.tableHeadMedia}>Media</TableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -167,9 +151,9 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}>
-                          <TableCell><NumberField record={data[id]} source="id" /></TableCell>
-                          <TableCell className={classes.tableHeadName} padding="checkbox"> <TextField record={data[id]} source="name" /> </TableCell>
-                          <TableCell className={classes.tableHeadMedia}>  <TextField record={data[id]} source="media.src" /> </TableCell>
+                          <TableCell><NumberField record={data[id]} source="id" className={classes.tableId}/></TableCell>
+                          <TableCell className={classes.tableHeadName} padding="checkbox"> <TextField record={data[id]} source="name" className={classes.tableName}/> </TableCell>
+                          {/* <TableCell className={classes.tableHeadMedia}>  <TextField record={data[id]} source="media.src" /> </TableCell> */}
                         </TableRow>
                       )}
                     </Draggable>
@@ -226,4 +210,4 @@ export const ZoneList = (props: ListProps) => (
       <DateField source="updatedAt" />
     </Datagrid>
   </List>
-);
+)

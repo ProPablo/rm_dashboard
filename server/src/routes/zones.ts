@@ -87,6 +87,27 @@ zoneRouter.post('/:id/reorder', async (req, res) => {
   res.json({ message: "Done successfully" });
 })
 
+zoneRouter.post('/reorder', async (req, res) => {
+  const { ordering } = req.body;
+  if (!ordering) throw new HTTPException(400, "Please include an ordering list for reordering artefacts");
+
+  const zones = await Zone.find();
+
+  const orderingLookup: IDLookup = ordering.reduce((acc: IDLookup, val: number, index: number) => {
+    acc.set(val, ordering.length - index);
+    return acc;
+  }, new Map<number, number>());
+
+  for (const z of zones) {
+    const priority = orderingLookup.get(z.id);
+    if (priority != undefined) {
+      await Zone.update({ id: z.id }, { priority });
+    }
+  }
+
+  res.json({ message: "Done successfully" });
+})
+
 // zoneRouter.get('/:id/artefacts', async (req, res) => {
 //   const id = parseInt(req.params.id);
 //   const artefacts = await Artefact.getRepository()

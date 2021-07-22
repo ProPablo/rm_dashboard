@@ -61,7 +61,7 @@ export const useListStyles = makeStyles({
     },
     headerCell: {
         root: {
-            backgroundColor: '#F2F3F8'
+            backgroundColor: '#F2F3F8',
         },
         backgroundColor: '#F2F3F8',
     },
@@ -89,14 +89,34 @@ export const useListStyles = makeStyles({
         '&:hover': {
             background: '#710801'
         },
-        marginTop: "20px"
+        marginTop: "20px", 
+    },
+    tourButton: {
+        backgroundColor: '#A20C02',
+        color: '#FFFFFF',
+        '&:hover': {
+            background: '#710801'
+        },
+        marginTop: "20px", 
+        paddingLeft: 100,
+        paddingRight: 100
     },
     tableHeadName: {
-        paddingRight: "2vw"
+        paddingRight: "2vw",
+        minWidth: "10vw",
     },
-    tableHeadMedia: {
-        paddingRight: "2vw"
-    }
+    tableHeadId: {
+        paddingRight: "1vw",
+        minWidth: "10vw"
+    },
+    tableName: {
+        minWidth: "10vw",
+    },
+    tableId: {
+        paddingRight: "1vw",
+        minWidth: "10vw",
+    },
+
 });
 
 export const redlandTheme: any = ({
