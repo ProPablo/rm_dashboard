@@ -1,5 +1,5 @@
 import ChevronLeft from '@material-ui/icons/ChevronLeft';
-import React from 'react';
+import { useEffect, useRef } from 'react';
 import { useForm } from 'react-final-form';
 import { Button } from '@material-ui/core';
 import { EditActionsProps, ImageField, ImageInput, ListButton, TopToolbar, useNotify } from 'react-admin';
@@ -38,3 +38,18 @@ export const ConditionalThumbnailEdit = (formData: any) => {
         </div>
     )
 }
+
+export function usePrevious(value: any) {
+    const ref = useRef();
+    useEffect(() => {
+      ref.current = value;
+    });
+    return ref.current;
+}
+
+export const reorder = (list: Array<any>, startIndex: number, endIndex: number) => {
+    const result = Array.from(list);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+    return result;
+};
