@@ -36,7 +36,7 @@ const ZoneArtefactsListView = ({ artefactId }: ArtefactProps) => {
         <View style={globalStyle.listItem}>
             <Card containerStyle={globalStyle.containerStyle} wrapperStyle={globalStyle.wrapperStyle}>
                 <Card.Title style={globalStyle.text}>{artefact?.name}</Card.Title>
-                <Text style={globalStyle.text}>{artefact?.description}</Text>
+                <Text style={[globalStyle.text, styles.cardDescr]}>{artefact?.description}</Text>
                 <Card.Image source={{
                     uri: artefact?.thumbnail, 
                 }}/>
@@ -64,12 +64,10 @@ export const ZoneDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     return (
         <View style={styles.pageContainer}>
             {zone &&
-                <ScrollView>
-                    <View style={[styles.viewDescr]}>
-                        <Text selectable style={styles.textName}> {zone.name}</Text>
-                        <Text style={styles.textDescr}>{zone.description}</Text>
-                    </View>
-                </ScrollView>
+                <View style={[styles.viewDescr]}>
+                    <Text selectable style={styles.textName}> {zone.name}</Text>
+                    <Text style={styles.textDescr}>{zone.description}</Text>
+                </View>
             }
             <FlatList
                 data={zone?.Artefacts}
@@ -90,6 +88,7 @@ const styles = StyleSheet.create({
     pageContainer: {
         alignContent: 'center',
         padding: 10,
+        paddingBottom: 0,
         flex: 1,
         backgroundColor: '#F7EECA',
     },
@@ -109,17 +108,22 @@ const styles = StyleSheet.create({
     textName: {
         fontSize: 30,
         textAlign: 'center',
-        fontFamily: 'Roboto'
+        fontFamily: 'Roboto',
     },
 
     textDescr: {
         fontSize: 15,
         textAlign: 'center',
-        fontFamily: 'Roboto'
+        fontFamily: 'Roboto',
+    },
+
+    cardDescr: {
+        paddingBottom: 10,
     },
 
     viewDescr: {
         backgroundColor: '#F7EECA',
-        paddingTop: 15,
+        borderRadius: 5,
+        padding: 10,
     }
 });

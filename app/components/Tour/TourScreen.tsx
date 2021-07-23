@@ -13,7 +13,7 @@ import Transform from './Transform';
 import VideoComponent from '../Home/VideoComponent';
 import { FAB } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { TourContext } from '.';
+import { TourContext, TourStateContext } from '.';
 // @ts-ignore
 import VideoPlayer from 'react-native-video-controls';
 import { Artefact, ZoneConsumable, Beacon, ArtefactMediaSmall } from "@shared/types";
@@ -21,6 +21,9 @@ import { MEDIA_URL } from '../../lib/controllers';
 import { globalStyle } from '../../lib/styles';
 import { useMemo } from 'react';
 import { useCallback } from 'react';
+import Carousel from 'react-native-snap-carousel';
+
+
 type NavigationProp = StackNavigationProp<TourStackParams>;
 
 
@@ -28,15 +31,19 @@ interface TourScreenProps {
     navigation: NavigationProp
 }
 
-interface TourContentProps {
+interface TourGuideProps {
     navigation: NavigationProp,
-    zone?: ZoneConsumable
+    zone?: ZoneConsumable,
 }
 
-export const TourContent = ({ navigation, zone }: TourContentProps) => {
+export const TourGuide = ({ navigation, zone }: TourGuideProps) => {
     const memo = useContext(MemoizedContext);
+    const zones = useContext(ZonesContext);
+    const [tourState, tourDispatch] = useContext(TourStateContext);
 
     const globalActionContext = useContext(GlobalActionContext);
+
+
     // const [currentArtefact, setArtefact] = useState<Artefact | undefined>(undefined);
     const beacons = useContext(BeaconsContext);
     const [hasPlayed, setHasPlayed] = useState(false);
@@ -58,12 +65,20 @@ export const TourContent = ({ navigation, zone }: TourContentProps) => {
         console.log("bruh play")
     }
 
+    const currentTourZone = useMemo(() => {
+        if (zones.length != 0) {
+            return zones[tourState.currGuideZoneIndex];
+        }
+    }, [tourState.currGuideZoneIndex, zones]);
+
     const currentArtefact: Artefact | undefined = useMemo(() => {
         let artefactIndex = 0;
         let foundArtefact: Artefact | undefined;
-        if (!zone) return;
-        while (artefactIndex < zone.Artefacts.length) {
-            const artefactId = zone.Artefacts[artefactIndex];
+
+        if (!currentTourZone) return;
+        
+        while (artefactIndex < currentTourZone.Artefacts.length) {
+            const artefactId = currentTourZone.Artefacts[artefactIndex];
             // const artefact = artefacts.find((a) => a.id === artefactId);
             const artefact = memo.artefacts[artefactId];
             if (artefact?.Media) {
@@ -72,35 +87,87 @@ export const TourContent = ({ navigation, zone }: TourContentProps) => {
             }
             artefactIndex++;
         }
+        delete foundArtefact?.thumbnail;
+        console.log({ foundArtefact })
         return foundArtefact;
-    }, [memo, zone])
+    }, [memo, currentTourZone])
 
     function handleVideoEnd() {
         console.log("videoEnd");
         // if (currentZone) findArtefact(currentZone);
     }
+
+
+    function handleSkip() {
+        console.log("Forward");
+        // ToastAndroid.show("Skipping", ToastAndroid.SHORT);
+        tourDispatch({ type: 'forward' })
+        // gravity is for location
+        // ToastAndroid.showWithGravity(
+        //     "All Your Base Are Belong To Us",
+        //     ToastAndroid.SHORT,
+        //     ToastAndroid.CENTER
+        // );
+    }
+
+    function handleBack() {
+        console.log("GOing back");
+        // ToastAndroid.show("Backing", ToastAndroid.SHORT);
+        tourDispatch({ type: 'backward' })
+    }
     return (
         <View style={styles.videoBottomSheetStyle}>
+            <View style={styles.videoContainer}>
+                {currentArtefact && (
+                    (currentArtefact.Media.type === 1) ?
+                        <View style={styles.video}>
+                            <VideoPlayer
+                                source={{ uri: `${MEDIA_URL}/${currentArtefact.Media.src}` }}
+                                disableFullScreen={true}
+                                disableBack={true}
+                                disableVolume={true}
+                                tapAnywhereToPause={true}
+                                paused={paused}
+                                onPause={handlePause}
+                                onPlay={handlePlay}
+                                onEnd={handleVideoEnd}
+                            />
+                        </View>
+                        :
+                            <Image
+                                style={[styles.image]}
+                                source={{
+                                    uri: `${MEDIA_URL}/${currentArtefact.Media.src}`,
+                                }} />
+                )}
+            </View>
 
-            {currentArtefact &&
-                <View>
-                    <View style={styles.video}>
-                        <VideoPlayer
-                            source={{ uri: `${MEDIA_URL}/${currentArtefact.Media.src}` }}
-                            disableFullScreen={true}
-                            disableBack={true}
-                            disableVolume={true}
-                            tapAnywhereToPause={true}
-                            paused={paused}
-                            onPause={handlePause}
-                            onPlay={handlePlay}
-                            onEnd={handleVideoEnd}
-                        />
+            <View style={styles.controlsContainer}>
+                <Button
+                    buttonStyle={{ flex: 1, backgroundColor: "#7A0600", marginRight: 10, padding: 10 }}
+                    icon={<Icon
+                        name="chevron-left"
+                        size={20}
+                        color="white" />}
+                    onPress={handleBack}
+                    disabled={!(tourState.currGuideZoneIndex > 0)}
+                />
+                {/* <Button title={zone?.name} buttonStyle={{ flex: 3, backgroundColor: "#CAA868", padding: "30%", margin: 0 }}/> */}
+                <Pressable>
+                    <View style={styles.tourContainer}>
+                        <Text style={styles.tourName}> {currentTourZone?.name}</Text>
                     </View>
-                    {/* <Button buttonStyle={{backgroundColor: "#7A0600"}} onPress={tourActionOnPress} title="Go to Artefact" /> */}
-                </View>
-
-            }
+                </Pressable>
+                <Button
+                    buttonStyle={{ flex: 1, backgroundColor: "#7A0600", marginLeft: 10, padding: 10 }}
+                    icon={<Icon
+                        name="chevron-right"
+                        size={20}
+                        color="white" />}
+                    onPress={handleSkip}
+                    disabled={!((tourState.hasVisited || tourState.currGuideZoneIndex < tourState.maxZoneIndex) && tourState.currGuideZoneIndex < zones.length)}
+                />
+            </View>
         </View>
     );
 }
@@ -108,8 +175,12 @@ export const TourContent = ({ navigation, zone }: TourContentProps) => {
 const TourScreen = (props: { navigation: NavigationProp }) => {
     const beaconList = useContext(TourContext);
     const memo = useContext(MemoizedContext);
+    const zones = useContext(ZonesContext);
+    const [tourState, tourDispatch] = useContext(TourStateContext);
     const transfromRef = useRef<Transform>(null);
-    const sheetRef = useRef(null);
+    const sheetRef = useRef<BottomSheet>(null);
+    // const zoneGuideIndex = useState(0);
+
 
     const currentZone = useMemo(() => {
         const { zones } = memo;
@@ -121,35 +192,40 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
             const foundZone = zones[beacon.zoneId];
             return foundZone;
         }
-    }, [memo, beaconList])
+    }, [memo, beaconList]);
+
+    useEffect(() => {
+        // if (zones.length < maxZoneIndex + 1) return;
+        // if (maxZoneIndex == -1) {
+        //     if (currentZone?.name == "Starting zone") {
+        //         setHasVisited(true);
+        //     }
+        //     return;
+        // }
+        if (zones.length < 1) return;
+
+        if (currentZone?.id == zones[tourState.maxZoneIndex].id) {
+            tourDispatch({ type: 'visit' });
+            console.log("visited", zones[tourState.maxZoneIndex]);
+        }
+    }, [currentZone, zones])
 
     const renderContent = () => (
         <View style={styles.bottomSheetStyle}>
-            <TourContent zone={currentZone} {...props} />
+            <TourGuide zone={currentZone} {...props} />
         </View>
     )
 
     const handlePopUp = () => {
-        // @ts-ignore
         sheetRef.current?.snapTo(0);
     }
 
-    // const handlreReset
-    // function tourActionOnPress() {
-    //     if (!currentArtefact) return;
-    //     navigation.navigate("Artefacts", {
-    //         screen: "ArtefactDetails",
-    //         params: {
-    //             artefactId: currentArtefact.id
-    //         }
-    //     });
-    // }
 
     const zoneTitleOnPress = () => {
         if (!currentZone) return;
         console.log("bruh", { currentZone });
 
-        props.navigation.push("ZoneDetails", {zoneId: currentZone.id})
+        props.navigation.push("ZoneDetails", { zoneId: currentZone.id })
 
 
         // props.navigation.dispatch((state) => {
@@ -198,7 +274,7 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
             </Card> */}
 
             <Pressable onPress={zoneTitleOnPress}>
-                <View style={globalStyle.zoneContainer}>
+                <View style={styles.zoneContainer}>
                     <Text style={styles.textName}> {currentZone ? currentZone.name : "No Zone Found / Entered"}</Text>
                 </View>
             </Pressable>
@@ -209,8 +285,8 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
                 borderRadius={20}
                 renderContent={renderContent}
             />
-            <Transform style={styles.transformView} ref={transfromRef}><Image source={require('./floorplan.jpg')} /></Transform>
-            <FAB color="#7A0600" onPress={handlePopUp} placement="right" icon={<Icon name="chevron-up" size={23} color="white" />} />
+            <Transform initialZoom={0.3} initialPos={{ x: -150, y: 0 }} style={styles.transformView} ref={transfromRef}><Image source={require('./floorplan.jpg')} /></Transform>
+            <FAB color="#7A0600" onPress={handlePopUp} placement="right" icon={<Icon name="map-signs" size={23} color="white" />} />
             <FAB color="#7A0600" onPress={() => transfromRef.current?.resetTransform()} placement="left" icon={<Icon name="map" size={23} color="white" />} />
 
         </View>
@@ -245,7 +321,7 @@ const styles = StyleSheet.create({
 
     videoBottomSheetStyle: {
         backgroundColor: '#F3E1C7',
-        padding: 16,
+        padding: 10,
         height: "100%"
     },
 
@@ -256,11 +332,26 @@ const styles = StyleSheet.create({
         borderColor: 'black'
     },
 
+    image: {
+        flex: 1,
+        height: 450,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 10,
+        borderWidth: 10,
+        borderColor: 'black'
+    },
+
+    videoContainer: {
+        minHeight: 450,
+    },
+
     bottomSheetStyle: {
         backgroundColor: "#F3E1C7",
-        padding: 16,
+        padding: 10,
         height: 550,
     },
+
     transformView: {
         zIndex: -20,
         flex: 1,
@@ -268,6 +359,39 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         // backgroundColor:"#00FF00"
+    },
+
+    zoneContainer: {
+        margin: 10,
+        padding: 10,
+        borderRadius: 10,
+        backgroundColor: '#A20C02'
+    },
+
+    tourContainer: {
+        flex: 3,
+        justifyContent: "center",
+        alignContent: "center",
+        borderRadius: 5,
+        paddingLeft: "20%",
+        paddingRight: "20%",
+        backgroundColor: '#2A2F3C'
+    },
+
+    tourName: {
+        fontSize: 20,
+        color: "#FFFFFF",
+        textAlign: 'center',
+        fontFamily: 'Roboto'
+    },
+
+    controlsContainer: {
+        flex: 1,
+        padding: 10,
+        justifyContent: "center",
+        flexDirection: "row",
+        alignContent: "stretch",
+        alignItems: "flex-end"
     },
 
 

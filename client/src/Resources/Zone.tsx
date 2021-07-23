@@ -53,7 +53,7 @@ export const ZoneBeaconsTable = () => {
 
 export const ZoneArtefactsTable = (props: PriorityTableProps) => {
   const classes = useListStyles();
-
+  const refresh = useRefresh();
   const listContext = useListContext();
   const { data } = listContext;
 
@@ -100,6 +100,8 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
       })
       .finally(() => {
         setLoading(false);
+        // Right now refresh makes it so that some flicking goes on
+        refresh();
       });
   }
 
@@ -128,7 +130,6 @@ export const ZoneArtefactsTable = (props: PriorityTableProps) => {
     <div>
       {/* Error is for frontend based errors for really broken stuff */}
       {/* <Error error="bruh" /> */}
-      {/* <div style={{ fontSize: "20px" }}>{state.tableEnabled ? "Enabled" : "Not Enabled"}</div> */}
       {/* Table */}
 
       <DragDropContext onDragEnd={onDragEnd}>
@@ -193,8 +194,8 @@ export const ZoneEdit = (props: EditProps) => {
           <ReferenceManyField label="ARTEFACTS" reference="artefacts" target="zoneId" source="id" sort={{ field: "priority", order: "DESC" }}>
             <ZoneArtefactsTable parentId={props.id} parentPath={props.basePath} />
           </ReferenceManyField>
-          <ReferenceManyField label="BEACONS" reference="beacons" target="zoneId">
 
+          <ReferenceManyField label="BEACONS" reference="beacons" target="zoneId">
             <ZoneBeaconsTable />
           </ReferenceManyField>
         </FormTab>

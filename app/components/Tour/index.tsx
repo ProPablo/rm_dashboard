@@ -1,5 +1,7 @@
 import { Beacon } from '@shared/types';
-import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import React, { createContext, Dispatch, useContext, useEffect, useRef, useState } from 'react';
+import { useMemo } from 'react';
+import { useReducer } from 'react';
 import { useCallback } from 'react';
 import {
   PermissionsAndroid,
@@ -19,14 +21,50 @@ import { BeaconsContext, GlobalActionContext } from '../../store';
 // const allPerms = [PermissionsAndroid.PERMISSIONS.BLUETOOTH, PermissionsAndroid.PERMISSIONS.BLUETOOTH_ADMIN, PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION];
 
 
-export interface TourContextValue {
-  beaconList: Beacon[],
-  beaconMAC: string | null,
-  isBLEnabled: boolean,
+// enum TourActionKind {
+//   SKIP,
+//   VISIT,
+//   GOBACK,
+//   VISITEXACT
+// }
+export interface TourState {
+  hasVisited: boolean,
+  maxZoneIndex: number,
+  currGuideZoneIndex: number,
 }
 
+const initialTourState: TourState = {
+  hasVisited: false,
+  currGuideZoneIndex: 0,
+  maxZoneIndex: 0
+}
+
+type TourAction = { type: 'forward' }
+  | { type: 'visit' }
+  | { type: 'backward' }
+  | { type: 'visitExact', index: number }
+
+const TourReducer = (state: TourState, action: TourAction): TourState => {
+  console.log({state, action});
+  switch (action.type) {
+    case 'forward':
+      const newZone = state.currGuideZoneIndex + 1;
+      if (newZone > state.maxZoneIndex) return { ...state, currGuideZoneIndex: newZone, maxZoneIndex: newZone, hasVisited: false };
+      return { ...state, currGuideZoneIndex: newZone, }
+    case 'backward':
+      return { ...state, currGuideZoneIndex: state.currGuideZoneIndex - 1 };
+    case 'visit':
+      return { ...state, hasVisited: true }
+    default:
+      return state;
+  }
+}
 
 // const TourContext = createContext<TourContextValue>({ beaconList: [], beaconMAC: null, isBLEnabled: false });
+
+const TourStateContext = createContext<[TourState, Dispatch<TourAction>]>([initialTourState, () => null]);
+TourStateContext.displayName = "TourStateContext";
+
 const TourContext = createContext<Beacon[]>([]);
 TourContext.displayName = "TourContext";
 
@@ -96,6 +134,11 @@ const Tour: React.FC = ({ children }) => {
   const beacons = useContext(BeaconsContext);
   const { setBLEnabled } = useContext(GlobalActionContext);
 
+  // const [hasVisitedCurrent, setHasVisited] = useState(false);
+  // const [maxZoneIndex, setZoneIndex] = useState(0);
+
+  const reducerVal = useReducer(TourReducer, initialTourState);
+
   useEffect(() => {
     if (!foundBeacon) return;
 
@@ -145,7 +188,7 @@ const Tour: React.FC = ({ children }) => {
     initProcess();
     // requestLocationPermission()
     //   .then(() => {
-    
+
     //     // TODO fix for ios
     const subscription = manager.onStateChange((state => {
       console.log("BLE Manager online");
@@ -162,18 +205,20 @@ const Tour: React.FC = ({ children }) => {
     // })
     return () => {
       manager.stopDeviceScan();
-      manager.destroy();
+      // manager.destroy();
     }
   }, [])
 
 
   return (
     <TourContext.Provider value={beaconsList}>
-      {children}
+      <TourStateContext.Provider value={reducerVal}>
+        {children}
+      </TourStateContext.Provider>
     </TourContext.Provider>
   )
 }
 
 export default Tour;
 
-export { TourContext };
+export { TourContext, TourStateContext };

@@ -11,7 +11,8 @@ const USE_NATIVE_DRIVER = true;
 export interface Props {
     children: React.ReactNode,
     style?: any,
-
+    initialPos?: { x: number, y: number },
+    initialZoom?: number
 }
 
 // TODO: Maybe use reanimated instead if low performance 
@@ -68,10 +69,14 @@ export default class Transform extends React.Component<Props> {
 
     componentDidMount() {
         this.resetTransform();
+        if (this.props.initialPos) this.panOffset.setValue(this.props.initialPos);
+        if (this.props.initialZoom) {
+            this.baseScale.setValue(this.props.initialZoom);
+            this.lastScale = this.props.initialZoom;
+        }
     }
 
     resetTransform() {
-        console.log("nigga balls")
         this.baseScale.setValue(0.15);
         this.lastScale = 0.15;
         this.pinchScale.setValue(1);
