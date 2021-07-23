@@ -21,11 +21,15 @@ import { MEDIA_URL } from '../../lib/controllers';
 import { globalStyle } from '../../lib/styles';
 import { useMemo } from 'react';
 import { useCallback } from 'react';
-import Carousel from 'react-native-snap-carousel';
+import Carousel, { } from 'react-native-snap-carousel';
 
 
 type NavigationProp = StackNavigationProp<TourStackParams>;
 
+type CarouselRenderItemProps = {
+    item: Artefact,
+    index: number
+}
 
 interface TourScreenProps {
     navigation: NavigationProp
@@ -71,12 +75,18 @@ export const TourGuide = ({ navigation, zone }: TourGuideProps) => {
         }
     }, [tourState.currGuideZoneIndex, zones]);
 
+    const currentArtefactList: Artefact[] = useMemo(() => {
+        if (!currentTourZone) return [];
+        return currentTourZone.Artefacts.filter((artefactId) => memo.artefacts[artefactId].Media).map((artefactId) => memo.artefacts[artefactId]);
+    }, [memo, currentTourZone])
+
+
     const currentArtefact: Artefact | undefined = useMemo(() => {
         let artefactIndex = 0;
         let foundArtefact: Artefact | undefined;
 
         if (!currentTourZone) return;
-        
+
         while (artefactIndex < currentTourZone.Artefacts.length) {
             const artefactId = currentTourZone.Artefacts[artefactIndex];
             // const artefact = artefacts.find((a) => a.id === artefactId);
@@ -115,9 +125,42 @@ export const TourGuide = ({ navigation, zone }: TourGuideProps) => {
         // ToastAndroid.show("Backing", ToastAndroid.SHORT);
         tourDispatch({ type: 'backward' })
     }
+
+    const _renderItem = ({ item, index }: CarouselRenderItemProps) => {
+        if (!item.Media) return (<></>);
+        delete item.thumbnail;
+        // console.log({ item });
+        return (<View style={styles.tourContainer}>
+            <Text style={styles.tourName}> {item.Media.src}</Text>
+        </View>)
+        // if (item.Media.type === 1) {
+        //     return (
+        //         <View style={styles.video}>
+        //             <VideoPlayer
+        //                 source={{ uri: `${MEDIA_URL}/${item.Media.src}` }}
+        //                 disableFullScreen={true}
+        //                 disableBack={true}
+        //                 disableVolume={true}
+        //                 tapAnywhereToPause={true}
+        //                 paused={paused}
+        //                 onPause={handlePause}
+        //                 onPlay={handlePlay}
+        //                 onEnd={handleVideoEnd}
+        //             />
+        //         </View>
+        //     )
+        // }
+        // else return (<Image
+        //     style={[styles.image]}
+        //     source={{
+        //         uri: `${MEDIA_URL}/${item.Media.src}`,
+        //     }} />)
+    }
+
     return (
         <View style={styles.videoBottomSheetStyle}>
-            <View style={styles.videoContainer}>
+
+            {/* <View style={styles.videoContainer}>
                 {currentArtefact && (
                     (currentArtefact.Media.type === 1) ?
                         <View style={styles.video}>
@@ -134,13 +177,22 @@ export const TourGuide = ({ navigation, zone }: TourGuideProps) => {
                             />
                         </View>
                         :
-                            <Image
-                                style={[styles.image]}
-                                source={{
-                                    uri: `${MEDIA_URL}/${currentArtefact.Media.src}`,
-                                }} />
+                        <Image
+                            style={[styles.image]}
+                            source={{
+                                uri: `${MEDIA_URL}/${currentArtefact.Media.src}`,
+                            }} />
                 )}
+            </View> */}
+            <View style={styles.videoContainer}>
+                <Carousel
+                    data={currentArtefactList}
+                    renderItem={_renderItem}
+                    sliderWidth={300}
+                    itemWidth={300}
+                />
             </View>
+
 
             <View style={styles.controlsContainer}>
                 <Button
