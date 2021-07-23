@@ -16,9 +16,9 @@ export const ArtefactCreate = (props: CreateProps) => {
         <SimpleForm>
         <TextInput source="name" />
         <TextInput multiline source="description" />
-        <NumberInput source="coordX" />
-        <NumberInput source="coordY" />
-        <DateInput source="acquisitionDate" />
+        <NumberInput source="coordX" label="Coord X"/>
+        <NumberInput source="coordY" label="Coord Y"/>
+        <DateInput source="acquisitionDate" label="Acquisition Date"/>
         <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined}>
             <SelectInput optionText="name" />
         </ReferenceInput>
@@ -37,14 +37,14 @@ export const ArtefactEdit = (props: EditProps) => {
   return (
     <Edit actions={<ResourceActions />} undoable={false} {...props}>
       <SimpleForm>
-        <TextInput disabled source="id" />
+        <TextInput disabled source="id" label="ID"/>
         <TextInput source="name" />
         <TextInput multiline source="description" />
-        <NumberInput source="coordX" />
-        <NumberInput source="coordY" />
-        <DateInput source="acquisitionDate" />
-        <DateInput disabled source="createdAt" />
-        <DateInput disabled source="updatedAt" />
+        <NumberInput source="coordX" label="Coord X"/>
+        <NumberInput source="coordY" label="Coord Y"/>
+        <DateInput source="acquisitionDate" label="Acquisition Date"/>
+        <DateInput disabled source="createdAt" label="Created At"/>
+        <DateInput disabled source="updatedAt" label="Updated At"/>
         <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined}>
           <SelectInput optionText="name" />
         </ReferenceInput>
@@ -75,15 +75,15 @@ export const ArtefactList = (props: CreateProps) => {
         <FunctionField
           label="Thumbnail"
           render={(artefact: any) => <img className={classes.thumbnailImage} src={artefact.thumbnail} />} />
-        <TextField source="id" />
+        <TextField source="id" label="ID"/>
         <TextField source="name" />
         <TextField source="description" />
-        <NumberField source="coordX" />
-        <NumberField source="coordY" />
+        <NumberField source="coordX" label="Coord X"/>
+        <NumberField source="coordY" label="Coord Y"/>
         <ReferenceField source="zoneId" reference="zones"><TextField source="id" /></ReferenceField>
-        <DateField source="acquisitionDate" />
-        <DateField source="createdAt" />
-        <DateField source="updatedAt" />
+        <DateField source="acquisitionDate" label="Acquisition Date"/>
+        <DateField source="createdAt" label="Created At"/>
+        <DateField source="updatedAt" label="Updated At"/>
       </Datagrid>
     </List>
   )

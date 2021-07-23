@@ -11,7 +11,7 @@ export const StoreItemCreate = (props: CreateProps) => (
       <TextInput source="name" />
       <TextInput multiline source="description" />
       <NumberInput source="cost" />
-      <BooleanInput source="inStock" />
+      <BooleanInput source="inStock" label="In Stock"/>
       <ImageInput source="InputMedia" label="Thumbnail" accept="image/*">
         <ImageField source="src" title="title" />
       </ImageInput>
@@ -22,13 +22,13 @@ export const StoreItemCreate = (props: CreateProps) => (
 export const StoreItemEdit = (props: EditProps) => (
   <Edit actions={<ResourceActions />} {...props} undoable={false}>
     <SimpleForm>
-      <TextInput disabled source="id" />
+      <TextInput disabled source="id" label="ID"/>
       <TextInput source="name" />
       <TextInput multiline source="description" />
       <NumberInput source="cost" />
-      <BooleanInput source="inStock" />
-      <DateInput disabled source="createdAt" />
-      <DateInput disabled source="updatedAt" />
+      <BooleanInput source="inStock" label="In Stock"/>
+      <DateInput disabled source="createdAt" label="Created At"/>
+      <DateInput disabled source="updatedAt" label="Updated At"/>
       {/* Image input {}*/}
       <FormDataConsumer>
         {({ formData, ...rest }) => (
@@ -51,13 +51,13 @@ export const StoreItemList = (props: CreateProps) => {
         <FunctionField
           label="Thumbnail"
           render={(storeItem: any) => <img className={classes.thumbnailImage} src={storeItem.thumbnail} />} />
-        <TextField source="id" />
+        <TextField source="id" label="ID"/>
         <TextField source="name" />
         <TextField source="description" />
         <NumberField source="cost" />
-        <BooleanField source="inStock" />
-        <DateField source="createdAt" />
-        <DateField source="updatedAt" />
+        <BooleanField source="inStock" label="In Stock"/>
+        <DateField source="createdAt" label="Created At"/>
+        <DateField source="updatedAt" label="Updated At"/>
       </Datagrid>
     </List>
   )

@@ -1,3 +1,6 @@
+//https://marmelab.com/react-admin/DataProviders.html#extending-a-data-provider-example-of-file-upload
+//https://stackoverflow.com/questions/59267434/multi-part-form-data-in-react-admin
+
 import { DataProvider, fetchUtils, ResourceMatch, UpdateParams } from 'react-admin';
 
 import jsonServerProvider from 'ra-data-json-server';
@@ -49,6 +52,7 @@ export const builtDataProvider: DataProvider = {
     formData.append('type', params.data.type);
     if (params.data.title) formData.append('title', params.data.title);
     else if (params.data.InputMedia.rawFile.name) formData.append('title', params.data.InputMedia.rawFile.name);
+    if (!params.data.artefactId) return Promise.reject("An artefact must be selected");
     formData.append('artefactId', params.data.artefactId);
     formData.append('file', params.data.InputMedia.rawFile);
 
@@ -81,6 +85,7 @@ export const builtDataProvider: DataProvider = {
     formData.append('type', params.data.type);
     formData.append('title', params.data.title);
 
+    if (!params.data.artefactId) return Promise.reject("An artefact must be selected");
     formData.append('artefactId', params.data.artefactId);
     formData.append('file', params.data.InputMedia.rawFile);
 

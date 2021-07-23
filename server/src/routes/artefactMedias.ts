@@ -31,15 +31,26 @@ artefactMediaRouter.get('/:id', async (req, res) => {
 })
 //Name of formdata field = file
 artefactMediaRouter.post('/', upload.single('file'), async (req, res, next) => {
+  let value;
+  
   if (req.file) {
-    req.body.src = req.file.path;
+    try {
+      value = await editSchema.validateAsync(req.body);
+    }
+    catch (e) {
+      console.log("error", e)
+      // delete the file 
+      await unlink(req.file.path);
+      throw new HTTPException(400, e.message);
+    }
+    value.src = req.file.path;
 
     if (isNaN(req.body.type))
-      req.body.type = MediaType[req.body.type];
+      value.type = MediaType[value.type];
 
     try {
-      console.log(req.body);
-      res.json(await ArtefactMedia.create(req.body as Object).save());
+      // console.log(req.body);
+      res.json(await ArtefactMedia.create(value as Object).save());
     }
     catch (e) {
       console.log("error", e.code);

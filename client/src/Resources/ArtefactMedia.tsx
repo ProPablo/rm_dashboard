@@ -1,5 +1,5 @@
 import React, { FC, memo } from "react";
-import { Create, CreateProps, DateInput, Edit, EditProps, FileFieldProps, FileInput, FormDataConsumer, ImageField, ImageInput, ReferenceInput, SelectInput, SimpleForm, TextInput, useRecordContext } from "react-admin";
+import { Create, CreateProps, Datagrid, DateField, DateInput, Edit, EditProps, FileFieldProps, FileInput, FormDataConsumer, FunctionField, ImageField, ImageInput, List, ListProps, NumberField, ReferenceField, ReferenceInput, SelectInput, SimpleForm, TextField, TextInput, useRecordContext } from "react-admin";
 import { useListStyles } from "../AppTheme";
 import { MEDIA_URL } from "../constants";
 import { ResourceActions } from "../helper";
@@ -122,4 +122,18 @@ export const ArtefactMediaCreate = (props: CreateProps) => (
       </ReferenceInput>
     </SimpleForm>
   </Create>
+);
+
+export const ArtefactMediaList = (props: ListProps) => (
+  <List {...props}>
+      <Datagrid rowClick="edit">
+        <TextField source="id" label="ID"/>
+        <TextField source="src" label="Source"/>
+        <TextField source="title" />
+        <FunctionField label="Type" render={(record: any) => record.type == 0 ? "Image" : "Video" }/>
+        <DateField source="createdAt" label="Created At"/>
+        <DateField source="updatedAt" label="Updated At"/>
+        <ReferenceField source="artefactId" reference="artefacts"><TextField source="name" /></ReferenceField>
+      </Datagrid>
+  </List>
 );

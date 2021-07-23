@@ -17,7 +17,7 @@ import { BeaconCreate, BeaconEdit, BeaconList } from './Resources/Beacon';
 import { ExhibitionCreate, ExhibitionEdit, ExhibitionList } from './Resources/Exhibition';
 import { StoreItemCreate, StoreItemList, StoreItemEdit } from './Resources/StoreItem';
 import { ZoneCreate, ZoneEdit, ZoneList } from './Resources/Zone';
-import { ArtefactMediaCreate, ArtefactMediaEdit } from './Resources/ArtefactMedia';
+import { ArtefactMediaCreate, ArtefactMediaEdit, ArtefactMediaList } from './Resources/ArtefactMedia';
 
 import { Artefact } from "../../shared/types";
 
@@ -27,7 +27,7 @@ function App() {
     <div className="App">
       <Admin customRoutes={customRoutes} layout={AppLayout} theme={redlandTheme} dataProvider={builtDataProvider} authProvider={authProvider} loginPage={LoginPage} >
         <Resource name="artefacts" options={{label: "Artefacts"}} list={ArtefactList} edit={ArtefactEdit} create={ArtefactCreate} icon={ArtefactIcon} />
-        <Resource name="artefactmedia" options={{label: "Artefact Media"}} list={ListGuesser} edit={ArtefactMediaEdit} create={ArtefactMediaCreate} icon={ArtefactMediaIcon} />
+        <Resource name="artefactmedia" options={{label: "Artefact Media"}} list={ArtefactMediaList} edit={ArtefactMediaEdit} create={ArtefactMediaCreate} icon={ArtefactMediaIcon} />
         <Resource name="zones" options={{label: "Zones"}} list={ZoneList} edit={ZoneEdit} create={ZoneCreate} icon={ZoneIcon} />
         <Resource name="beacons" options={{label: "Beacons"}} list={BeaconList} edit={BeaconEdit} create={BeaconCreate} icon={BeaconIcon} />
         <Resource name="exhibitions" options={{label: "Exhibitions"}} list={ExhibitionList} edit={ExhibitionEdit} create={ExhibitionCreate} icon={ExhibitionsIcon} />

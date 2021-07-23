@@ -101,28 +101,4 @@ const styles = StyleSheet.create({
       borderBottomWidth: 3,
       padding: 10
   },
-  switch: {
-      flex: 2
-  },
-  info: {
-      padding: 10,
-      marginTop: 20,
-      borderColor: "#f4cfce",
-      borderWidth: 1
-  },
-  row: {
-      flexDirection: "row",
-      backgroundColor: "#f4cfce"
-  },
-  row1: {
-      flexDirection: "row"
-  },
-  prop: {
-      flex: 1,
-      padding: 10
-  },
-  val: {
-      alignSelf: "center",
-      flex: 1
-  }
 });
