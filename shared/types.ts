@@ -20,15 +20,21 @@ export interface Artefact {
 //   image: string,
 // }
 
+export enum MediaType {
+  IMAGE,
+  VIDEO
+}
+
 export interface ArtefactMediaSmall {
   src: string,
-  type: [0,1], // 0 image, 1 video 
+  type: MediaType//[0,1], // 0 image, 1 video 
 }
 
 export interface ZoneConsumable {
   id: number,
   name: string,
   description: string,
+  priority: number,
   Artefacts: number[],
 }
 
@@ -51,14 +57,14 @@ export interface Beacon {
 //   CoordX: number,
 //   CoordY: number,
 //   Activation: boolean
-  
+
 // }
 
 export interface StoreItem {
   id: number,
   name: string,
   description: string,
-  cost: number, 
+  cost: number,
   inStock: boolean,
   thumbnail?: string,
 }
@@ -71,7 +77,7 @@ export interface Exhibition {
   priceAdult: number,
   priceConcession: number,
   priceChild: number,
-  startDate: string, 
+  startDate: string,
   finishDate: string,
   thumbnail?: string
 }

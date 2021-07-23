@@ -21,6 +21,9 @@ import { MEDIA_URL } from '../../lib/controllers';
 import { globalStyle } from '../../lib/styles';
 import { useMemo } from 'react';
 import { useCallback } from 'react';
+import Carousel from 'react-native-snap-carousel';
+
+
 type NavigationProp = StackNavigationProp<TourStackParams>;
 
 
@@ -62,12 +65,20 @@ export const TourGuide = ({ navigation, zone }: TourGuideProps) => {
         console.log("bruh play")
     }
 
+    const currentTourZone = useMemo(() => {
+        if (zones.length != 0) {
+            return zones[tourState.currGuideZoneIndex];
+        }
+    }, [tourState.currGuideZoneIndex, zones]);
+
     const currentArtefact: Artefact | undefined = useMemo(() => {
         let artefactIndex = 0;
         let foundArtefact: Artefact | undefined;
-        if (!zone) return;
-        while (artefactIndex < zone.Artefacts.length) {
-            const artefactId = zone.Artefacts[artefactIndex];
+
+        if (!currentTourZone) return;
+        
+        while (artefactIndex < currentTourZone.Artefacts.length) {
+            const artefactId = currentTourZone.Artefacts[artefactIndex];
             // const artefact = artefacts.find((a) => a.id === artefactId);
             const artefact = memo.artefacts[artefactId];
             if (artefact?.Media) {
@@ -76,24 +87,21 @@ export const TourGuide = ({ navigation, zone }: TourGuideProps) => {
             }
             artefactIndex++;
         }
+        delete foundArtefact?.thumbnail;
+        console.log({ foundArtefact })
         return foundArtefact;
-    }, [memo, zone])
+    }, [memo, currentTourZone])
 
     function handleVideoEnd() {
         console.log("videoEnd");
         // if (currentZone) findArtefact(currentZone);
     }
 
-    const currentTourZone = useMemo(() => {
-        if (zones.length != 0) {
-            return zones[tourState.maxZoneIndex];
-        }
-    }, [tourState.maxZoneIndex, zones]);
 
     function handleSkip() {
-        console.log("Skipping");
-        ToastAndroid.show("Skipping", ToastAndroid.SHORT);
-        tourDispatch({ type: 'skip' })
+        console.log("Forward");
+        // ToastAndroid.show("Skipping", ToastAndroid.SHORT);
+        tourDispatch({ type: 'forward' })
         // gravity is for location
         // ToastAndroid.showWithGravity(
         //     "All Your Base Are Belong To Us",
@@ -104,29 +112,34 @@ export const TourGuide = ({ navigation, zone }: TourGuideProps) => {
 
     function handleBack() {
         console.log("GOing back");
-        ToastAndroid.show("Backing", ToastAndroid.SHORT);
-        tourDispatch({ type: 'goback' })
+        // ToastAndroid.show("Backing", ToastAndroid.SHORT);
+        tourDispatch({ type: 'backward' })
     }
-
     return (
         <View style={styles.videoBottomSheetStyle}>
-
             <View style={styles.videoContainer}>
-                {currentArtefact &&
-                    <View style={styles.video}>
-                        <VideoPlayer
-                            source={{ uri: `${MEDIA_URL}/${currentArtefact.Media.src}` }}
-                            disableFullScreen={true}
-                            disableBack={true}
-                            disableVolume={true}
-                            tapAnywhereToPause={true}
-                            paused={paused}
-                            onPause={handlePause}
-                            onPlay={handlePlay}
-                            onEnd={handleVideoEnd}
-                        />
-                    </View>
-                }
+                {currentArtefact && (
+                    (currentArtefact.Media.type === 1) ?
+                        <View style={styles.video}>
+                            <VideoPlayer
+                                source={{ uri: `${MEDIA_URL}/${currentArtefact.Media.src}` }}
+                                disableFullScreen={true}
+                                disableBack={true}
+                                disableVolume={true}
+                                tapAnywhereToPause={true}
+                                paused={paused}
+                                onPause={handlePause}
+                                onPlay={handlePlay}
+                                onEnd={handleVideoEnd}
+                            />
+                        </View>
+                        :
+                            <Image
+                                style={[styles.image]}
+                                source={{
+                                    uri: `${MEDIA_URL}/${currentArtefact.Media.src}`,
+                                }} />
+                )}
             </View>
 
             <View style={styles.controlsContainer}>
@@ -137,6 +150,7 @@ export const TourGuide = ({ navigation, zone }: TourGuideProps) => {
                         size={20}
                         color="white" />}
                     onPress={handleBack}
+                    disabled={!(tourState.currGuideZoneIndex > 0)}
                 />
                 {/* <Button title={zone?.name} buttonStyle={{ flex: 3, backgroundColor: "#CAA868", padding: "30%", margin: 0 }}/> */}
                 <Pressable>
@@ -151,6 +165,7 @@ export const TourGuide = ({ navigation, zone }: TourGuideProps) => {
                         size={20}
                         color="white" />}
                     onPress={handleSkip}
+                    disabled={!((tourState.hasVisited || tourState.currGuideZoneIndex < tourState.maxZoneIndex) && tourState.currGuideZoneIndex < zones.length)}
                 />
             </View>
         </View>
@@ -187,12 +202,13 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
         //     }
         //     return;
         // }
+        if (zones.length < 1) return;
 
         if (currentZone?.id == zones[tourState.maxZoneIndex].id) {
             tourDispatch({ type: 'visit' });
             console.log("visited", zones[tourState.maxZoneIndex]);
         }
-    }, [currentZone])
+    }, [currentZone, zones])
 
     const renderContent = () => (
         <View style={styles.bottomSheetStyle}>
@@ -311,6 +327,16 @@ const styles = StyleSheet.create({
 
     video: {
         height: 450,
+        borderRadius: 10,
+        borderWidth: 10,
+        borderColor: 'black'
+    },
+
+    image: {
+        flex: 1,
+        height: 450,
+        justifyContent: 'center',
+        alignItems: 'center',
         borderRadius: 10,
         borderWidth: 10,
         borderColor: 'black'

@@ -39,18 +39,20 @@ const initialTourState: TourState = {
   maxZoneIndex: 0
 }
 
-type TourAction = { type: 'skip' }
+type TourAction = { type: 'forward' }
   | { type: 'visit' }
-  | { type: 'goback' }
+  | { type: 'backward' }
   | { type: 'visitExact', index: number }
 
 const TourReducer = (state: TourState, action: TourAction): TourState => {
+  console.log({state, action});
   switch (action.type) {
-    case 'skip':
-      
-      return { ...state, maxZoneIndex: state.maxZoneIndex + 1, hasVisited: false };
-    case 'goback':
-      return { ...state, maxZoneIndex: state.maxZoneIndex - 1, hasVisited: false };
+    case 'forward':
+      const newZone = state.currGuideZoneIndex + 1;
+      if (newZone > state.maxZoneIndex) return { ...state, currGuideZoneIndex: newZone, maxZoneIndex: newZone, hasVisited: false };
+      return { ...state, currGuideZoneIndex: newZone, }
+    case 'backward':
+      return { ...state, currGuideZoneIndex: state.currGuideZoneIndex - 1 };
     case 'visit':
       return { ...state, hasVisited: true }
     default:
@@ -203,7 +205,7 @@ const Tour: React.FC = ({ children }) => {
     // })
     return () => {
       manager.stopDeviceScan();
-      manager.destroy();
+      // manager.destroy();
     }
   }, [])
 

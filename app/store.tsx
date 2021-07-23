@@ -58,6 +58,7 @@ export const GlobalStore: React.FC = ({ children }) => {
         const storeItemResults = await request<StoreItem[]>(`${baseURL}/storeItems`);
         const exhibitionResults = await request<Exhibition[]>(`${baseURL}/exhibitions`);
         const zoneResults = await request<ZoneConsumable[]>(`${baseURL}/zones/app`);
+        zoneResults.sort((a, b) => b.priority - a.priority ); //descending
         const beaconResults = await request<Beacon[]>(`${baseURL}/beacons`);
         // if production / logger
         // console.log(artefactResults);
@@ -96,7 +97,7 @@ export const GlobalStore: React.FC = ({ children }) => {
       acc[val.id] = val;
       return acc
     }, {}),
-    
+
   }), [artefacts, zones])
 
   useEffect(() => {
