@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Title } from "react-admin";
+import { Title, TextField } from "react-admin";
 import { SERVER_URL } from '../constants';
+
 // state - variables set through setState instead of normal assignment 
 
 interface AboutProps { // children do not get write access, props cannot change

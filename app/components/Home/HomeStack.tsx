@@ -1,17 +1,32 @@
 import React from 'react'
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
 import HomeScreen from './HomeScreen';
 import TourScreen from "../Tour/TourScreen";
 import { HeaderIcon } from '../../lib/styles';
+import { FAB } from 'react-native-elements/dist/buttons/FAB';
+import { Icon } from 'react-native-elements';
+import SettingsScreen from './SettingsScreen';
 
 export type HomeStackParams = {
     Tour: {screen: string},
+    Settings: {screen: string},
     HomeScreen: undefined,
+}
+
+type NavigationProp = StackNavigationProp<HomeStackParams>
+
+
+interface Props {
+    navigation: NavigationProp,
 }
 
 const Stack = createStackNavigator<HomeStackParams>();
 
-export const HomeStack: React.FC = () => {
+export const HomeStack: React.FC<Props> = (props) => {
+    function actionOnPress () {
+        props.navigation.navigate('Settings', { screen: 'SettingsScreen' });
+
+    }
     return (
         <Stack.Navigator 
             screenOptions={{
@@ -20,8 +35,13 @@ export const HomeStack: React.FC = () => {
             {/* TODO: make back button that navigates back to  */}
             <Stack.Screen name="HomeScreen" component={HomeScreen}
                 options={{
-                    headerLeft: props => <HeaderIcon />
+                    headerLeft: props => <HeaderIcon />,
+                    headerRight: () => (
+                        <FAB size='small' color="#7A0600" onPress={actionOnPress} style={{padding: 20}} icon={<Icon name="info" size={24} color="white" />}/>
+                    ) 
                 }} />
+            <Stack.Screen name="Settings" component={SettingsScreen}/>
+
         </Stack.Navigator>
     )
 }
