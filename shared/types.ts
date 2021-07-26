@@ -8,7 +8,7 @@ export interface Artefact {
   coordY: number,
   zoneId: number,
   priority: number,
-  Media: ArtefactMediaSmall,
+  Media?: ArtefactMediaSmall,
 }
 
 // inputArtefact {}
