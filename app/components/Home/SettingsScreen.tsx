@@ -32,12 +32,12 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                     <Switch style={styles.switch}></Switch>
                 </View>
                 <Pressable onPress={handleTourEnable}>
-                    <View style={globalStyle.zoneContainer}>
+                    <View style={globalStyle.pressableContainer}>
                         <Text style={styles.settingsText}>Refresh</Text>
                     </View>
                 </Pressable>
                 <Pressable onPress={handleTourEnable}>
-                    <View style={globalStyle.zoneContainer}>
+                    <View style={globalStyle.pressableContainer}>
                         <Text style={styles.settingsText}>Restart Tour</Text>
                     </View>
                 </Pressable>

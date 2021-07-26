@@ -215,7 +215,7 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
     return (
         <View style={styles.pageContainer}>
             <Pressable onPress={zoneTitleOnPress}>
-                <View style={styles.zoneContainer}>
+                <View style={globalStyle.pressableContainer}>
                     <Text style={styles.textName}> {currentZone ? currentZone.name : "No Zone Found / Entered"}</Text>
                 </View>
             </Pressable>
@@ -255,12 +255,7 @@ const styles = StyleSheet.create({
         paddingTop: 20,
     },
     
-    zoneContainer: {
-        margin: 10,
-        padding: 10,
-        borderRadius: 10,
-        backgroundColor: '#A20C02'
-    },
+
 
     textName: {
         fontSize: 27,

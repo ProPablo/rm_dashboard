@@ -55,6 +55,12 @@ export const globalStyle = StyleSheet.create({
         elevation: 4,
     },
 
+    pressableContainer: {
+        margin: 10,
+        padding: 10,
+        borderRadius: 10,
+        backgroundColor: '#A20C02'
+    },
 
     wrapperStyle: {
 
