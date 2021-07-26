@@ -22,6 +22,8 @@ import { globalStyle } from '../../lib/styles';
 import { useMemo } from 'react';
 import { useCallback } from 'react';
 import Carousel, { } from 'react-native-snap-carousel';
+import { ZoneMediaRender } from '../Zones/ZoneDetailScreen';
+import { NativeViewGestureHandler } from 'react-native-gesture-handler';
 
 
 type NavigationProp = StackNavigationProp<TourStackParams>;
@@ -40,34 +42,17 @@ interface TourGuideProps {
     zone?: ZoneConsumable,
 }
 
-export const TourGuide = ({ navigation, zone }: TourGuideProps) => {
+export const TourGuide = ({ navigation }: TourGuideProps) => {
     const memo = useContext(MemoizedContext);
     const zones = useContext(ZonesContext);
     const [tourState, tourDispatch] = useContext(TourStateContext);
 
-    const globalActionContext = useContext(GlobalActionContext);
+    // useEffect(() => {
+    //     console.log({ zone })
+    //     setHasPlayed(false);
+    // }, [zone]);
 
 
-    // const [currentArtefact, setArtefact] = useState<Artefact | undefined>(undefined);
-    const beacons = useContext(BeaconsContext);
-    const [hasPlayed, setHasPlayed] = useState(false);
-    const [paused, setPaused] = useState(false);
-
-    useEffect(() => {
-        console.log({ zone })
-        setHasPlayed(false);
-    }, [zone]);
-
-
-    function handlePause() {
-        setPaused(true);
-        console.log("bruh pause")
-    }
-
-    function handlePlay() {
-        setPaused(false);
-        console.log("bruh play")
-    }
 
     const currentTourZone = useMemo(() => {
         if (zones.length != 0) {
@@ -79,34 +64,6 @@ export const TourGuide = ({ navigation, zone }: TourGuideProps) => {
         if (!currentTourZone) return [];
         return currentTourZone.Artefacts.filter((artefactId) => memo.artefacts[artefactId].Media).map((artefactId) => memo.artefacts[artefactId]);
     }, [memo, currentTourZone])
-
-
-    const currentArtefact: Artefact | undefined = useMemo(() => {
-        let artefactIndex = 0;
-        let foundArtefact: Artefact | undefined;
-
-        if (!currentTourZone) return;
-
-        while (artefactIndex < currentTourZone.Artefacts.length) {
-            const artefactId = currentTourZone.Artefacts[artefactIndex];
-            // const artefact = artefacts.find((a) => a.id === artefactId);
-            const artefact = memo.artefacts[artefactId];
-            if (artefact?.Media) {
-                foundArtefact = artefact;
-                break;
-            }
-            artefactIndex++;
-        }
-        delete foundArtefact?.thumbnail;
-        console.log({ foundArtefact })
-        return foundArtefact;
-    }, [memo, currentTourZone])
-
-    function handleVideoEnd() {
-        console.log("videoEnd");
-        // if (currentZone) findArtefact(currentZone);
-    }
-
 
     function handleSkip() {
         console.log("Forward");
@@ -126,71 +83,19 @@ export const TourGuide = ({ navigation, zone }: TourGuideProps) => {
         tourDispatch({ type: 'backward' })
     }
 
-    const _renderItem = ({ item, index }: CarouselRenderItemProps) => {
-        if (!item.Media) return (<></>);
-        delete item.thumbnail;
-        // console.log({ item });
-        return (<View style={styles.tourContainer}>
-            <Text style={styles.tourName}> {item.Media.src}</Text>
-        </View>)
-        // if (item.Media.type === 1) {
-        //     return (
-        //         <View style={styles.video}>
-        //             <VideoPlayer
-        //                 source={{ uri: `${MEDIA_URL}/${item.Media.src}` }}
-        //                 disableFullScreen={true}
-        //                 disableBack={true}
-        //                 disableVolume={true}
-        //                 tapAnywhereToPause={true}
-        //                 paused={paused}
-        //                 onPause={handlePause}
-        //                 onPlay={handlePlay}
-        //                 onEnd={handleVideoEnd}
-        //             />
-        //         </View>
-        //     )
-        // }
-        // else return (<Image
-        //     style={[styles.image]}
-        //     source={{
-        //         uri: `${MEDIA_URL}/${item.Media.src}`,
-        //     }} />)
-    }
-
     return (
-        <View style={styles.videoBottomSheetStyle}>
+        <View style={styles.bottomSheetContainer}>
+            <View style={styles.carouselContainer}>
+                <NativeViewGestureHandler disallowInterruption >
 
-            {/* <View style={styles.videoContainer}>
-                {currentArtefact && (
-                    (currentArtefact.Media.type === 1) ?
-                        <View style={styles.video}>
-                            <VideoPlayer
-                                source={{ uri: `${MEDIA_URL}/${currentArtefact.Media.src}` }}
-                                disableFullScreen={true}
-                                disableBack={true}
-                                disableVolume={true}
-                                tapAnywhereToPause={true}
-                                paused={paused}
-                                onPause={handlePause}
-                                onPlay={handlePlay}
-                                onEnd={handleVideoEnd}
-                            />
-                        </View>
-                        :
-                        <Image
-                            style={[styles.image]}
-                            source={{
-                                uri: `${MEDIA_URL}/${currentArtefact.Media.src}`,
-                            }} />
-                )}
-            </View> */}
-            <View style={styles.videoContainer}>
-                <Carousel
-                    data={currentArtefactList}
-                    renderItem={_renderItem}
-                    sliderWidth={300}
-                    itemWidth={300}
-                />
+                    <Carousel
+                        // layout={'stack'}
+                        data={currentArtefactList}
+                        renderItem={ZoneMediaRender}
+                        sliderWidth={320}
+                        itemWidth={320}
+                    />
+                </NativeViewGestureHandler>
             </View>
 
 
@@ -247,15 +152,7 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
     }, [memo, beaconList]);
 
     useEffect(() => {
-        // if (zones.length < maxZoneIndex + 1) return;
-        // if (maxZoneIndex == -1) {
-        //     if (currentZone?.name == "Starting zone") {
-        //         setHasVisited(true);
-        //     }
-        //     return;
-        // }
         if (zones.length < 1) return;
-
         if (currentZone?.id == zones[tourState.maxZoneIndex].id) {
             tourDispatch({ type: 'visit' });
             console.log("visited", zones[tourState.maxZoneIndex]);
@@ -263,9 +160,7 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
     }, [currentZone, zones])
 
     const renderContent = () => (
-        <View style={styles.bottomSheetStyle}>
-            <TourGuide zone={currentZone} {...props} />
-        </View>
+        <TourGuide zone={currentZone} {...props} />
     )
 
     const handlePopUp = () => {
@@ -318,13 +213,7 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
     };
 
     return (
-        <View style={styles.containerStyle}>
-            {/* <Card containerStyle={globalStyle.containerStyle} wrapperStyle={globalStyle.wrapperStyle}>
-                <Card.Title style={globalStyle.text}>{artefact.name}</Card.Title>
-                <Text style={globalStyle.text}>{artefact.description}</Text>
-
-            </Card> */}
-
+        <View style={styles.pageContainer}>
             <Pressable onPress={zoneTitleOnPress}>
                 <View style={styles.zoneContainer}>
                     <Text style={styles.textName}> {currentZone ? currentZone.name : "No Zone Found / Entered"}</Text>
@@ -335,6 +224,7 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
                 ref={sheetRef}
                 snapPoints={[550, 300, 0]}
                 borderRadius={20}
+                // @ts-ignore
                 renderContent={renderContent}
             />
             <Transform initialZoom={0.3} initialPos={{ x: -150, y: 0 }} style={styles.transformView} ref={transfromRef}><Image source={require('./floorplan.jpg')} /></Transform>
@@ -347,77 +237,43 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
 }
 
 const styles = StyleSheet.create({
+    pageContainer: {
+        flex: 1,
+        backgroundColor: "#FDF3BF",
+    },
+    
+    bottomSheetContainer: {
+        backgroundColor: "#F3E1C7",
+        // paddingLeft: 100,
+        height: 550,
+    },
+    
+    carouselContainer: {
+        flex: 11,
+        // minHeight: 450,
+        alignItems: 'center',
+        paddingTop: 20,
+    },
+    
+    zoneContainer: {
+        margin: 10,
+        padding: 10,
+        borderRadius: 10,
+        backgroundColor: '#A20C02'
+    },
+
     textName: {
         fontSize: 27,
         color: "#FFFFFF",
         textAlign: 'center',
         fontFamily: 'Roboto'
     },
-    textDescr: {
-        fontSize: 15,
-        color: "#FFFFFF",
-        textAlign: 'center',
-        fontFamily: 'Roboto'
-    },
-
-    text: {
-        color: '#fff',
-        textAlign: 'center',
-        fontFamily: 'Roboto'
-    },
-
-    containerStyle: {
-        flex: 1,
-        backgroundColor: "#FDF3BF",
-    },
-
-    videoBottomSheetStyle: {
-        backgroundColor: '#F3E1C7',
-        padding: 10,
-        height: "100%"
-    },
-
-    video: {
-        height: 450,
-        borderRadius: 10,
-        borderWidth: 10,
-        borderColor: 'black'
-    },
-
-    image: {
-        flex: 1,
-        height: 450,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 10,
-        borderWidth: 10,
-        borderColor: 'black'
-    },
-
-    videoContainer: {
-        minHeight: 450,
-    },
-
-    bottomSheetStyle: {
-        backgroundColor: "#F3E1C7",
-        padding: 10,
-        height: 550,
-    },
 
     transformView: {
         zIndex: -20,
         flex: 1,
-        // paddingTop: "80%",
         justifyContent: "center",
         alignItems: "center",
-        // backgroundColor:"#00FF00"
-    },
-
-    zoneContainer: {
-        margin: 10,
-        padding: 10,
-        borderRadius: 10,
-        backgroundColor: '#A20C02'
     },
 
     tourContainer: {
@@ -439,6 +295,7 @@ const styles = StyleSheet.create({
 
     controlsContainer: {
         flex: 1,
+        // maxHeight: 100,
         padding: 10,
         justifyContent: "center",
         flexDirection: "row",
