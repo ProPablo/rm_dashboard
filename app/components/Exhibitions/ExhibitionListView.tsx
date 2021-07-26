@@ -20,9 +20,7 @@ const ExhibitionListView = ({ exhibition }: Props) => {
                 {/* <Card.Image style={globalStyle.image} source={{
                     uri: exhibition.URI,
                 }}/> */}
-
             </Card>
-
         </View>
     )
 }

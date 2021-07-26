@@ -27,11 +27,6 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         navigation.navigate('Tour', { screen: 'TourScreen' });
     }
 
-    function handleTourEnable() {
-        console.log("Enabling tour functionality, starting bluetooth");
-
-    }
-
     return (
         <>
             <ScrollView
@@ -55,10 +50,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                         <Card.Title style={styles.text}>{"Start Tour"}</Card.Title>
                         <Icon style={{ alignSelf: "center" }} name="play" size={50} color="white" />
                     </Card>
-
                 </Pressable>
-
-                <Button title="Enable Touring Access" onPress={handleTourEnable} color="#A20C02" />
             </ScrollView>
         </>
     );

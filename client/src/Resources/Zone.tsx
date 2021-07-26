@@ -1,6 +1,6 @@
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@material-ui/core';
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Create, CreateProps, Datagrid, DateField, DateInput, Edit, EditProps, Error, FormTab, Identifier, List, ListControllerProps, ListProps, NumberField, ReferenceManyField, SimpleForm, TabbedForm, TextField, TextInput, useListContext, useNotify, useRefresh } from 'react-admin';
+import { Button, Create, CreateProps, Datagrid, DateField, DateInput, Edit, EditProps, Error, FormTab, Identifier, List, ListControllerProps, ListProps, NumberField, NumberInput, ReferenceManyField, SimpleForm, TabbedForm, TextField, TextInput, useListContext, useNotify, useRefresh } from 'react-admin';
 import { DragDropContext, Draggable, Droppable, DropResult } from 'react-beautiful-dnd';
 import '../App.css';
 import { useListStyles } from '../AppTheme';
@@ -13,6 +13,8 @@ export const ZoneCreate = (props: CreateProps) => (
     <SimpleForm>
       <TextInput source="name" />
       <TextInput multiline source="description" />
+      <NumberInput source="coordX" label="Coord X"/>
+      <NumberInput source="coordY" label="Coord Y"/>
     </SimpleForm>
   </Create>
 )
@@ -178,11 +180,13 @@ export const ZoneEdit = (props: EditProps) => {
 
       <TabbedForm>
         <FormTab label="Zone">
-          <TextInput disabled source="id" />
+          <TextInput disabled source="id" label="ID"/>
           <TextInput source="name" />
           <TextInput source="description" />
-          <DateInput disabled source="createdAt" />
-          <DateInput disabled source="updatedAt" />
+          <NumberInput source="coordX" label="Coord X"/>
+          <NumberInput source="coordY" label="Coord Y"/>
+          <DateInput disabled source="createdAt" label="Created At"/>
+          <DateInput disabled source="updatedAt" label="Updated At"/>
         </FormTab>
 
         <FormTab label="Relations">
@@ -204,11 +208,13 @@ export const ZoneEdit = (props: EditProps) => {
 export const ZoneList = (props: ListProps) => (
   <List {...props}>
     <Datagrid rowClick="edit">
-      <TextField source="id" />
+      <TextField source="id" label="ID"/>
       <TextField source="name" />
       <TextField source="description" />
-      <DateField source="createdAt" />
-      <DateField source="updatedAt" />
+      <NumberField source="coordX" label="Coord X"/>
+      <NumberField source="coordY" label="Coord Y"/>
+      <DateField source="createdAt" label="Created At"/>
+      <DateField source="updatedAt" label="Updated At"/>
     </Datagrid>
   </List>
 )

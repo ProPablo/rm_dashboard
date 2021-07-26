@@ -15,7 +15,9 @@ export const editSchema = Joi.object({
   src: Joi.any().strip(),
   type: [Joi.number(), Joi.valid("image", "video")],
   name: Joi.string(),
-  artefactId: Joi.number(),
+  artefactId: Joi.number().required().messages({
+    'number.base': 'Artefact ID must be a number'
+  }),
   createdAt: Joi.date().strip(),
   updatedAt: Joi.date().strip(),
 });

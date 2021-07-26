@@ -8,8 +8,8 @@ export const BeaconCreate = (props: CreateProps) => (
     <SimpleForm>
       <TextInput source="name" />
       <TextInput label="MAC Address" source="macAddress" />
-      <NumberInput source="coordX" />
-      <NumberInput source="coordY" />
+      <NumberInput source="coordX" label="Coord X"/>
+      <NumberInput source="coordY" label="Coord Y"/>
       <BooleanInput source="activation" />
       <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined} >
         <SelectInput optionText="name" />
@@ -21,13 +21,13 @@ export const BeaconCreate = (props: CreateProps) => (
 export const BeaconEdit = (props: EditProps) => (
   <Edit actions={<ResourceActions />} undoable={false} {...props}>
     <SimpleForm>
-      <TextInput disabled source="id" />
+      <TextInput disabled source="id" label="ID"/>
       <TextInput source="name" />
       <NumberInput disabled source="visits" />
       <TextInput label="MAC Address" source="macAddress" />
       <BooleanInput source="activation" />
-      <NumberInput source="coordX" />
-      <NumberInput source="coordY" />
+      <NumberInput source="coordX" label="Coord X"/>
+      <NumberInput source="coordY" label="Coord Y"/>
       <DateInput disabled source="createdAt" />
       <DateInput disabled source="updatedAt" />
       <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined} >
@@ -40,16 +40,16 @@ export const BeaconEdit = (props: EditProps) => (
 export const BeaconList = (props: ListProps) => (
   <List {...props}>
     <Datagrid rowClick="edit">
-      <TextField source="id" />
+      <TextField source="id" label="ID"/>
       <TextField source="name" />
       <NumberField source="visits" />
       <TextField label="MAC Address" source="macAddress" />
       <BooleanField source="activation" />
       <ReferenceField source="zoneId" reference="zones"><TextField source="id" /></ReferenceField>
-      <NumberField source="coordX" />
-      <NumberField source="coordY" />
-      <DateField source="createdAt" />
-      <DateField source="updatedAt" />
+      <NumberField source="coordX" label="Coord X"/>
+      <NumberField source="coordY" label="Coord Y"/>
+      <DateField source="createdAt" label="Created At"/>
+      <DateField source="updatedAt" label="Updated At"/>
     </Datagrid>
   </List>
 );
