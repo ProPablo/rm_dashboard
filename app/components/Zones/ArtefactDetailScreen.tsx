@@ -98,6 +98,7 @@ const ArtefactDetailScreen: React.FC<Props> = ({ route }) => {
                                     }} style={[imageDimens, styles.image]} />
                                 </View>
                             }
+                            
                         <Text selectable style={styles.textDescr}>{artefact.description}</Text>
                         <Text selectable style={styles.textDescr}>{artefact.name} is located in {zone?.name} and was acquired on {new Date(artefact?.acquisitionDate).toDateString()}</Text>
                     </View>
