@@ -66,6 +66,8 @@ export const ExhibitionList = (props: CreateProps) => {
         <NumberField source="priceAdult" label="Price Adult"/>
         <NumberField source="priceConcession" label="Price Concession"/>
         <NumberField source="priceChild" label="Price Child"/>
+        <DateField source="startDate" label="Start Date"/>
+        <DateField source="finishDate" label="Finish Date"/>
         <DateField source="createdAt" label="Created At"/>
         <DateField source="updatedAt" label="Updated At"/>
       </Datagrid>
