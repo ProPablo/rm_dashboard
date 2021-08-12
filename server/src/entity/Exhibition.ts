@@ -48,7 +48,7 @@ export class Exhibition extends BaseEntity {
   @Column({ nullable: true })
   organiser: string;
 
-  @Column( {default: false} ) 
+  @Column( {default: "N/A"} ) 
   status: string;
 
   @Column({ type: "double", default: "0.0" })
