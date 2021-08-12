@@ -7,6 +7,7 @@ export const editSchema = Joi.object({
   description: Joi.string().allow(null),
   thumbnail: Joi.binary().allow(null),
   organiser: Joi.string().allow(null),
+  status: Joi.string(),
   createdAt: Joi.date().strip(),
   updatedAt: Joi.date().strip(),
   startDate: [Joi.allow("").strip(), Joi.date()],
@@ -46,6 +47,9 @@ export class Exhibition extends BaseEntity {
 
   @Column({ nullable: true })
   organiser: string;
+
+  @Column( {default: false} ) 
+  status: string;
 
   @Column({ type: "double", default: "0.0" })
   priceAdult: number;
