@@ -222,7 +222,7 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
 
             <BottomSheet
                 ref={sheetRef}
-                snapPoints={[550, 300, 0]}
+                snapPoints={[675, 400, 0]}
                 borderRadius={20}
                 // @ts-ignore
                 renderContent={renderContent}
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
     bottomSheetContainer: {
         backgroundColor: "#F3E1C7",
         // paddingLeft: 100,
-        height: 550,
+        height: 675,
     },
     
     carouselContainer: {
