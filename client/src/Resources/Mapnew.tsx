@@ -1,6 +1,8 @@
-import { makeStyles, Typography, Button } from '@material-ui/core';
+import { makeStyles, Typography, Button, Box, TextField as MuiTextField } from '@material-ui/core';
+import CompareArrowsSharpIcon from '@material-ui/icons/CompareArrows';
+import { useForm } from 'react-final-form';
 import React, { useEffect, useRef, useState } from 'react'
-import { Title, List, Datagrid, TextField, RowClickFunction, Edit, SimpleForm, TextInput, NumberInput, TopToolbar, ShowButton, EditProps } from 'react-admin'
+import { Title, List, Datagrid, TextField, RowClickFunction, Edit, SimpleForm, TextInput, NumberInput, TopToolbar, ShowButton, EditProps, FormDataConsumer } from 'react-admin'
 import { useDrag, useGesture } from 'react-use-gesture'
 import floorPlan from '../floorplan.jpg';
 import clsx from 'clsx';
@@ -32,7 +34,7 @@ export interface PlacedItemProps {
 }
 
 export interface EditRowProps extends EditProps {
-  onClickPlace: ()=>void
+  onClickPlace: () => void
 }
 
 const useStyles = makeStyles(theme => ({
@@ -89,6 +91,22 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: "green",
     height: "100%",
   },
+  dragNumeric: {
+    display: "flex",
+    border: "1px solid #CCC",
+    alignItems: "center",
+    borderRadius: 4,
+    fontFamily: "sans-serif",
+    width: 250,
+    margin: "20px auto"
+  },
+  dragNumericInput: {
+    flexGrow: 1,
+    margin: "2px 2px"
+  },
+  dragNumericIcon: {
+    margin: "0px 15px"
+  }
 }));
 
 const initialMapState: MapState = {
@@ -107,54 +125,33 @@ export const Map = (props: MapProps) => {
   const styles = useStyles();
   const el = useRef<HTMLImageElement>(null);
   const [mapState, setMapState] = useState<MapState>(initialMapState);
+  const mouse = useMouseMove();
 
   function onPickupClick(type: PinType) {
     setMapState({ ...mapState, currentSelection: type });
   }
 
-  // function onMouseMove(event: React.MouseEvent<Element, MouseEvent>) {
-  //   console.log("thign event", event);
-  // }
-
-  function onMouseMove(event: MouseEvent) {
-    // console.log('docevent', event);
-    setMapState((prev) => ({ ...prev, placementPosition: { x: event.clientX, y: event.clientY } }));
-  }
-
   function onClickPlace() {
     console.log("bruh");
-    setMapState({...mapState, mapPinMode: true});
+    setMapState({ ...mapState, mapPinMode: true });
   }
 
   useEffect(() => {
-    document.addEventListener('mousemove', onMouseMove);
-
     const testInt = setInterval(() => {
       console.log(el.current?.getBoundingClientRect())
     }, 1000);
-
     return () => {
-      document.removeEventListener('mousemove', onMouseMove);
       clearInterval(testInt);
     }
   }, []);
 
-  // const onZoneRowClick: any = (zoneId: any) => {
-  //   console.log("lol", zoneId);
-  //   // return "lmao";
-  // }
-
-
-
   return (
     <div className={styles.container}>
-      {mapState.mapPinMode && <div className={styles.dragItem} style={{ top: mapState.placementPosition.y, left: mapState.placementPosition.x }} />}
+      {mapState.mapPinMode && <div className={styles.dragItem} style={{ top: mouse.y, left: mouse.x }} />}
 
       <Title title="Map" />
       {/* <div className={styles.dragContainer}>
         <PickupItem color="lightgreen" click={onPickupClick} type={PinType.Artfact} />
-        <PickupItem color="blue" click={onPickupClick} type={PinType.Beacon} />
-        <PickupItem color="yellow" click={onPickupClick} type={PinType.Zone} />
       </div> */}
 
       <img
@@ -165,29 +162,81 @@ export const Map = (props: MapProps) => {
       </img>
       <div className={styles.selectionArea}>
         <List resource="zones" basePath="/tour" sort={{ field: "priority", order: "DESC" }}>
-          <Datagrid isRowSelectable={() => false} expand={<EditRow onClickPlace={onClickPlace}/>}>
+          <Datagrid isRowSelectable={() => false} expand={<EditRow onClickPlace={onClickPlace} />}>
             <TextField source="id" label="ID" />
             <TextField source="name" />
           </Datagrid>
         </List>
-
       </div>
-
     </div>
 
   )
 }
 
+
+export function useMouseMove() {
+  const [mouse, setMouse] = useState<v2>({ x: 0, y: 0 });
+  function onMouseEvent(e: MouseEvent) {
+    setMouse({ x: e.clientX, y: e.clientY });
+  }
+  useEffect(() => {
+    document.addEventListener('mousemove', onMouseEvent);
+    return () => {
+      document.removeEventListener('mousemove', onMouseEvent);
+    }
+  })
+  return mouse;
+}
+
+
+export const DragNumber = () => {
+  const styles = useStyles();
+
+  const form = useForm();
+  var formdata = form.getState().values;
+  const mouse = useMouseMove();
+  const 
+
+  function onStart(e: MouseEvent) {
+
+  }
+
+  function onEnd(e: MouseEvent) {
+
+  }
+
+  useEffect(() => {
+    document.addEventListener('mouseup', onMouseEvent);
+    return () => {
+      document.removeEventListener('mouseup', onMouseEvent);
+    }
+  }, [])
+
+  return (
+    <div className={styles.dragNumeric}>
+      <CompareArrowsSharpIcon className={styles.dragNumericIcon} />
+      <MuiTextField className={styles.dragNumericInput} type="number" id="input-with-sx" label="Draggable" />
+    </div>
+  )
+}
+
+
 const EditRow = (props: EditRowProps) => (
   <Edit {...props}
     title=" "
   >
-
     <SimpleForm>
       <TextInput disabled source="id" label="ID" />
       <TextInput source="name" />
       <NumberInput source="coordX" label="Coord X" />
       <NumberInput source="coordY" label="Coord Y" />
+
+      <FormDataConsumer>
+        {() => (
+          <DragNumber />
+        )}
+      </FormDataConsumer>
+
       <Button variant='contained' title="Place" onClick={props.onClickPlace} >Place</Button>
     </SimpleForm>
   </Edit>
@@ -218,10 +267,4 @@ export const PickupItem = ({ color, type, click }: PickupProps) => {
       <Typography>{typeLetter}</Typography>
     </div>
   )
-}
-
-
-
-export const PlacedItem = () => {
-
 }
