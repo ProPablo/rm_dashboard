@@ -80,7 +80,7 @@ export const ArtefactList = (props: CreateProps) => {
         <TextField source="description" />
         <NumberField source="coordX" label="Coord X"/>
         <NumberField source="coordY" label="Coord Y"/>
-        <ReferenceField source="zoneId" reference="zones"><TextField source="id" /></ReferenceField>
+        <ReferenceField source="zoneId" reference="zones"><TextField source="name" /></ReferenceField>
         <DateField source="acquisitionDate" label="Acquisition Date"/>
         <DateField source="createdAt" label="Created At"/>
         <DateField source="updatedAt" label="Updated At"/>
