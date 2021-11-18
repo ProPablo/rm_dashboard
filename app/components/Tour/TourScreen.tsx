@@ -167,7 +167,6 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
         sheetRef.current?.snapTo(0);
     }
 
-
     const zoneTitleOnPress = () => {
         if (!currentZone) return;
         console.log("bruh", { currentZone });

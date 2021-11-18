@@ -5,6 +5,7 @@ Developed in React Native, here are some common issues/ instructions on how to s
 Also Migrated to Typescript, see: https://reactnative.dev/docs/typescript
 
 ## Run 
+* For a dev environment, ensure you have a file in the root of this directory called env.js that exports `backendURL` which is ip:port of server
 * To run development server for android run ```npx react-native run-android```. If this ddoesnt work try running ```npx react-native run-android --variant=debug```
 
 * To generate an APK for Android phones run, ```npx react-native run-android --variant=release``` when building the React Native application

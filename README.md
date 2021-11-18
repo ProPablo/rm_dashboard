@@ -27,6 +27,7 @@ Run server and client together for development and assign appropriate dotENV. De
 ## Deployment instructions
 * `sudo-apt update`
 * `sudo-apt upgrade`
+* npm i -g typescript && npm i -g nodemon 
 * `cd server && npm run pm2`
 
 ## Contributors

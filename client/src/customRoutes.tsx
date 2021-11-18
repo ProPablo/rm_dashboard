@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Route } from 'react-router-dom';
 import { AboutPage } from './Resources/About'
-import { Map } from "./Resources/Map";
+import { Map } from "./Resources/Mapnew";
 import { TourList } from "./Resources/Tour";
 
 export default [

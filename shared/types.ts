@@ -20,6 +20,11 @@ export interface Artefact {
 //   image: string,
 // }
 
+export interface v2 {
+  x: number, 
+  y: number
+}
+
 export enum MediaType {
   IMAGE,
   VIDEO
