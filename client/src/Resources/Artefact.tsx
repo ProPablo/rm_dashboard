@@ -16,8 +16,6 @@ export const ArtefactCreate = (props: CreateProps) => {
         <SimpleForm>
         <TextInput source="name" />
         <TextInput multiline source="description" />
-        <NumberInput source="coordX" label="Coord X"/>
-        <NumberInput source="coordY" label="Coord Y"/>
         <DateInput source="acquisitionDate" label="Acquisition Date"/>
         <ReferenceInput source="zoneId" reference="zones" allowEmpty emptyValue={undefined}>
             <SelectInput optionText="name" />
@@ -40,8 +38,6 @@ export const ArtefactEdit = (props: EditProps) => {
         <TextInput disabled source="id" label="ID"/>
         <TextInput source="name" />
         <TextInput multiline source="description" />
-        <NumberInput source="coordX" label="Coord X"/>
-        <NumberInput source="coordY" label="Coord Y"/>
         <DateInput source="acquisitionDate" label="Acquisition Date"/>
         <DateInput disabled source="createdAt" label="Created At"/>
         <DateInput disabled source="updatedAt" label="Updated At"/>
@@ -78,8 +74,6 @@ export const ArtefactList = (props: CreateProps) => {
         <TextField source="id" label="ID"/>
         <TextField source="name" />
         <TextField source="description" />
-        <NumberField source="coordX" label="Coord X"/>
-        <NumberField source="coordY" label="Coord Y"/>
         <ReferenceField source="zoneId" reference="zones"><TextField source="id" /></ReferenceField>
         <DateField source="acquisitionDate" label="Acquisition Date"/>
         <DateField source="createdAt" label="Created At"/>

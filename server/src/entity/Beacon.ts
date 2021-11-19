@@ -61,6 +61,7 @@ export class Beacon extends BaseEntity {
   @Column({ nullable: true })
   zoneId: number;
   @ManyToOne(() => Zone, zone => zone.Beacons, {
+    onDelete: "CASCADE",
     nullable: true
   })
   @JoinColumn({ name: "zoneId" })

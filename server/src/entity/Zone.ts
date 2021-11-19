@@ -10,6 +10,8 @@ export const editSchema = Joi.object({
   name: Joi.string().min(3).max(30),
   coordX: Joi.number(),
   coordY: Joi.number(),
+  width: Joi.number(),
+  height: Joi.number(),
   description: [Joi.allow(null), Joi.string().min(3).max(30)],
   priority: Joi.number(),
 })
@@ -37,6 +39,12 @@ export class Zone extends BaseEntity {
 
   @Column( {type: "double", default: "0.0"} )
   coordY: number;
+
+  @Column( {type: "double", default: "30"} )
+  width: number;
+
+  @Column( {type: "double", default: "30"} )
+  height: number;
 
   @CreateDateColumn()
   createdAt: Date

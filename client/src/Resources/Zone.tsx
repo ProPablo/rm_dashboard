@@ -13,8 +13,6 @@ export const ZoneCreate = (props: CreateProps) => (
     <SimpleForm>
       <TextInput source="name" />
       <TextInput multiline source="description" />
-      <NumberInput source="coordX" label="Coord X"/>
-      <NumberInput source="coordY" label="Coord Y"/>
     </SimpleForm>
   </Create>
 )
@@ -181,8 +179,10 @@ export const ZoneEdit = (props: EditProps) => {
           <TextInput disabled source="id" label="ID"/>
           <TextInput source="name" />
           <TextInput source="description" />
-          <NumberInput source="coordX" label="Coord X"/>
-          <NumberInput source="coordY" label="Coord Y"/>
+          <NumberInput disabled source="coordX" label="Coord X"/>
+          <NumberInput disabled source="coordY" label="Coord Y"/>
+          <NumberInput disabled source="width" label="Width"/>
+          <NumberInput disabled source="height" label="Height"/>
           <DateInput disabled source="createdAt" label="Created At"/>
           <DateInput disabled source="updatedAt" label="Updated At"/>
         </FormTab>
@@ -211,6 +211,8 @@ export const ZoneList = (props: ListProps) => (
       <TextField source="description" />
       <NumberField source="coordX" label="Coord X"/>
       <NumberField source="coordY" label="Coord Y"/>
+      <NumberField source="width" label="Width"/>
+      <NumberField source="height" label="Height"/>
       <DateField source="createdAt" label="Created At"/>
       <DateField source="updatedAt" label="Updated At"/>
     </Datagrid>

@@ -7,14 +7,16 @@ import {
   useNotify,
   ListBase,
   useListContext,
-  FunctionField
+  FunctionField,
+  NumberField
 } from 'react-admin'
 
 // import { useDrag, useGesture } from 'react-use-gesture'
-import floorPlan from '../floorplan.jpg';
+import floorPlan from '../floorplan2.jpg';
 import clsx from 'clsx';
 import { v2 } from "../../../shared/types";
 import { useMouseMove } from '../components/useMouseMove';
+import { DragNumber } from '../components/DragNumber';
 
 export enum PinType {
   Artfact,
@@ -60,7 +62,7 @@ const useStyles = makeStyles(theme => ({
   mapImage: {
     border: "1px solid blue",
     // width: "90%",
-    // height: "813px",
+    height: "680px",
     userSelect: "none",
     objectFit: "contain"
   },
@@ -83,12 +85,20 @@ const useStyles = makeStyles(theme => ({
   },
   dragItem: {
     position: "absolute",
-    backgroundColor: "blue",
+    // backgroundColor: "blue",
     width: "30px",
     height: "30px",
     transform: "translate(-50%, -50%)",
     pointerEvents: "none",
-    zIndex: 1000
+    zIndex: 1000,
+    alignItems: "center",
+    justifyContent: "center",
+    // textAlign: "center",
+    color: "white",
+    verticalAlign: "middle",
+    display: "flex",
+    // lineHeight: "-50%",
+    opacity: "35%"
   },
   placedItem: {
     position: "absolute",
@@ -98,23 +108,6 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: "green",
     height: "100%",
     overflow: 'scroll'
-  },
-  dragNumeric: {
-    display: "flex",
-    border: "1px solid #CCC",
-    alignItems: "center",
-    borderRadius: 4,
-    fontFamily: "sans-serif",
-    width: 250,
-    margin: "20px auto"
-  },
-  dragNumericInput: {
-    flexGrow: 1,
-    margin: "2px 2px"
-  },
-  dragNumericIcon: {
-    margin: "0px 15px",
-    cursor: "ew-resize"
   },
   goodbye: {
     display: "none"
@@ -194,7 +187,7 @@ export const Map = (props: MapProps) => {
         }
 
         {/* https://stackoverflow.com/questions/68170423/is-it-possible-to-allow-only-one-expanded-row-in-a-datagrid */}
-        <List resource="zones" basePath="/zones" sort={{ field: "priority", order: "DESC" }} actions={<div />}>
+        <List resource="zones" basePath="/zones" sort={{ field: "priority", order: "DESC" }} actions={<div />} bulkActionButtons={false}>
           {/* <Datagrid isRowSelectable={() => false} expand={<EditRow onClickPlace={onClickPlace} />} rowClick="expand" > */}
           <Datagrid isRowSelectable={() => false} >
             <FunctionField
@@ -210,76 +203,56 @@ export const Map = (props: MapProps) => {
   )
 }
 
+function randomHash(input: string): number {
+  // return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+  //   float rand(float n){return fract(sin(n) * 43758.5453123);}
+  let x = 0;
+  for (var i = 0; i < input.length; i++) {
+    x += input.charCodeAt(i);
+  }
+  let val = (Math.sin(x) * 43758.5453123) % 1;
+  if (val < 0) {
+    val = -val;
+  }
+  return val;
+}
+
+export const SinglePoint = ({ data, imageOff }: any) => {
+  const styles = useStyles();
+  const rand = randomHash(data.name);
+  const hsl = {
+    h: rand,
+    s: 0.4,
+    l: 0.6
+  }
+  const hslString = `hsl(${hsl.h*360}, ${Math.floor(hsl.s * 100)}%, ${Math.floor(hsl.l * 100)}%)`
+  console.log({data, rand, hslString});
+
+  return (
+    <div className={styles.dragItem} style={{ top: data.coordY + imageOff.top, left: data.coordX + imageOff.left, width: data.width, height: data.height, backgroundColor: hslString }} > {data.id}</div>
+  )
+}
+
+
 export const AllPoints = ({ imageOff, currentID }: { imageOff: DOMRect | undefined, currentID: number | null }) => {
   const styles = useStyles();
   const listContext = useListContext();
   const { data, ids } = listContext;
+
   if (!imageOff) return <div className={styles.goodbye} />;
   return (
     <div>
       {ids.map((id) => {
-        if ( currentID && currentID === id) return null;
+        if (currentID && currentID === id) return null;
         return (
-          <div className={styles.dragItem} style={{ top: data[id].coordY + imageOff.top, left: data[id].coordX + imageOff.left }} > {id}</div>
+          <SinglePoint data={data[id]} imageOff={imageOff} />
+          // <div className={styles.dragItem} style={{ top: data[id].coordY + imageOff.top, left: data[id].coordX + imageOff.left, width: data[id].width, height: data[id].height }} > {id}</div>
         )
       })}
     </div>
   )
 }
 
-
-
-
-export interface DragNumberProps {
-  name: string
-}
-
-export const DragNumber = ({ name }: DragNumberProps) => {
-  const styles = useStyles();
-  const form = useForm();
-  var formdata = form.getState().values;
-  const mouse = useMouseMove();
-  const [startPoint, setStartPoint] = useState<null | number>(null);
-  const [startValue, setStartValue] = useState<number>(formdata[name]);
-
-  function onStart(e: React.MouseEvent) {
-    setStartPoint(mouse.x);
-    setStartValue(formdata[name]);
-    document.body.style.cursor = "ew-resize"
-  }
-
-  useEffect(() => {
-    if (startPoint === null) return;
-    // console.log("mouseHold")
-    const newVal = (mouse.x - startPoint) + startValue;
-    form.change(name, newVal);
-  }, [startPoint, startValue, mouse])
-
-  function onEnd(e: MouseEvent) {
-    setStartPoint(null);
-    setStartPoint(null);
-    document.body.style.cursor = "auto"
-  }
-
-  function onTextChange(e: React.ChangeEvent<HTMLInputElement>) {
-    form.change(name, e.target.value);
-  }
-
-  useEffect(() => {
-    document.addEventListener('mouseup', onEnd);
-    return () => {
-      document.removeEventListener('mouseup', onEnd);
-    }
-  }, [])
-
-  return (
-    <div className={styles.dragNumeric}>
-      <TextInput source={name} disabled className={styles.goodbye} />
-      <CompareArrowsSharpIcon className={styles.dragNumericIcon} onMouseDown={onStart} />
-      <MuiTextField className={styles.dragNumericInput} type="number" id={`dragnum-${name}`} label={name} value={formdata[name]} onChange={onTextChange} />
-    </div>
-  )
-}
 
 export interface EditRowProps extends EditProps {
   onClickPlace: () => void,
@@ -298,16 +271,17 @@ const EditRow = (props: EditRowProps) => {
       }}
       undoable={false}
     >
-
       <SimpleForm>
         <TextInput disabled source="id" label="ID" />
         <TextInput source="name" />
         <DragNumber name="coordX" />
         <DragNumber name="coordY" />
+        <DragNumber name="width" />
+        <DragNumber name="height" />
         {imageOff &&
           <FormDataConsumer>
             {({ formData }) => (
-              <div className={styles.dragItem} style={{ top: formData.coordY + imageOff.top, left: formData.coordX + imageOff.left }} > {formData.id}</div>
+              <SinglePoint data={formData} imageOff={imageOff} />
             )}
           </FormDataConsumer>
         }
