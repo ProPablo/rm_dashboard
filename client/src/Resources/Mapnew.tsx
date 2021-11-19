@@ -1,7 +1,7 @@
 import { makeStyles, Typography, Button, Box, TextField as MuiTextField, Grid } from '@material-ui/core';
 import CompareArrowsSharpIcon from '@material-ui/icons/CompareArrows';
 import { useForm, useField } from 'react-final-form';
-import React, { useEffect, useRef, useState, MouseEvent as ReactMouseEvent } from 'react'
+import React, { useEffect, useRef, useState, MouseEvent as ReactMouseEvent, useContext, createContext } from 'react'
 import {
   Title, List, Datagrid, TextField, Edit, SimpleForm, TextInput, NumberInput, TopToolbar, ShowButton, EditProps, FormDataConsumer,
   useNotify,
@@ -14,6 +14,7 @@ import {
 import floorPlan from '../floorplan.jpg';
 import clsx from 'clsx';
 import { v2 } from "../../../shared/types";
+import { useMouseMove } from '../components/useMouseMove';
 
 export enum PinType {
   Artfact,
@@ -40,9 +41,7 @@ export interface PlacedItemProps {
   Id: number
 }
 
-export interface EditRowProps extends EditProps {
-  onClickPlace: () => void
-}
+
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -122,6 +121,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+
+
 const initialMapState: MapState = {
   currentSelection: PinType.Artfact,
   mapPinMode: false,
@@ -133,6 +134,7 @@ interface MapState {
   editId: number | null,
   currentSelection: PinType
 }
+
 
 export const Map = (props: MapProps) => {
   const styles = useStyles();
@@ -170,7 +172,7 @@ export const Map = (props: MapProps) => {
 
   return (
     <div className={styles.container}>
-      x:{pinPos.x}, y:{pinPos.y}
+      {/* x:{pinPos.x}, y:{pinPos.y} */}
       {mapState.mapPinMode && <div className={styles.dragItem} style={{ top: mouse.y, left: mouse.x }} />}
 
       <Title title="Map" />
@@ -178,10 +180,8 @@ export const Map = (props: MapProps) => {
         <PickupItem color="lightgreen" click={onPickupClick} type={PinType.Artfact} />
       </div> */}
       <ListBase resource="zones" basePath="/zones" sort={{ field: "priority", order: "DESC" }}>
-        <AllPoints />
+        <AllPoints currentID={mapState.editId} imageOff={el.current?.getBoundingClientRect()} />
       </ListBase>
-
-
       <img
         ref={el}
         src={floorPlan}
@@ -190,7 +190,7 @@ export const Map = (props: MapProps) => {
       </img>
       <div className={styles.selectionArea}>
         {
-          !!mapState.editId ? <EditRow resource="zones" basePath="/zones" onClickPlace={onClickPlace} id={mapState.editId.toString()} /> : <div>nothing</div>
+          !!mapState.editId ? <EditRow imageOff={el.current?.getBoundingClientRect()} resource="zones" basePath="/zones" onClickPlace={onClickPlace} id={mapState.editId.toString()} /> : <div>nothing</div>
         }
 
         {/* https://stackoverflow.com/questions/68170423/is-it-possible-to-allow-only-one-expanded-row-in-a-datagrid */}
@@ -199,7 +199,7 @@ export const Map = (props: MapProps) => {
           <Datagrid isRowSelectable={() => false} >
             <FunctionField
               label="Edit"
-              render={(zone: any) => <Button onClick={() => onEditMode(zone.id)} > HAHA</Button>} />
+              render={(zone: any) => <Button onClick={() => onEditMode(zone.id)}> HAHA</Button>} />
             <TextField source="id" label="ID" />
             <TextField source="name" />
           </Datagrid>
@@ -210,32 +210,25 @@ export const Map = (props: MapProps) => {
   )
 }
 
-export const AllPoints = () => {
+export const AllPoints = ({ imageOff, currentID }: { imageOff: DOMRect | undefined, currentID: number | null }) => {
   const styles = useStyles();
   const listContext = useListContext();
   const { data, ids } = listContext;
+  if (!imageOff) return <div className={styles.goodbye} />;
   return (
     <div>
-
-      {ids.map((id) => <div className={styles.dragItem} style={{ top: data[id].coordY, left: data[id].coordX }} />)}
+      {ids.map((id) => {
+        if ( currentID && currentID === id) return null;
+        return (
+          <div className={styles.dragItem} style={{ top: data[id].coordY + imageOff.top, left: data[id].coordX + imageOff.left }} > {id}</div>
+        )
+      })}
     </div>
   )
 }
 
 
-export function useMouseMove() {
-  const [mouse, setMouse] = useState<v2>({ x: 0, y: 0 });
-  function onMouseEvent(e: MouseEvent) {
-    setMouse({ x: e.clientX, y: e.clientY });
-  }
-  useEffect(() => {
-    document.addEventListener('mousemove', onMouseEvent);
-    return () => {
-      document.removeEventListener('mousemove', onMouseEvent);
-    }
-  })
-  return mouse;
-}
+
 
 export interface DragNumberProps {
   name: string
@@ -246,12 +239,6 @@ export const DragNumber = ({ name }: DragNumberProps) => {
   const form = useForm();
   var formdata = form.getState().values;
   const mouse = useMouseMove();
-  const {
-    input: { onChange },
-    meta: { touched, error }
-  } = useField(name);
-
-
   const [startPoint, setStartPoint] = useState<null | number>(null);
   const [startValue, setStartValue] = useState<number>(formdata[name]);
 
@@ -259,7 +246,6 @@ export const DragNumber = ({ name }: DragNumberProps) => {
     setStartPoint(mouse.x);
     setStartValue(formdata[name]);
     document.body.style.cursor = "ew-resize"
-
   }
 
   useEffect(() => {
@@ -295,9 +281,15 @@ export const DragNumber = ({ name }: DragNumberProps) => {
   )
 }
 
+export interface EditRowProps extends EditProps {
+  onClickPlace: () => void,
+  imageOff: DOMRect | undefined
+}
 
 const EditRow = (props: EditRowProps) => {
   const notify = useNotify();
+  const styles = useStyles();
+  const { imageOff } = props;
   return (
     <Edit {...props}
       title=" "
@@ -306,19 +298,19 @@ const EditRow = (props: EditRowProps) => {
       }}
       undoable={false}
     >
+
       <SimpleForm>
         <TextInput disabled source="id" label="ID" />
         <TextInput source="name" />
-
-        <FormDataConsumer>
-          {() => (
-            <div>
-              <DragNumber name="coordX" />
-              <DragNumber name="coordY" />
-            </div>
-          )}
-        </FormDataConsumer>
-
+        <DragNumber name="coordX" />
+        <DragNumber name="coordY" />
+        {imageOff &&
+          <FormDataConsumer>
+            {({ formData }) => (
+              <div className={styles.dragItem} style={{ top: formData.coordY + imageOff.top, left: formData.coordX + imageOff.left }} > {formData.id}</div>
+            )}
+          </FormDataConsumer>
+        }
         <Button variant='contained' title="Place" onClick={props.onClickPlace} >Place</Button>
       </SimpleForm>
     </Edit>
