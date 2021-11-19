@@ -1,9 +1,16 @@
-import { makeStyles, Typography, Button, Box, TextField as MuiTextField } from '@material-ui/core';
+import { makeStyles, Typography, Button, Box, TextField as MuiTextField, Grid } from '@material-ui/core';
 import CompareArrowsSharpIcon from '@material-ui/icons/CompareArrows';
-import { useForm } from 'react-final-form';
-import React, { useEffect, useRef, useState } from 'react'
-import { Title, List, Datagrid, TextField, RowClickFunction, Edit, SimpleForm, TextInput, NumberInput, TopToolbar, ShowButton, EditProps, FormDataConsumer } from 'react-admin'
-import { useDrag, useGesture } from 'react-use-gesture'
+import { useForm, useField } from 'react-final-form';
+import React, { useEffect, useRef, useState, MouseEvent as ReactMouseEvent } from 'react'
+import {
+  Title, List, Datagrid, TextField, Edit, SimpleForm, TextInput, NumberInput, TopToolbar, ShowButton, EditProps, FormDataConsumer,
+  useNotify,
+  ListBase,
+  useListContext,
+  FunctionField
+} from 'react-admin'
+
+// import { useDrag, useGesture } from 'react-use-gesture'
 import floorPlan from '../floorplan.jpg';
 import clsx from 'clsx';
 import { v2 } from "../../../shared/types";
@@ -77,19 +84,21 @@ const useStyles = makeStyles(theme => ({
   },
   dragItem: {
     position: "absolute",
-    backgroundColor: "brown",
+    backgroundColor: "blue",
     width: "30px",
     height: "30px",
     transform: "translate(-50%, -50%)",
-    pointerEvents: "none"
+    pointerEvents: "none",
+    zIndex: 1000
   },
   placedItem: {
-    position: "absolute"
+    position: "absolute",
   },
   selectionArea: {
     flexGrow: 1,
     backgroundColor: "green",
     height: "100%",
+    overflow: 'scroll'
   },
   dragNumeric: {
     display: "flex",
@@ -105,19 +114,23 @@ const useStyles = makeStyles(theme => ({
     margin: "2px 2px"
   },
   dragNumericIcon: {
-    margin: "0px 15px"
+    margin: "0px 15px",
+    cursor: "ew-resize"
+  },
+  goodbye: {
+    display: "none"
   }
 }));
 
 const initialMapState: MapState = {
-  placementPosition: { x: 0, y: 0 },
   currentSelection: PinType.Artfact,
-  mapPinMode: false
+  mapPinMode: false,
+  editId: null,
 }
 
 interface MapState {
-  placementPosition: v2,
   mapPinMode: boolean,
+  editId: number | null,
   currentSelection: PinType
 }
 
@@ -126,9 +139,10 @@ export const Map = (props: MapProps) => {
   const el = useRef<HTMLImageElement>(null);
   const [mapState, setMapState] = useState<MapState>(initialMapState);
   const mouse = useMouseMove();
+  const [pinPos, setPinPos] = useState<v2>({ x: 0, y: 0 });
 
-  function onPickupClick(type: PinType) {
-    setMapState({ ...mapState, currentSelection: type });
+  function onEditMode(id: number) {
+    setMapState({ ...mapState, editId: id })
   }
 
   function onClickPlace() {
@@ -137,22 +151,36 @@ export const Map = (props: MapProps) => {
   }
 
   useEffect(() => {
-    const testInt = setInterval(() => {
-      console.log(el.current?.getBoundingClientRect())
-    }, 1000);
-    return () => {
-      clearInterval(testInt);
+    if (mapState.mapPinMode) {
+      if (!el.current) return;
+      const currentBounds = el.current.getBoundingClientRect();
+      const val: v2 = { x: mouse.x - currentBounds.left, y: mouse.y - currentBounds.top };
+      setPinPos(val);
     }
+  }, [mouse, mapState]);
+
+  useEffect(() => {
+    // const testInt = setInterval(() => {
+    //   console.log(el.current?.getBoundingClientRect())
+    // }, 1000);
+    // return () => {
+    //   clearInterval(testInt);
+    // }
   }, []);
 
   return (
     <div className={styles.container}>
+      x:{pinPos.x}, y:{pinPos.y}
       {mapState.mapPinMode && <div className={styles.dragItem} style={{ top: mouse.y, left: mouse.x }} />}
 
       <Title title="Map" />
       {/* <div className={styles.dragContainer}>
         <PickupItem color="lightgreen" click={onPickupClick} type={PinType.Artfact} />
       </div> */}
+      <ListBase resource="zones" basePath="/zones" sort={{ field: "priority", order: "DESC" }}>
+        <AllPoints />
+      </ListBase>
+
 
       <img
         ref={el}
@@ -161,8 +189,17 @@ export const Map = (props: MapProps) => {
         className={styles.mapImage} >
       </img>
       <div className={styles.selectionArea}>
-        <List resource="zones" basePath="/tour" sort={{ field: "priority", order: "DESC" }}>
-          <Datagrid isRowSelectable={() => false} expand={<EditRow onClickPlace={onClickPlace} />}>
+        {
+          !!mapState.editId ? <EditRow resource="zones" basePath="/zones" onClickPlace={onClickPlace} id={mapState.editId.toString()} /> : <div>nothing</div>
+        }
+
+        {/* https://stackoverflow.com/questions/68170423/is-it-possible-to-allow-only-one-expanded-row-in-a-datagrid */}
+        <List resource="zones" basePath="/zones" sort={{ field: "priority", order: "DESC" }} actions={<div />}>
+          {/* <Datagrid isRowSelectable={() => false} expand={<EditRow onClickPlace={onClickPlace} />} rowClick="expand" > */}
+          <Datagrid isRowSelectable={() => false} >
+            <FunctionField
+              label="Edit"
+              render={(zone: any) => <Button onClick={() => onEditMode(zone.id)} > HAHA</Button>} />
             <TextField source="id" label="ID" />
             <TextField source="name" />
           </Datagrid>
@@ -170,6 +207,18 @@ export const Map = (props: MapProps) => {
       </div>
     </div>
 
+  )
+}
+
+export const AllPoints = () => {
+  const styles = useStyles();
+  const listContext = useListContext();
+  const { data, ids } = listContext;
+  return (
+    <div>
+
+      {ids.map((id) => <div className={styles.dragItem} style={{ top: data[id].coordY, left: data[id].coordX }} />)}
+    </div>
   )
 }
 
@@ -188,60 +237,94 @@ export function useMouseMove() {
   return mouse;
 }
 
+export interface DragNumberProps {
+  name: string
+}
 
-export const DragNumber = () => {
+export const DragNumber = ({ name }: DragNumberProps) => {
   const styles = useStyles();
-
   const form = useForm();
   var formdata = form.getState().values;
   const mouse = useMouseMove();
-  const 
+  const {
+    input: { onChange },
+    meta: { touched, error }
+  } = useField(name);
 
-  function onStart(e: MouseEvent) {
 
-  }
+  const [startPoint, setStartPoint] = useState<null | number>(null);
+  const [startValue, setStartValue] = useState<number>(formdata[name]);
 
-  function onEnd(e: MouseEvent) {
+  function onStart(e: React.MouseEvent) {
+    setStartPoint(mouse.x);
+    setStartValue(formdata[name]);
+    document.body.style.cursor = "ew-resize"
 
   }
 
   useEffect(() => {
-    document.addEventListener('mouseup', onMouseEvent);
+    if (startPoint === null) return;
+    // console.log("mouseHold")
+    const newVal = (mouse.x - startPoint) + startValue;
+    form.change(name, newVal);
+  }, [startPoint, startValue, mouse])
+
+  function onEnd(e: MouseEvent) {
+    setStartPoint(null);
+    setStartPoint(null);
+    document.body.style.cursor = "auto"
+  }
+
+  function onTextChange(e: React.ChangeEvent<HTMLInputElement>) {
+    form.change(name, e.target.value);
+  }
+
+  useEffect(() => {
+    document.addEventListener('mouseup', onEnd);
     return () => {
-      document.removeEventListener('mouseup', onMouseEvent);
+      document.removeEventListener('mouseup', onEnd);
     }
   }, [])
 
   return (
     <div className={styles.dragNumeric}>
-      <CompareArrowsSharpIcon className={styles.dragNumericIcon} />
-      <MuiTextField className={styles.dragNumericInput} type="number" id="input-with-sx" label="Draggable" />
+      <TextInput source={name} disabled className={styles.goodbye} />
+      <CompareArrowsSharpIcon className={styles.dragNumericIcon} onMouseDown={onStart} />
+      <MuiTextField className={styles.dragNumericInput} type="number" id={`dragnum-${name}`} label={name} value={formdata[name]} onChange={onTextChange} />
     </div>
   )
 }
 
 
-const EditRow = (props: EditRowProps) => (
-  <Edit {...props}
-    title=" "
-  >
-    <SimpleForm>
-      <TextInput disabled source="id" label="ID" />
-      <TextInput source="name" />
-      <NumberInput source="coordX" label="Coord X" />
-      <NumberInput source="coordY" label="Coord Y" />
+const EditRow = (props: EditRowProps) => {
+  const notify = useNotify();
+  return (
+    <Edit {...props}
+      title=" "
+      onSuccess={() => {
+        notify('Submit entry succesfull');
+      }}
+      undoable={false}
+    >
+      <SimpleForm>
+        <TextInput disabled source="id" label="ID" />
+        <TextInput source="name" />
 
-      <FormDataConsumer>
-        {() => (
-          <DragNumber />
-        )}
-      </FormDataConsumer>
+        <FormDataConsumer>
+          {() => (
+            <div>
+              <DragNumber name="coordX" />
+              <DragNumber name="coordY" />
+            </div>
+          )}
+        </FormDataConsumer>
 
-      <Button variant='contained' title="Place" onClick={props.onClickPlace} >Place</Button>
-    </SimpleForm>
-  </Edit>
+        <Button variant='contained' title="Place" onClick={props.onClickPlace} >Place</Button>
+      </SimpleForm>
+    </Edit>
 
-)
+  )
+}
 
 export const PickupItem = ({ color, type, click }: PickupProps) => {
   const styles = useStyles();

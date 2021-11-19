@@ -49,8 +49,6 @@ export const ZoneBeaconsTable = () => {
   )
 }
 
-
-
 export const ZoneArtefactsTable = (props: PriorityTableProps) => {
   const classes = useListStyles();
   const refresh = useRefresh();
