@@ -210,11 +210,9 @@ function randomHash(input: string): number {
   for (var i = 0; i < input.length; i++) {
     x += input.charCodeAt(i);
   }
+  x *= 0.01;
   let val = (Math.sin(x) * 43758.5453123) % 1;
-  if (val < 0) {
-    val = -val;
-  }
-  return val;
+  return (val + 1) / 2;
 }
 
 export const SinglePoint = ({ data, imageOff }: any) => {
