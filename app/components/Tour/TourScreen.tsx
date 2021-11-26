@@ -226,7 +226,10 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
                 // @ts-ignore
                 renderContent={renderContent}
             />
-            <Transform initialZoom={0.3} initialPos={{ x: -150, y: 0 }} style={styles.transformView} ref={transfromRef}><Image source={require('./floorplan.jpg')} /></Transform>
+            <Transform initialZoom={0.3} initialPos={{ x: -150, y: 0 }} style={styles.transformView} ref={transfromRef}><Map currentZone={currentZone} /></Transform>
+            {/* <Transform initialZoom={0.3} initialPos={{ x: -150, y: 0 }} style={styles.transformView} ref={transfromRef}><Image source={require('./floorplan.jpg')} /></Transform> */}
+            {/* <Transform initialZoom={0.3} initialPos={{ x: -150, y: 0 }} style={styles.transformView} ref={transfromRef}><Image source={require('./floorplan.jpg')} /></Transform> */}
+
             <FAB color="#7A0600" onPress={handlePopUp} placement="right" icon={<Icon name="map-signs" size={23} color="white" />} />
             <FAB color="#7A0600" onPress={() => transfromRef.current?.resetTransform()} placement="left" icon={<Icon name="map" size={23} color="white" />} />
 
@@ -234,27 +237,41 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
 
     );
 }
+export interface MapProps {
+    currentZone: ZoneConsumable | undefined,
+}
+
+const Map = (props: MapProps) => {
+    const zones = useContext(ZonesContext);
+    return (
+        <View>
+            {zones.map(z => <View style={[styles.zoneIndicator,
+            { width: z.width, height: z.height, left: z.coordX, top: z.coordY },
+            { transform: [{ translateX: -(z.width / 2) }, { translateY: -(z.height / 2) }] }
+            ]} />)}
+            <Image onLayout={(e) => console.log(e.nativeEvent.layout)} source={require('./floorplan2.jpg')} />
+        </View>
+    )
+}
 
 const styles = StyleSheet.create({
     pageContainer: {
         flex: 1,
         backgroundColor: "#FDF3BF",
     },
-    
+
     bottomSheetContainer: {
         backgroundColor: "#F3E1C7",
         // paddingLeft: 100,
         height: 550,
     },
-    
+
     carouselContainer: {
         flex: 11,
         // minHeight: 450,
         alignItems: 'center',
         paddingTop: 20,
     },
-    
-
 
     textName: {
         fontSize: 27,
@@ -297,6 +314,11 @@ const styles = StyleSheet.create({
         alignItems: "flex-end"
     },
 
+    zoneIndicator: {
+        backgroundColor: "#F3E1C7DD",
+        position: 'absolute',
+        zIndex: 100
+    }
 
 });
 

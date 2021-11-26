@@ -62,7 +62,7 @@ const useStyles = makeStyles(theme => ({
   mapImage: {
     border: "1px solid blue",
     // width: "90%",
-    height: "680px",
+    // height: "680px",
     userSelect: "none",
     objectFit: "contain"
   },
@@ -128,10 +128,11 @@ interface MapState {
   currentSelection: PinType
 }
 
+const ImageContext = createContext<null | HTMLImageElement>(null);
 
 export const Map = (props: MapProps) => {
   const styles = useStyles();
-  const el = useRef<HTMLImageElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
   const [mapState, setMapState] = useState<MapState>(initialMapState);
   const mouse = useMouseMove();
   const [pinPos, setPinPos] = useState<v2>({ x: 0, y: 0 });
@@ -147,63 +148,66 @@ export const Map = (props: MapProps) => {
 
   useEffect(() => {
     if (mapState.mapPinMode) {
-      if (!el.current) return;
-      const currentBounds = el.current.getBoundingClientRect();
-      const val: v2 = { x: mouse.x - currentBounds.left, y: mouse.y - currentBounds.top };
-      setPinPos(val);
+      if (!imageRef.current) return;
+      const currentBounds = imageRef.current.getBoundingClientRect();
+      const pinWithOffset: v2 = { x: mouse.x - currentBounds.left, y: mouse.y - currentBounds.top };
+      setPinPos(pinWithOffset);
     }
   }, [mouse, mapState]);
 
   useEffect(() => {
-    // const testInt = setInterval(() => {
-    //   console.log(el.current?.getBoundingClientRect())
-    // }, 1000);
-    // return () => {
-    //   clearInterval(testInt);
-    // }
+    const testInt = setInterval(() => {
+      console.log(imageRef.current?.getBoundingClientRect())
+    }, 1000);
+    return () => {
+      clearInterval(testInt);
+    }
   }, []);
 
   return (
-    <div className={styles.container}>
-      {/* x:{pinPos.x}, y:{pinPos.y} */}
-      {mapState.mapPinMode && <div className={styles.dragItem} style={{ top: mouse.y, left: mouse.x }} />}
+    <ImageContext.Provider value={imageRef.current}>
 
-      <Title title="Map" />
-      {/* <div className={styles.dragContainer}>
+      <div className={styles.container}>
+        {/* x:{pinPos.x}, y:{pinPos.y} */}
+        {mapState.mapPinMode && <div className={styles.dragItem} style={{ top: mouse.y, left: mouse.x }} />}
+
+        <Title title="Map" />
+        {/* <div className={styles.dragContainer}>
         <PickupItem color="lightgreen" click={onPickupClick} type={PinType.Artfact} />
       </div> */}
-      <ListBase resource="zones" basePath="/zones" sort={{ field: "priority", order: "DESC" }}>
-        <AllPoints currentID={mapState.editId} imageOff={el.current?.getBoundingClientRect()} />
-      </ListBase>
-      <img
-        ref={el}
-        src={floorPlan}
-        draggable="false"
-        className={styles.mapImage} >
-      </img>
-      <div className={styles.selectionArea}>
-        {
-          !!mapState.editId ? <EditRow imageOff={el.current?.getBoundingClientRect()} resource="zones" basePath="/zones" onClickPlace={onClickPlace} id={mapState.editId.toString()} /> : <div>nothing</div>
-        }
+        <ListBase resource="zones" basePath="/zones" sort={{ field: "priority", order: "DESC" }}>
+          <AllPoints currentID={mapState.editId} />
+        </ListBase>
+        <img
+          ref={imageRef}
+          src={floorPlan}
+          draggable="false"
+          className={styles.mapImage} >
+        </img>
+        <div className={styles.selectionArea}>
+          {
+            !!mapState.editId ? <EditRow imageOff={imageRef.current?.getBoundingClientRect()} resource="zones" basePath="/zones" onClickPlace={onClickPlace} id={mapState.editId.toString()} /> : <div>nothing</div>
+          }
 
-        {/* https://stackoverflow.com/questions/68170423/is-it-possible-to-allow-only-one-expanded-row-in-a-datagrid */}
-        <List resource="zones" basePath="/zones" sort={{ field: "priority", order: "DESC" }} actions={<div />} bulkActionButtons={false}>
-          {/* <Datagrid isRowSelectable={() => false} expand={<EditRow onClickPlace={onClickPlace} />} rowClick="expand" > */}
-          <Datagrid isRowSelectable={() => false} >
-            <FunctionField
-              label="Edit"
-              render={(zone: any) => <Button onClick={() => onEditMode(zone.id)}> HAHA</Button>} />
-            <TextField source="id" label="ID" />
-            <TextField source="name" />
-          </Datagrid>
-        </List>
+          {/* https://stackoverflow.com/questions/68170423/is-it-possible-to-allow-only-one-expanded-row-in-a-datagrid */}
+          <List resource="zones" basePath="/zones" sort={{ field: "priority", order: "DESC" }} actions={<div />} bulkActionButtons={false}>
+            {/* <Datagrid isRowSelectable={() => false} expand={<EditRow onClickPlace={onClickPlace} />} rowClick="expand" > */}
+            <Datagrid isRowSelectable={() => false} >
+              <FunctionField
+                label="Edit"
+                render={(zone: any) => <Button onClick={() => onEditMode(zone.id)}>EDIT</Button>} />
+              <TextField source="id" label="ID" />
+              <TextField source="name" />
+            </Datagrid>
+          </List>
+        </div>
       </div>
-    </div>
-
+    </ImageContext.Provider>
   )
 }
 
 function randomHash(input: string): number {
+  if (!input) return 0;
   // return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
   //   float rand(float n){return fract(sin(n) * 43758.5453123);}
   let x = 0;
@@ -215,7 +219,8 @@ function randomHash(input: string): number {
   return (val + 1) / 2;
 }
 
-export const SinglePoint = ({ data, imageOff }: any) => {
+export const SinglePoint = ({ data }: any) => {
+  const imageEl = useContext(ImageContext);
   const styles = useStyles();
   const rand = randomHash(data.name);
   const hsl = {
@@ -223,27 +228,38 @@ export const SinglePoint = ({ data, imageOff }: any) => {
     s: 0.4,
     l: 0.6
   }
-  const hslString = `hsl(${hsl.h*360}, ${Math.floor(hsl.s * 100)}%, ${Math.floor(hsl.l * 100)}%)`
-  console.log({data, rand, hslString});
-
+  const hslString = `hsl(${hsl.h * 360}, ${Math.floor(hsl.s * 100)}%, ${Math.floor(hsl.l * 100)}%)`
+  // console.log({data, rand, hslString});
+  if (!imageEl) return (<div className={styles.goodbye} />);
+  const imageOff = imageEl.getBoundingClientRect();
+  console.log(imageEl.naturalWidth, imageEl.naturalHeight);
+  const xScale = imageOff.width / imageEl.naturalWidth;
+  const yScale = imageOff.height / imageEl.naturalHeight;
+  const styleObj = {
+    left: data.coordX * xScale + imageOff.left,
+    top: data.coordY * yScale + imageOff.top,
+    width: data.width * xScale,
+    height: data.height * yScale,
+    backgroundColor: hslString
+  }
   return (
-    <div className={styles.dragItem} style={{ top: data.coordY + imageOff.top, left: data.coordX + imageOff.left, width: data.width, height: data.height, backgroundColor: hslString }} > {data.id}</div>
+    <div className={styles.dragItem} style={styleObj} > {data.id}</div>
   )
 }
 
 
-export const AllPoints = ({ imageOff, currentID }: { imageOff: DOMRect | undefined, currentID: number | null }) => {
+export const AllPoints = ({ currentID }: { currentID: number | null }) => {
   const styles = useStyles();
   const listContext = useListContext();
   const { data, ids } = listContext;
 
-  if (!imageOff) return <div className={styles.goodbye} />;
+  // if (!imageOff) return <div className={styles.goodbye} />;
   return (
     <div>
       {ids.map((id) => {
         if (currentID && currentID === id) return null;
         return (
-          <SinglePoint data={data[id]} imageOff={imageOff} />
+          <SinglePoint data={data[id]} />
           // <div className={styles.dragItem} style={{ top: data[id].coordY + imageOff.top, left: data[id].coordX + imageOff.left, width: data[id].width, height: data[id].height }} > {id}</div>
         )
       })}
@@ -260,7 +276,6 @@ export interface EditRowProps extends EditProps {
 const EditRow = (props: EditRowProps) => {
   const notify = useNotify();
   const styles = useStyles();
-  const { imageOff } = props;
   return (
     <Edit {...props}
       title=" "
@@ -276,19 +291,18 @@ const EditRow = (props: EditRowProps) => {
         <DragNumber name="coordY" />
         <DragNumber name="width" />
         <DragNumber name="height" />
-        {imageOff &&
-          <FormDataConsumer>
-            {({ formData }) => (
-              <SinglePoint data={formData} imageOff={imageOff} />
-            )}
-          </FormDataConsumer>
-        }
+        <FormDataConsumer>
+          {({ formData }) => (
+            <SinglePoint data={formData} />
+          )}
+        </FormDataConsumer>
         <Button variant='contained' title="Place" onClick={props.onClickPlace} >Place</Button>
       </SimpleForm>
     </Edit>
 
   )
 }
+
 
 export const PickupItem = ({ color, type, click }: PickupProps) => {
   const styles = useStyles();

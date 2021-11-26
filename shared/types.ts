@@ -41,6 +41,8 @@ export interface ZoneConsumable {
   description: string,
   coordX: number,
   coordY: number,
+  width: number,
+  height: number,
   priority: number,
   Artefacts: number[],
 }

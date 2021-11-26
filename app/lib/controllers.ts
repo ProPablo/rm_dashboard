@@ -1,5 +1,5 @@
 import { backendURL } from "../env.js";
-process.env.NODE_ENV = "production"
+// process.env.NODE_ENV = "production"
 export const baseURL = process.env.NODE_ENV === "production" ? "https://rm.kongroo.xyz/api" : backendURL;
 
 export const MEDIA_URL = process.env.NODE_ENV === "production" ? "https://rm.kongroo.xyz" : baseURL;
