@@ -72,7 +72,7 @@ export const ZoneMediaRender = ({ item, index }: CarouselRenderItemProps) => {
             <View style={styles.video}>
                 <VideoPlayer
                     source={{ uri: `${MEDIA_URL}/${item.Media.src}` }}
-                    disableFullScreen={true}
+                    // disableFullScreen={true}
                     disableBack={true}
                     disableVolume={true}
                     tapAnywhereToPause={true}

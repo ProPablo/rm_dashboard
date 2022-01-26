@@ -2,7 +2,8 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { StackActions, CommonActions, Route } from '@react-navigation/native';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
-    Image, Pressable, StyleSheet, ToastAndroid, View
+    Image, Pressable, StyleSheet, ToastAndroid, View,
+    Animated
 } from 'react-native';
 import { Text, Button } from 'react-native-elements';
 import BottomSheet from 'reanimated-bottom-sheet';
@@ -21,9 +22,11 @@ import { MEDIA_URL } from '../../lib/controllers';
 import { globalStyle } from '../../lib/styles';
 import { useMemo } from 'react';
 import { useCallback } from 'react';
+// import Animated, {useSharedValue, useAnimatedStyle, withRepeat, withTiming} from 'react-native-reanimated';
 import Carousel, { } from 'react-native-snap-carousel';
 import { ZoneMediaRender } from '../Zones/ZoneDetailScreen';
 import { NativeViewGestureHandler } from 'react-native-gesture-handler';
+import { Easing } from 'react-native-reanimated';
 
 
 type NavigationProp = StackNavigationProp<TourStackParams>;
@@ -46,13 +49,6 @@ export const TourGuide = ({ navigation }: TourGuideProps) => {
     const memo = useContext(MemoizedContext);
     const zones = useContext(ZonesContext);
     const [tourState, tourDispatch] = useContext(TourStateContext);
-
-    // useEffect(() => {
-    //     console.log({ zone })
-    //     setHasPlayed(false);
-    // }, [zone]);
-
-
 
     const currentTourZone = useMemo(() => {
         if (zones.length != 0) {
@@ -172,43 +168,6 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
         console.log("bruh", { currentZone });
 
         props.navigation.push("ZoneDetails", { zoneId: currentZone.id })
-
-
-        // props.navigation.dispatch((state) => {
-        //     return CommonActions.reset({
-        //         // ...state,
-        //         index: 1,
-        //         routes: [
-        //             {
-        //                 name: "Tour"
-        //             },
-        //             {
-        //                 name: "Zones"
-        //             },
-        //             {
-        //                 name: "Zones",
-        //                 screen: "ZoneDetails",
-        //                 params: {
-        //                     zoneId: currentZone.id
-        //                 }
-        //             }
-        //         ]
-        //     })
-        // })
-
-        // props.navigation.push("Zones", {
-        //     screen: "ZoneDetails",
-        //     params: {
-        //         zoneId: currentZone.id
-        //     }
-        // });
-
-        // props.navigation.navigate("Zones", {
-        //     screen: "ZoneDetails",
-        //     params: {
-        //         zoneId: currentZone.id
-        //     }
-        // });
     };
 
     return (
@@ -241,18 +200,82 @@ export interface MapProps {
     currentZone: ZoneConsumable | undefined,
 }
 
+const maxValue = 10;
+const minValue = -10;
+
 const Map = (props: MapProps) => {
     const zones = useContext(ZonesContext);
+    const [tourState, tourDispatch] = useContext(TourStateContext);
+    // const pulseValue = useRef(new Animated.Value(0));
+
+
+    // useEffect(() => {
+    //     animatedLoop.current.start();
+    // }, [zones]);
+
     return (
         <View>
-            {zones.map(z => <View style={[styles.zoneIndicator,
+            {/* {zones.map(z => <View key={z.id} style={[styles.zoneIndicator,
             { width: z.width, height: z.height, left: z.coordX, top: z.coordY },
             { transform: [{ translateX: -(z.width / 2) }, { translateY: -(z.height / 2) }] }
-            ]} />)}
+            ]} />)} */}
+            {zones.map(z =>
+                <ZoneIndicator key={z.id} zone={z} isCurrentZone={false}/>
+            )}
             <Image onLayout={(e) => console.log(e.nativeEvent.layout)} source={require('./floorplan2.jpg')} />
         </View>
     )
 }
+
+export interface ZoneIndicatorProps {
+    zone: ZoneConsumable,
+    isCurrentZone: boolean
+}
+
+export class ZoneIndicator extends React.Component<ZoneIndicatorProps> {
+    pulseValue: Animated.Value;
+    constructor(props: ZoneIndicatorProps) {
+        super(props);
+        this.pulseValue = new Animated.Value(0);
+        Animated.loop(
+            Animated.sequence([
+                Animated.timing(this.pulseValue, {
+                    toValue: maxValue,
+                    duration: 300,
+                    useNativeDriver: true,
+                    easing: Easing.elastic(1)
+                }),
+                Animated.timing(this.pulseValue, {
+                    toValue: minValue,
+                    duration: 300,
+                    useNativeDriver: true,
+                    easing: Easing.elastic(1)
+                }),
+                // Animated.timing(this.pulseValue, {
+                //     toValue: maxValue,
+                //     duration: 100,
+                //     useNativeDriver: true
+                // }),
+                // Animated.timing(this.pulseValue, {
+                //     toValue: minValue,
+                //     duration: 2000,
+                //     useNativeDriver: true
+                // })
+            ])
+        ).start()
+
+    }
+
+    render() {
+        return (
+            <Animated.View key={this.props.zone.id} style={[styles.zoneIndicator,
+            { width: this.props.zone.width, height: this.props.zone.height, left: this.props.zone.coordX, top: this.props.zone.coordY },
+            { transform: [{ translateY: (Animated.add(-this.props.zone.width / 2, this.pulseValue)) }, { translateX: -(this.props.zone.height / 2) }] }
+            ]} />
+        )
+    }
+}
+
 
 const styles = StyleSheet.create({
     pageContainer: {
@@ -315,9 +338,12 @@ const styles = StyleSheet.create({
     },
 
     zoneIndicator: {
-        backgroundColor: "#F3E1C7DD",
+        // backgroundColor: "#F3E1C7DD",
         position: 'absolute',
-        zIndex: 100
+        zIndex: 100,
+        borderRadius: 10,
+        borderWidth: 5,
+        borderColor: "#7A0600",
     }
 
 });
