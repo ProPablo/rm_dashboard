@@ -174,7 +174,6 @@ const Tour: React.FC = ({ children }) => {
   }
 
   const initProcess = async () => {
-    console.log("starting eat ass")
 
     await requestLocationPermission();
     // await manager.enable(); //awaiting doesnt actually wait cringe
