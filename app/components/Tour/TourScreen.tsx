@@ -24,7 +24,7 @@ import { useMemo } from 'react';
 import { useCallback } from 'react';
 // import Animated, {useSharedValue, useAnimatedStyle, withRepeat, withTiming} from 'react-native-reanimated';
 import Carousel, { } from 'react-native-snap-carousel';
-import { ZoneMediaRender } from '../Zones/ZoneDetailScreen';
+import { ZoneMediaRender, PureZoneMediaRender } from '../Zones/ZoneDetailScreen';
 import { NativeViewGestureHandler } from 'react-native-gesture-handler';
 import { Easing } from 'react-native-reanimated';
 
@@ -45,10 +45,25 @@ interface TourGuideProps {
     zone?: ZoneConsumable,
 }
 
+
+const TestRender = ({ item, index }: any) => {
+    console.log({ item, index });
+
+    const bigarr = new Array(10).fill(" Lorem ipsum dolor sit amet, consectetur adipisicing elit. Recusandae quod porro hic libero quas sunt dignissimos! Unde perspiciatis, totam distinctio ipsum numquam sapiente rerum cum ab quas autem? Odio, officia.")
+    return (
+        <>
+            <Text >
+                {bigarr.map(v => v)}
+            </Text>
+        </>
+    )
+}
+
 export const TourGuide = ({ navigation }: TourGuideProps) => {
     const memo = useContext(MemoizedContext);
     const zones = useContext(ZonesContext);
     const [tourState, tourDispatch] = useContext(TourStateContext);
+    const carouselRef = useRef<Carousel<Artefact> | null>(null);
 
     const currentTourZone = useMemo(() => {
         if (zones.length != 0) {
@@ -56,10 +71,18 @@ export const TourGuide = ({ navigation }: TourGuideProps) => {
         }
     }, [tourState.currGuideZoneIndex, zones]);
 
-    const currentArtefactList: Artefact[] = useMemo(() => {
-        if (!currentTourZone) return [];
-        return currentTourZone.Artefacts.filter((artefactId) => memo.artefacts[artefactId].Media).map((artefactId) => memo.artefacts[artefactId]);
-    }, [memo, currentTourZone])
+    // const mainArtefact: Artefact = useMemo(() => {
+    //     return item.Artefacts.filter((artefactId) => memo.artefacts[artefactId].Media).map((artefactId) => memo.artefacts[artefactId])[0];
+    // }, [memo, item])
+
+    const mediaArtefactList = useMemo(() => {
+        if (zones.length == 0) return [];
+        return zones.filter(z => z.Artefacts.length > 0).map(z => memo.artefacts[z.Artefacts[0]]);
+    }, [memo, zones])
+
+    useEffect(() => {
+        carouselRef.current?.snapToItem(tourState.currGuideZoneIndex);
+    }, [tourState.currGuideZoneIndex])
 
     function handleSkip() {
         console.log("Forward");
@@ -74,7 +97,6 @@ export const TourGuide = ({ navigation }: TourGuideProps) => {
     }
 
     function handleBack() {
-        console.log("GOing back");
         // ToastAndroid.show("Backing", ToastAndroid.SHORT);
         tourDispatch({ type: 'backward' })
     }
@@ -82,16 +104,16 @@ export const TourGuide = ({ navigation }: TourGuideProps) => {
     return (
         <View style={styles.bottomSheetContainer}>
             <View style={styles.carouselContainer}>
-                <NativeViewGestureHandler disallowInterruption >
+                {/* <PureZoneMediaRender item={currentArtefactList[0]} index={0} /> */}
 
-                    <Carousel
-                        // layout={'stack'}
-                        data={currentArtefactList}
-                        renderItem={ZoneMediaRender}
-                        sliderWidth={320}
-                        itemWidth={320}
-                    />
-                </NativeViewGestureHandler>
+                <Carousel
+                    data={mediaArtefactList}
+                    renderItem={ZoneMediaRender}
+                    sliderWidth={320}
+                    itemWidth={320}
+                    scrollEnabled={false}
+                    ref={carouselRef}
+                />
             </View>
 
 
@@ -118,7 +140,7 @@ export const TourGuide = ({ navigation }: TourGuideProps) => {
                         size={20}
                         color="white" />}
                     onPress={handleSkip}
-                    disabled={!((tourState.hasVisited || tourState.currGuideZoneIndex < tourState.maxZoneIndex) && tourState.currGuideZoneIndex < zones.length)}
+                    disabled={!((tourState.hasVisited || tourState.currGuideZoneIndex < tourState.maxZoneIndex) && tourState.currGuideZoneIndex < zones.length - 1)}
                 />
             </View>
         </View>
@@ -156,7 +178,10 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
     }, [currentZone, zones])
 
     const renderContent = () => (
-        <TourGuide zone={currentZone} {...props} />
+        <TourGuide
+            // zone={currentZone}
+            {...props}
+        />
     )
 
     const handlePopUp = () => {
@@ -220,7 +245,7 @@ const Map = (props: MapProps) => {
             { transform: [{ translateX: -(z.width / 2) }, { translateY: -(z.height / 2) }] }
             ]} />)} */}
             {zones.map(z =>
-                <ZoneIndicator key={z.id} zone={z} isCurrentZone={false}/>
+                <ZoneIndicator key={z.id} zone={z} isCurrentZone={false} />
             )}
             <Image onLayout={(e) => console.log(e.nativeEvent.layout)} source={require('./floorplan2.jpg')} />
         </View>
@@ -268,10 +293,12 @@ export class ZoneIndicator extends React.Component<ZoneIndicatorProps> {
 
     render() {
         return (
-            <Animated.View key={this.props.zone.id} style={[styles.zoneIndicator,
-            { width: this.props.zone.width, height: this.props.zone.height, left: this.props.zone.coordX, top: this.props.zone.coordY },
-            { transform: [{ translateY: (Animated.add(-this.props.zone.width / 2, this.pulseValue)) }, { translateX: -(this.props.zone.height / 2) }] }
-            ]} />
+            <Animated.View key={this.props.zone.id}
+                style={[styles.zoneIndicator,
+                { width: this.props.zone.width, height: this.props.zone.height, left: this.props.zone.coordX, top: this.props.zone.coordY },
+                // { transform: [{ translateY: -this.props.zone.height / 2 }, { translateX: -(this.props.zone.width / 2) }] }
+                { transform: [{ translateY: (Animated.add(-this.props.zone.height / 2, this.pulseValue)) }, { translateX: -(this.props.zone.width / 2) }] }
+                ]} />
         )
     }
 }

@@ -17,6 +17,7 @@ const httpClient = (url: any, options: any = {}) => {
   }
   return fetchUtils.fetchJson(url, options);
 };
+
 const dataProvider = jsonServerProvider(SERVER_URL, httpClient);
 
 const convertFileToBase64 = (file: any) => new Promise((resolve, reject) => {

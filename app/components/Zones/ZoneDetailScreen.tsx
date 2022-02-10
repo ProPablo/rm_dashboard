@@ -29,7 +29,7 @@ interface ArtefactProps {
     artefactId: number,
 }
 
-type CarouselRenderItemProps = {
+type ZoneMediaRenderProps = {
     item: Artefact,
     index: number
 }
@@ -56,16 +56,16 @@ const ZoneArtefactsListView = ({ artefactId }: ArtefactProps) => {
     )
 }
 
-export const ZoneMediaRender = ({ item, index }: CarouselRenderItemProps) => {
+export const ZoneMediaRender = ({ item, index }: ZoneMediaRenderProps) => {
+    // This crashes the app (maybe cuz carousel is class)
+    // const memo = useContext(MemoizedContext);
+
     if (!item.Media) return (<></>);
-    delete item.thumbnail;
-    console.log({ item });
+    // delete mainArtefact.thumbnail;
 
     function handleVideoEnd() {
         console.log("videoEnd");
-        // if (currentZone) findArtefact(currentZone);
     }
-
 
     if (item.Media.type === 1) {
         return (
@@ -98,6 +98,7 @@ export const ZoneMediaRender = ({ item, index }: CarouselRenderItemProps) => {
             }} />
     )
 }
+export const PureZoneMediaRender = React.memo(ZoneMediaRender);
 
 export const ZoneDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     const { zoneId } = route.params;
@@ -196,7 +197,7 @@ const styles = StyleSheet.create({
     },
 
     video: {
-        flex:1,
+        flex: 1,
         borderRadius: 10,
         borderWidth: 10,
         borderColor: 'black',
