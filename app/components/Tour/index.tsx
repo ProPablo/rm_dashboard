@@ -21,12 +21,13 @@ import { BeaconsContext, GlobalActionContext } from '../../store';
 // const allPerms = [PermissionsAndroid.PERMISSIONS.BLUETOOTH, PermissionsAndroid.PERMISSIONS.BLUETOOTH_ADMIN, PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION];
 
 
-// enum TourActionKind {
-//   SKIP,
-//   VISIT,
-//   GOBACK,
-//   VISITEXACT
-// }
+//Best practice so that we can rename anytime
+export enum TourActionName {
+  FORWARD = "forward",
+  VISIT = "visit",
+  GOBACK = "backward",
+  VISITEXACT = "visitExact"
+}
 export interface TourState {
   hasVisited: boolean,
   maxZoneIndex: number,
@@ -39,14 +40,16 @@ const initialTourState: TourState = {
   maxZoneIndex: 0
 }
 
-type TourAction = { type: 'forward' }
-  | { type: 'visit' }
-  | { type: 'backward' }
-  | { type: 'visitExact', index: number }
+type TourAction =
+  { type: TourActionName.FORWARD } |
+  { type: TourActionName.VISIT } |
+  { type: TourActionName.GOBACK } |
+  { type: TourActionName.VISITEXACT, index: number };
 
 const TourReducer = (state: TourState, action: TourAction): TourState => {
-  console.log({state, action});
+  console.log({ state, action });
   switch (action.type) {
+    
     case 'forward':
       const newZone = state.currGuideZoneIndex + 1;
       if (newZone > state.maxZoneIndex) return { ...state, currGuideZoneIndex: newZone, maxZoneIndex: newZone, hasVisited: false };
@@ -59,8 +62,6 @@ const TourReducer = (state: TourState, action: TourAction): TourState => {
       return state;
   }
 }
-
-// const TourContext = createContext<TourContextValue>({ beaconList: [], beaconMAC: null, isBLEnabled: false });
 
 const TourStateContext = createContext<[TourState, Dispatch<TourAction>]>([initialTourState, () => null]);
 TourStateContext.displayName = "TourStateContext";
@@ -125,41 +126,13 @@ export const isLocationEnabled = () => {
 
 export const manager = new BleManager();
 
+const BEACON_TIMEOUT = 10 * 1000; //TEN SECONDS
+
 const Tour: React.FC = ({ children }) => {
-  // const manager = useRef<BleManager | null>(null);
-  // TODO handle islocation
-  // const [tourState, setTour] = useState<TourContextValue>({ beaconList: [], beaconMAC: null, isBLEnabled: true });
-  const [beaconsList, setBeacons] = useState<Beacon[]>([]);
-  const [foundBeacon, setBeacon] = useState<Device | null>(null);
+  const [nearbyBeacons, setBeacons] = useState<Beacon[]>([]);
   const beacons = useContext(BeaconsContext);
   const { setBLEnabled } = useContext(GlobalActionContext);
-
-  // const [hasVisitedCurrent, setHasVisited] = useState(false);
-  // const [maxZoneIndex, setZoneIndex] = useState(0);
-
   const reducerVal = useReducer(TourReducer, initialTourState);
-
-  useEffect(() => {
-    if (!foundBeacon) return;
-
-    const beacon = beacons.find((b) => b.macAddress === foundBeacon.id);
-    if (beacon) {
-      // null assertion says object will not be null
-      beacon.rssi = foundBeacon.rssi!;
-      setBeacons((oldList) => {
-        const newList = [...oldList];
-        const existing = oldList.findIndex(b => b.id === beacon.id)
-        if (existing != -1) {
-          newList.splice(existing, 1, beacon);
-        }
-        else {
-          newList.push(beacon);
-        }
-        return newList;
-      })
-    }
-
-  }, [foundBeacon]);
 
   const onBeacon = (error: BleError | null, device: Device | null) => {
     if (error) {
@@ -170,7 +143,24 @@ const Tour: React.FC = ({ children }) => {
       return;
     }
     if (!device) return;
-    setBeacon(device);
+    const serverBeacon = beacons.find((b) => b.macAddress === device.id);
+    if (!serverBeacon) return;
+    serverBeacon.rssi = device.rssi!;
+
+    let currentDate: number | Date = new Date();
+    currentDate = currentDate.getTime();
+
+    setBeacons((oldList) => {
+      const newList = oldList.filter(b => b.lastVisited! + BEACON_TIMEOUT < currentDate);
+      const existing = newList.findIndex(b => b.id === serverBeacon.id);
+      if (existing != -1) {
+        newList.splice(existing, 1, serverBeacon);
+      }
+      else {
+        newList.push(serverBeacon);
+      }
+      return newList;
+    })
   }
 
   const initProcess = async () => {
@@ -210,7 +200,7 @@ const Tour: React.FC = ({ children }) => {
 
 
   return (
-    <TourContext.Provider value={beaconsList}>
+    <TourContext.Provider value={nearbyBeacons}>
       <TourStateContext.Provider value={reducerVal}>
         {children}
       </TourStateContext.Provider>

@@ -1,5 +1,5 @@
 import React, { createContext, Dispatch, SetStateAction, useContext, useEffect, useMemo, useState } from "react";
-import { Artefact, ZoneConsumable, Beacon, ArtefactMediaSmall, StoreItem, Exhibition, Memo, artefactLookup, zonesLookup } from "@shared/types";
+import { Artefact, ZoneConsumable, Beacon, ArtefactMediaSmall, StoreItem, Exhibition, Memo, artefactLookup, zonesLookup, GlobalSettings } from "@shared/types";
 import { baseURL, request } from "./lib/controllers";
 // export interface artefactsContextValue {
 //   artefacts: IArtefact[];
@@ -11,6 +11,7 @@ export interface ActionContextValue {
   cacheImages?: null,
   isLoading: boolean,
   isBLEnabled: boolean,
+  globalSettings?: GlobalSettings, 
   setBLEnabled: Dispatch<SetStateAction<boolean>>
 }
 
@@ -60,6 +61,8 @@ export const GlobalStore: React.FC = ({ children }) => {
         const zoneResults = await request<ZoneConsumable[]>(`${baseURL}/zones/app`);
         zoneResults.sort((a, b) => b.priority - a.priority ); //descending
         const beaconResults = await request<Beacon[]>(`${baseURL}/beacons`);
+        // const globalSettings = await request<GlobalSettings>(`${baseURL}/about`)
+
         // if production / logger
         // console.log(artefactResults);
         // console.log(storeItemResults);
@@ -72,7 +75,7 @@ export const GlobalStore: React.FC = ({ children }) => {
         setZones(zoneResults)
         setBeacons(beaconResults);
 
-      } catch (e) {
+      } catch (e: any) {
         console.log(e.message);
         // TODO inform user of failure and retry in setTimeout
       }

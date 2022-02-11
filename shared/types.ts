@@ -50,13 +50,14 @@ export interface ZoneConsumable {
 export interface Beacon {
   id: number,
   name: string,
-  visits: number,
+  // visits: number,
   macAddress: string,
   activation: boolean,
   coordX: number,
   coordY: number,
   zoneId: number,
-  rssi?: number
+  rssi?: number,
+  lastVisited?: number
 }
 
 // export interface inputBeacon {
@@ -101,4 +102,9 @@ export interface Memo {
   artefacts: artefactLookup,
   zones: zonesLookup
   // beacons: beaconLookup
+}
+
+export interface GlobalSettings {
+  beaconTimeout: number,
+  beaconThreshold: number
 }

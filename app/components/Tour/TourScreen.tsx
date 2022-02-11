@@ -14,7 +14,7 @@ import Transform from './Transform';
 import VideoComponent from '../Home/VideoComponent';
 import { FAB } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { TourContext, TourStateContext } from '.';
+import { TourActionName, TourContext, TourStateContext } from '.';
 // @ts-ignore
 import VideoPlayer from 'react-native-video-controls';
 import { Artefact, ZoneConsumable, Beacon, ArtefactMediaSmall } from "@shared/types";
@@ -87,7 +87,7 @@ export const TourGuide = ({ navigation }: TourGuideProps) => {
     function handleSkip() {
         console.log("Forward");
         // ToastAndroid.show("Skipping", ToastAndroid.SHORT);
-        tourDispatch({ type: 'forward' })
+        tourDispatch({ type: TourActionName.FORWARD})
         // gravity is for location
         // ToastAndroid.showWithGravity(
         //     "All Your Base Are Belong To Us",
@@ -98,7 +98,7 @@ export const TourGuide = ({ navigation }: TourGuideProps) => {
 
     function handleBack() {
         // ToastAndroid.show("Backing", ToastAndroid.SHORT);
-        tourDispatch({ type: 'backward' })
+        tourDispatch({ type: TourActionName.GOBACK})
     }
 
     return (
@@ -172,7 +172,7 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
     useEffect(() => {
         if (zones.length < 1) return;
         if (currentZone?.id == zones[tourState.maxZoneIndex].id) {
-            tourDispatch({ type: 'visit' });
+            tourDispatch({ type: TourActionName.VISIT});
             console.log("visited", zones[tourState.maxZoneIndex]);
         }
     }, [currentZone, zones])
