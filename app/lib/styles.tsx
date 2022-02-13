@@ -48,17 +48,14 @@ export const globalStyle = StyleSheet.create({
     containerStyle: {
         borderRadius: 7,
         backgroundColor: '#A20C02',
-        shadowOffset: { width: 2, height: 2 },
-        shadowOpacity: 0.8,
-        shadowRadius: 5,
-        elevation: 4,
+        borderColor: '#A20C02',
     },
 
     pressableContainer: {
         margin: 10,
         padding: 10,
         borderRadius: 10,
-        backgroundColor: '#A20C02'
+        backgroundColor: '#555C77'
     },
 
     cardDescr: {

@@ -67,8 +67,8 @@ export const ZoneTourTable = (props: ZoneTourTableProps) => {
           {provided => (
             <Table stickyHeader/*contentEditable={state.tableEnabled} */
               ref={provided.innerRef} {...provided.droppableProps}>
-              <TableHead >
-                <TableRow >
+              <TableHead>
+                <TableRow>
                   <TableCell className={classes.tableHeadId}>Id</TableCell>
                   <TableCell className={classes.tableHeadName} padding="checkbox">Name</TableCell>
                 </TableRow>
