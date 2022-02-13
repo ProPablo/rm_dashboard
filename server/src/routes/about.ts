@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getEnvValue, setEnvValue, readEnvVars } from '../envhelper';
+import { getEnvValue, setEnvValue, readEnvVars } from '../envHelper';
 
 export const aboutRouter = Router();
 
