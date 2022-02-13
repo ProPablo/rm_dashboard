@@ -37,14 +37,16 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                         refreshing={global.isLoading}
                         onRefresh={onRefresh} />
                 }>
+                <Card.Title style={styles.titleText}>{"Display Information \nand Guidance System"}</Card.Title>
+
                 {/* <Card containerStyle={[styles.eventContainerStyle, globalStyle.shadow]} wrapperStyle={styles.wrapperStyle}>
                     <Card.Title style={styles.text}>{"EVENT_NAME"}</Card.Title>
                     <Text style={styles.text}>{"EVENT_DESCRIPTION"}</Text>
                     <Button title="Learn More" onPress={actionOnPress} color="#A20C02" />
                 </Card> */}
-                {/* <Image
-                    source={{ uri: 'https://scontent.fbne6-1.fna.fbcdn.net/v/t31.0-8/12132639_1621472404741790_4024952992087543132_o.jpg?_nc_cat=105&_nc_sid=e3f864&_nc_ohc=FaGvP6Mx5WgAX-1-LPx&_nc_ht=scontent.fbne6-1.fna&oh=e3b3d3cd969a47629b7b3f0c2e748278&oe=5F99ACA7' }}
-                    style={styles.image} /> */}
+                <Image
+                    source={require('../../lib/homeimg.jpg')}
+                    style={styles.image} />
                 <Pressable onPress={tourActionOnPress}>
                     <Card containerStyle={[styles.tourStartContainer, globalStyle.shadow]} wrapperStyle={styles.wrapperStyle}>
                         <Card.Title style={styles.text}>{"Start Tour"}</Card.Title>
@@ -68,11 +70,20 @@ const styles = StyleSheet.create({
 
     image: {
         width: Math.round(dimensions.width * 15 / 16),
-        height: 200,
+        height: Math.round(dimensions.height * 15 / 30),
+        borderRadius: 10
     },
 
     text: {
         color: '#fff',
+        textAlign: 'center',
+        fontFamily: 'Roboto'
+    },
+
+    titleText: {
+        paddingTop: 10,
+        fontSize: 27,
+        color: '#262F40',
         textAlign: 'center',
         fontFamily: 'Roboto'
     },

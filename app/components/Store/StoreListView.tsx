@@ -18,9 +18,10 @@ const StoreListView = ({ store }: Props) => {
         <View style={globalStyle.listItem}>
             <Card containerStyle={globalStyle.containerStyle} wrapperStyle={globalStyle.wrapperStyle}>
                 <Card.Title style={globalStyle.text}>{store.name}</Card.Title>
-                <Text style={globalStyle.text}>{store.description}</Text>
-                <Card.Divider />
-
+                <Text style={[globalStyle.text, globalStyle.cardDescr]}>{store.description}</Text>
+                <Card.Image style={globalStyle.image} source={{
+                    uri: store.thumbnail,
+                }}/>
             </Card>
 
         </View>
