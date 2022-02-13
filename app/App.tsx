@@ -86,8 +86,6 @@ const App = () => {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
-  //TODO create Hook for BT updates
-
   return (
     <NavigationContainer theme={NavigationTheme}>
       <GlobalStore>

@@ -37,7 +37,7 @@ export const authProvider: AuthProvider = {
     return Promise.resolve();
   },
 
-  //TODO: change permission return to roles
+  // CONSIDER: change permission return to roles
   getPermissions: () => {
     const role = localStorage.getItem('auth');
     return role ? Promise.resolve(role) : Promise.reject();

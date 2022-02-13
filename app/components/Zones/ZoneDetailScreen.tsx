@@ -71,15 +71,20 @@ export const ZoneMediaRender = ({ item, index }: ZoneMediaRenderProps) => {
         return (
             <View style={styles.video}>
                 <VideoPlayer
+                // TODO: fullscreen toggle mode customizable
                     source={{ uri: `${MEDIA_URL}/${item.Media.src}` }}
-                    // disableFullScreen={true}
+                    disableFullScreen={false}
                     disableBack={true}
                     disableVolume={true}
                     tapAnywhereToPause={true}
-                    paused={true}
+                    paused={false} //use only for initial pause state
                     // onPause={handlePause}
                     // onPlay={handlePlay}
                     onEnd={handleVideoEnd}
+                    fullscreen={true}
+                    toggleResizeModeOnFullscreen={false}
+                    resizeMode="cover"
+                    disableFullscreen
                 />
                 {/* <Video
                     source={{ uri: `${MEDIA_URL}/${item.Media.src}` }}
@@ -91,11 +96,16 @@ export const ZoneMediaRender = ({ item, index }: ZoneMediaRenderProps) => {
         )
     }
     else return (
-        <Image
-            style={styles.image}
-            source={{
-                uri: `${MEDIA_URL}/${item.Media.src}`,
-            }} />
+        <View style={styles.video}>
+            <Image
+                style={styles.image}
+                source={{
+                    uri: `${MEDIA_URL}/${item.Media.src}`,
+                }} />
+            <Text style={styles.textDescr}>{item.description}</Text>
+        </View>
+
+        
     )
 }
 export const PureZoneMediaRender = React.memo(ZoneMediaRender);

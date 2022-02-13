@@ -87,7 +87,7 @@ export const TourGuide = ({ navigation }: TourGuideProps) => {
     function handleSkip() {
         console.log("Forward");
         // ToastAndroid.show("Skipping", ToastAndroid.SHORT);
-        tourDispatch({ type: TourActionName.FORWARD})
+        tourDispatch({ type: TourActionName.FORWARD })
         // gravity is for location
         // ToastAndroid.showWithGravity(
         //     "All Your Base Are Belong To Us",
@@ -98,7 +98,7 @@ export const TourGuide = ({ navigation }: TourGuideProps) => {
 
     function handleBack() {
         // ToastAndroid.show("Backing", ToastAndroid.SHORT);
-        tourDispatch({ type: TourActionName.GOBACK})
+        tourDispatch({ type: TourActionName.GOBACK })
     }
 
     return (
@@ -124,6 +124,7 @@ export const TourGuide = ({ navigation }: TourGuideProps) => {
                         name="chevron-left"
                         size={20}
                         color="white" />}
+
                     onPress={handleBack}
                     disabled={!(tourState.currGuideZoneIndex > 0)}
                 />
@@ -159,27 +160,28 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
 
     const currentZone = useMemo(() => {
         const { zones } = memo;
-        // console.log(beaconList);
-        if (beaconList.length) {
+        console.log({ beaconList });
+        if (beaconList.length > 0) {
+
             // React unsorts in intermediate stages such as passing thrrough props
             beaconList.sort((a, b) => b.rssi! - a.rssi!);
             const beacon = beaconList[0];
             const foundZone = zones[beacon.zoneId];
             return foundZone;
         }
+        else return null;
     }, [memo, beaconList]);
 
     useEffect(() => {
         if (zones.length < 1) return;
         if (currentZone?.id == zones[tourState.maxZoneIndex].id) {
-            tourDispatch({ type: TourActionName.VISIT});
+            tourDispatch({ type: TourActionName.VISIT });
             console.log("visited", zones[tourState.maxZoneIndex]);
         }
     }, [currentZone, zones])
 
     const renderContent = () => (
         <TourGuide
-            // zone={currentZone}
             {...props}
         />
     )
@@ -190,8 +192,6 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
 
     const zoneTitleOnPress = () => {
         if (!currentZone) return;
-        console.log("bruh", { currentZone });
-
         props.navigation.push("ZoneDetails", { zoneId: currentZone.id })
     };
 
@@ -199,7 +199,7 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
         <View style={styles.pageContainer}>
             <Pressable onPress={zoneTitleOnPress}>
                 <View style={globalStyle.pressableContainer}>
-                    <Text style={styles.textName}> {currentZone ? currentZone.name : "No Zone Found / Entered"}</Text>
+                    <Text style={styles.textName}> {currentZone != null ? currentZone.name : "No Zone Found / Entered"}</Text>
                 </View>
             </Pressable>
 
@@ -222,7 +222,7 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
     );
 }
 export interface MapProps {
-    currentZone: ZoneConsumable | undefined,
+    currentZone: ZoneConsumable | null,
 }
 
 const maxValue = 10;
@@ -231,12 +231,7 @@ const minValue = -10;
 const Map = (props: MapProps) => {
     const zones = useContext(ZonesContext);
     const [tourState, tourDispatch] = useContext(TourStateContext);
-    // const pulseValue = useRef(new Animated.Value(0));
 
-
-    // useEffect(() => {
-    //     animatedLoop.current.start();
-    // }, [zones]);
 
     return (
         <View>
@@ -245,7 +240,12 @@ const Map = (props: MapProps) => {
             { transform: [{ translateX: -(z.width / 2) }, { translateY: -(z.height / 2) }] }
             ]} />)} */}
             {zones.map(z =>
-                <ZoneIndicator key={z.id} zone={z} isCurrentZone={false} />
+                <ZoneIndicator
+                    key={z.id}
+                    zone={z}
+                    isCurrentZone={z.id == props.currentZone?.id}
+                // toBeVisited={tourState.maxZoneIndex == }
+                />
             )}
             <Image onLayout={(e) => console.log(e.nativeEvent.layout)} source={require('./floorplan2.jpg')} />
         </View>
@@ -254,7 +254,8 @@ const Map = (props: MapProps) => {
 
 export interface ZoneIndicatorProps {
     zone: ZoneConsumable,
-    isCurrentZone: boolean
+    isCurrentZone: boolean,
+    toBeVisited?: boolean
 }
 
 export class ZoneIndicator extends React.Component<ZoneIndicatorProps> {

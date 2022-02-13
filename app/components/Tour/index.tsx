@@ -49,7 +49,7 @@ type TourAction =
 const TourReducer = (state: TourState, action: TourAction): TourState => {
   console.log({ state, action });
   switch (action.type) {
-    
+
     case 'forward':
       const newZone = state.currGuideZoneIndex + 1;
       if (newZone > state.maxZoneIndex) return { ...state, currGuideZoneIndex: newZone, maxZoneIndex: newZone, hasVisited: false };
@@ -127,6 +127,7 @@ export const isLocationEnabled = () => {
 export const manager = new BleManager();
 
 const BEACON_TIMEOUT = 10 * 1000; //TEN SECONDS
+const BEACON_AUTO_EXPIRE = 20 * 1000;
 
 const Tour: React.FC = ({ children }) => {
   const [nearbyBeacons, setBeacons] = useState<Beacon[]>([]);
@@ -134,7 +135,7 @@ const Tour: React.FC = ({ children }) => {
   const { setBLEnabled } = useContext(GlobalActionContext);
   const reducerVal = useReducer(TourReducer, initialTourState);
 
-  const onBeacon = (error: BleError | null, device: Device | null) => {
+  const onBeacon = useCallback((error: BleError | null, device: Device | null) => {
     if (error) {
       if (error.message == "BluetoothLE is powered off") {
         console.log(error);
@@ -147,8 +148,8 @@ const Tour: React.FC = ({ children }) => {
     if (!serverBeacon) return;
     serverBeacon.rssi = device.rssi!;
 
-    let currentDate: number | Date = new Date();
-    currentDate = currentDate.getTime();
+    const currentDate = (new Date()).getTime();
+    serverBeacon.lastVisited = currentDate;
 
     setBeacons((oldList) => {
       const newList = oldList.filter(b => b.lastVisited! + BEACON_TIMEOUT < currentDate);
@@ -159,26 +160,29 @@ const Tour: React.FC = ({ children }) => {
       else {
         newList.push(serverBeacon);
       }
+      console.log({ serverBeacon, newList, oldList });
       return newList;
     })
-  }
-
-  const initProcess = async () => {
-
-    await requestLocationPermission();
-    // await manager.enable(); //awaiting doesnt actually wait cringe
-    manager.enable();
-    manager.startDeviceScan(null, null, onBeacon);
-    console.log("diggers")
-  }
+  }, [beacons, setBeacons])
 
 
   useEffect(() => {
+    const initProcess = async () => {
+      await requestLocationPermission();
+      // await manager.enable(); //awaiting doesnt actually wait cringe
+      manager.enable();
+      manager.startDeviceScan(null, null, onBeacon);
+      console.log("diggers")
+    }
     initProcess();
-    // requestLocationPermission()
-    //   .then(() => {
 
-    //     // TODO fix for ios
+    const beaconTimeoutTimer = setInterval(() => {
+      const currentDate = (new Date()).getTime();
+      console.log("autoTimeout");
+      setBeacons(prevList => prevList.filter(b => b.lastVisited! + BEACON_TIMEOUT < currentDate));
+    })
+
+    //TODO; fix subscriber
     const subscription = manager.onStateChange((state => {
       console.log("BLE Manager online");
       if (state === 'PoweredOn') {
@@ -195,8 +199,9 @@ const Tour: React.FC = ({ children }) => {
     return () => {
       manager.stopDeviceScan();
       // manager.destroy();
+      clearInterval(beaconTimeoutTimer);
     }
-  }, [])
+  }, [beacons])
 
 
   return (
