@@ -66,7 +66,6 @@ export const ZoneMediaRender = ({ item, index }: ZoneMediaRenderProps) => {
     function handleVideoEnd() {
         console.log("videoEnd");
     }
-
     if (item.Media.type === 1) {
         return (
             <View style={styles.video}>
@@ -126,12 +125,7 @@ export const ZoneDetailScreen: React.FC<Props> = ({ route, navigation }) => {
         if (!memo.zones) return;
         setZone(memo.zones[+zoneId]);
     }, [memo]);
-
-    const currentArtefactList: Artefact[] = useMemo(() => {
-        if (!zone) return [];
-        return zone.Artefacts.filter((artefactId) => memo.artefacts[artefactId].Media).map((artefactId) => memo.artefacts[artefactId]);
-    }, [memo, zone])
-
+    
     return (
         <View style={styles.pageContainer}>
             {zone &&

@@ -7,6 +7,7 @@ import "reflect-metadata";
 import swagggerUI from 'swagger-ui-express';
 import { createConnection } from "typeorm";
 import { errorMiddleware } from "./helperFunctions";
+import { aboutRouter } from './routes/about'
 import { artefactRouter } from "./routes/artefacts";
 import { beaconRouter } from "./routes/beacon";
 import { exhibitionRouter } from "./routes/exhibition";
@@ -21,7 +22,7 @@ const isDevelopment = process.env.NODE_ENV === "development";
 
 createConnection({
   "type": "mysql",
-  "host": "localhost",
+  "host": process.env.DB_HOST,
   "port": 3306,
   "username": process.env.DB_USER,
   "password": process.env.DB_PASSWORD,
@@ -75,22 +76,14 @@ createConnection({
 
   app.use('/swagger', swagggerUI.serve, swagggerUI.setup(swaggerDoc));
 
+  router.use('/about', aboutRouter)
   router.use('/artefacts', artefactRouter);
   router.use('/zones', zoneRouter);
   router.use('/beacons', beaconRouter);
   router.use('/artefactmedia', artefactMediaRouter);
   router.use('/exhibitions', exhibitionRouter);
   router.use('/storeItems', storeItemRouter);
-
-  router.get('/about', (req, res) => {
-    res.json({
-      companyName: "Redland Museum",
-      streetName: "60 Smith Street",
-      addressDetails: "Cleveland, QLD 4165",
-      phone: "+7 32863494",
-      email: "admin@redlandmuseum.com.au"
-    });
-  })
+  
   app.use(router);
 
   app.use(errorMiddleware);

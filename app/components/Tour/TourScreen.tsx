@@ -110,14 +110,14 @@ export const TourGuide = ({ navigation }: TourGuideProps) => {
             <View style={styles.carouselContainer}>
                 {/* <PureZoneMediaRender item={currentArtefactList[0]} index={0} /> */}
 
-                {/* <Carousel
+                <Carousel
                     data={mediaArtefactList}
                     renderItem={ZoneMediaRender}
                     sliderWidth={320}
                     itemWidth={320}
                     scrollEnabled={false}
                     ref={carouselRef}
-                /> */}
+                />
             </View>
 
 
