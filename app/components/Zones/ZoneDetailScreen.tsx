@@ -139,15 +139,6 @@ export const ZoneDetailScreen: React.FC<Props> = ({ route, navigation }) => {
                     ListHeaderComponent={<View style={styles.viewDescr}>
                         <Text selectable style={styles.textName}> {zone.name}</Text>
                         <Text style={styles.textDescr}>{zone.description}</Text>
-                        <Carousel
-                            // layout={'stack'}
-                            data={currentArtefactList}
-                            renderItem={ZoneMediaRender}
-                            sliderWidth={320}
-                            itemWidth={320}
-                        // Use for passing down which video should currently play
-                        // extraData={}
-                        />
                     </View>}
                     data={zone?.Artefacts}
                     renderItem={({ item }) => (

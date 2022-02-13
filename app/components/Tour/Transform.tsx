@@ -3,8 +3,8 @@ import { StyleSheet, Text, View, Animated, StyleProp } from 'react-native';
 import { FAB, Icon } from 'react-native-elements';
 import { PinchGestureHandler, PanGestureHandler, State } from 'react-native-gesture-handler';
 
-const minScale = 0.5;
-const maxScale = 2;
+const minScale = 0.2;
+const maxScale = 1;
 
 const USE_NATIVE_DRIVER = true;
 

@@ -100,20 +100,24 @@ export const TourGuide = ({ navigation }: TourGuideProps) => {
         // ToastAndroid.show("Backing", ToastAndroid.SHORT);
         tourDispatch({ type: TourActionName.GOBACK })
     }
+    const zoneTourTitleOnPress = () => {
+        if (!currentTourZone) return;
+        navigation.push("ZoneDetails", {zoneId: currentTourZone.id})
+    }
 
     return (
         <View style={styles.bottomSheetContainer}>
             <View style={styles.carouselContainer}>
                 {/* <PureZoneMediaRender item={currentArtefactList[0]} index={0} /> */}
 
-                <Carousel
+                {/* <Carousel
                     data={mediaArtefactList}
                     renderItem={ZoneMediaRender}
                     sliderWidth={320}
                     itemWidth={320}
                     scrollEnabled={false}
                     ref={carouselRef}
-                />
+                /> */}
             </View>
 
 
@@ -128,8 +132,7 @@ export const TourGuide = ({ navigation }: TourGuideProps) => {
                     onPress={handleBack}
                     disabled={!(tourState.currGuideZoneIndex > 0)}
                 />
-                {/* <Button title={zone?.name} buttonStyle={{ flex: 3, backgroundColor: "#CAA868", padding: "30%", margin: 0 }}/> */}
-                <Pressable>
+                <Pressable onPress={zoneTourTitleOnPress}>
                     <View style={styles.tourContainer}>
                         <Text style={styles.tourName}> {currentTourZone?.name}</Text>
                     </View>
@@ -345,7 +348,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         paddingLeft: "20%",
         paddingRight: "20%",
-        backgroundColor: '#2A2F3C'
+        backgroundColor: '#A20C02'
     },
 
     tourName: {

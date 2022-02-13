@@ -176,11 +176,11 @@ const Tour: React.FC = ({ children }) => {
     }
     initProcess();
 
-    const beaconTimeoutTimer = setInterval(() => {
-      const currentDate = (new Date()).getTime();
-      console.log("autoTimeout");
-      setBeacons(prevList => prevList.filter(b => b.lastVisited! + BEACON_TIMEOUT < currentDate));
-    })
+    // const beaconTimeoutTimer = setInterval(() => {
+    //   const currentDate = (new Date()).getTime();
+    //   // console.log("autoTimeout");
+    //   setBeacons(prevList => prevList.filter(b => b.lastVisited! + BEACON_TIMEOUT < currentDate));
+    // })
 
     //TODO; fix subscriber
     const subscription = manager.onStateChange((state => {
