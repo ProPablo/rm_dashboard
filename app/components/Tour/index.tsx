@@ -29,13 +29,13 @@ export enum TourActionName {
   VISITEXACT = "visitExact"
 }
 export interface TourState {
-  hasVisited: boolean,
+  // hasVisited: boolean,
   maxZoneIndex: number,
   currGuideZoneIndex: number,
 }
 
 const initialTourState: TourState = {
-  hasVisited: false,
+  // hasVisited: false,
   currGuideZoneIndex: 0,
   maxZoneIndex: 0
 }
@@ -51,13 +51,13 @@ const TourReducer = (state: TourState, action: TourAction): TourState => {
   switch (action.type) {
 
     case 'forward':
-      const newZone = state.currGuideZoneIndex + 1;
-      if (newZone > state.maxZoneIndex) return { ...state, currGuideZoneIndex: newZone, maxZoneIndex: newZone, hasVisited: false };
-      return { ...state, currGuideZoneIndex: newZone, }
+      // const newZone = state.currGuideZoneIndex + 1;
+      // if (newZone > state.maxZoneIndex) return { ...state, currGuideZoneIndex: newZone, maxZoneIndex: newZone, hasVisited: false };
+      return { ...state, currGuideZoneIndex: state.currGuideZoneIndex + 1 }
     case 'backward':
       return { ...state, currGuideZoneIndex: state.currGuideZoneIndex - 1 };
     case 'visit':
-      return { ...state, hasVisited: true }
+      return { ...state, maxZoneIndex: state.maxZoneIndex + 1 }
     default:
       return state;
   }
@@ -126,8 +126,8 @@ export const isLocationEnabled = () => {
 
 export const manager = new BleManager();
 
-const BEACON_TIMEOUT = 10 * 1000; //TEN SECONDS
-const BEACON_AUTO_EXPIRE = 20 * 1000;
+const BEACON_TIMEOUT = 15 * 1000; //TEN SECONDS
+const BEACON_AUTO_EXPIRE = 25 * 1000; 
 
 const Tour: React.FC = ({ children }) => {
   const [nearbyBeacons, setBeacons] = useState<Beacon[]>([]);
@@ -176,11 +176,11 @@ const Tour: React.FC = ({ children }) => {
     }
     initProcess();
 
-    // const beaconTimeoutTimer = setInterval(() => {
-    //   const currentDate = (new Date()).getTime();
-    //   // console.log("autoTimeout");
-    //   setBeacons(prevList => prevList.filter(b => b.lastVisited! + BEACON_TIMEOUT < currentDate));
-    // })
+    const beaconTimeoutTimer = setInterval(() => {
+      const currentDate = (new Date()).getTime();
+      console.log("autoTimeout");
+      setBeacons(prevList => prevList.filter(b => b.lastVisited! + BEACON_TIMEOUT < currentDate));
+    }, BEACON_AUTO_EXPIRE)
 
     //TODO; fix subscriber
     const subscription = manager.onStateChange((state => {

@@ -58,6 +58,10 @@ export const globalStyle = StyleSheet.create({
         backgroundColor: '#555C77'
     },
 
+    cardDescr: {
+        paddingBottom: 10,
+    },
+
     wrapperStyle: {
 
     }

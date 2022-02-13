@@ -144,7 +144,7 @@ export const TourGuide = ({ navigation }: TourGuideProps) => {
                         size={20}
                         color="white" />}
                     onPress={handleSkip}
-                    disabled={!((tourState.hasVisited || tourState.currGuideZoneIndex < tourState.maxZoneIndex) && tourState.currGuideZoneIndex < zones.length - 1)}
+                    disabled={!(tourState.currGuideZoneIndex < tourState.maxZoneIndex)}
                 />
             </View>
         </View>
@@ -158,14 +158,10 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
     const [tourState, tourDispatch] = useContext(TourStateContext);
     const transfromRef = useRef<Transform>(null);
     const sheetRef = useRef<BottomSheet>(null);
-    // const zoneGuideIndex = useState(0);
-
 
     const currentZone = useMemo(() => {
         const { zones } = memo;
-        console.log({ beaconList });
         if (beaconList.length > 0) {
-
             // React unsorts in intermediate stages such as passing thrrough props
             beaconList.sort((a, b) => b.rssi! - a.rssi!);
             const beacon = beaconList[0];
@@ -176,10 +172,12 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
     }, [memo, beaconList]);
 
     useEffect(() => {
-        if (zones.length < 1) return;
-        if (currentZone?.id == zones[tourState.maxZoneIndex].id) {
+        if (zones.length == 0) return;
+        const nextZoneIndex = tourState.maxZoneIndex + 1;
+        if (nextZoneIndex == zones.length) return;
+        if (currentZone?.id == zones[nextZoneIndex].id) {
             tourDispatch({ type: TourActionName.VISIT });
-            console.log("visited", zones[tourState.maxZoneIndex]);
+            console.log("visited", zones[nextZoneIndex]);
         }
     }, [currentZone, zones])
 
@@ -208,7 +206,7 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
 
             <BottomSheet
                 ref={sheetRef}
-                snapPoints={[550, 300, 0]}
+                snapPoints={[675, 400, 0]}
                 borderRadius={20}
                 // @ts-ignore
                 renderContent={renderContent}
@@ -234,20 +232,17 @@ const minValue = -10;
 const Map = (props: MapProps) => {
     const zones = useContext(ZonesContext);
     const [tourState, tourDispatch] = useContext(TourStateContext);
-
+    const canVisitNext = tourState.maxZoneIndex + 1 < zones.length;
+    console.log({ canVisitNext, tourState });
 
     return (
         <View>
-            {/* {zones.map(z => <View key={z.id} style={[styles.zoneIndicator,
-            { width: z.width, height: z.height, left: z.coordX, top: z.coordY },
-            { transform: [{ translateX: -(z.width / 2) }, { translateY: -(z.height / 2) }] }
-            ]} />)} */}
-            {zones.map(z =>
+            {zones.map((z, i) =>
                 <ZoneIndicator
                     key={z.id}
                     zone={z}
-                    isCurrentZone={z.id == props.currentZone?.id}
-                // toBeVisited={tourState.maxZoneIndex == }
+                    isCurrentZone={z.id === props.currentZone?.id}
+                    toBeVisited={canVisitNext && tourState.maxZoneIndex + 1 === i}
                 />
             )}
             <Image onLayout={(e) => console.log(e.nativeEvent.layout)} source={require('./floorplan2.jpg')} />
@@ -258,15 +253,18 @@ const Map = (props: MapProps) => {
 export interface ZoneIndicatorProps {
     zone: ZoneConsumable,
     isCurrentZone: boolean,
-    toBeVisited?: boolean
+    toBeVisited: boolean
 }
 
 export class ZoneIndicator extends React.Component<ZoneIndicatorProps> {
     pulseValue: Animated.Value;
+    animationComposite: Animated.CompositeAnimation
+
     constructor(props: ZoneIndicatorProps) {
         super(props);
         this.pulseValue = new Animated.Value(0);
-        Animated.loop(
+
+        this.animationComposite = Animated.loop(
             Animated.sequence([
                 Animated.timing(this.pulseValue, {
                     toValue: maxValue,
@@ -291,14 +289,27 @@ export class ZoneIndicator extends React.Component<ZoneIndicatorProps> {
                 //     useNativeDriver: true
                 // })
             ])
-        ).start()
+        );
 
+    }
+
+    componentDidMount() {
+        if (this.props.toBeVisited)
+            this.animationComposite?.start()
+    }
+
+    componentDidUpdate() {
+        if (this.props.toBeVisited)
+            this.animationComposite.start();
+        else
+            this.animationComposite.stop();
     }
 
     render() {
         return (
             <Animated.View key={this.props.zone.id}
                 style={[styles.zoneIndicator,
+                this.props.isCurrentZone && { borderColor: "green" },
                 { width: this.props.zone.width, height: this.props.zone.height, left: this.props.zone.coordX, top: this.props.zone.coordY },
                 // { transform: [{ translateY: -this.props.zone.height / 2 }, { translateX: -(this.props.zone.width / 2) }] }
                 { transform: [{ translateY: (Animated.add(-this.props.zone.height / 2, this.pulseValue)) }, { translateX: -(this.props.zone.width / 2) }] }
@@ -317,7 +328,7 @@ const styles = StyleSheet.create({
     bottomSheetContainer: {
         backgroundColor: "#F3E1C7",
         // paddingLeft: 100,
-        height: 550,
+        height: 675,
     },
 
     carouselContainer: {
@@ -375,6 +386,10 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         borderWidth: 5,
         borderColor: "#7A0600",
+    },
+    currentZoneIndicator: {
+        borderColor: "blue",
+
     }
 
 });

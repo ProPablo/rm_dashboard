@@ -61,7 +61,6 @@ export const GlobalStore: React.FC = ({ children }) => {
         const zoneResults = await request<ZoneConsumable[]>(`${baseURL}/zones/app`);
         zoneResults.sort((a, b) => b.priority - a.priority ); //descending
         const beaconResults = await request<Beacon[]>(`${baseURL}/beacons`);
-        console.log({beaconResults});
         
         // const globalSettings = await request<GlobalSettings>(`${baseURL}/about`)
 

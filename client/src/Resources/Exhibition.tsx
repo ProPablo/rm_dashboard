@@ -1,5 +1,5 @@
 import React from 'react';
-import { Create, CreateProps, Datagrid, DateField, DateInput, Edit, EditProps, FormDataConsumer, FunctionField, ImageField, ImageInput, List, NumberField, NumberInput, ReferenceField, SimpleForm, TextField, TextInput } from 'react-admin';
+import { BooleanField, BooleanInput, ChipField, Create, CreateProps, Datagrid, DateField, DateInput, Edit, EditProps, FormDataConsumer, FunctionField, ImageField, ImageInput, List, NumberField, NumberInput, ReferenceField, SelectInput, SimpleForm, TextField, TextInput } from 'react-admin';
 import '../App.css';
 import { useListStyles } from '../AppTheme';
 import { ConditionalThumbnailEdit, ResourceActions } from '../helper';
@@ -11,6 +11,11 @@ export const ExhibitionCreate = (props: CreateProps) => (
       <TextInput source="name" />
       <TextInput multiline source="description"/>
       <TextInput source="organiser" />
+      <SelectInput source="status" choices={[
+        { id: 'Current', name: 'Current' },
+        { id: 'Upcoming', name: 'Upcoming' },
+        { id: 'Past', name: 'Past' },
+      ]} />
       <DateInput source="startDate" label="Start Date"/>
       <DateInput source="finishDate" label="Finish Date"/>
       <NumberInput source="priceAdult" label="Price Adult"/>
@@ -30,6 +35,11 @@ export const ExhibitionEdit = (props: EditProps) => (
       <TextInput source="name" />
       <TextInput multiline source="description" />
       <TextInput source="organiser" />
+      <SelectInput source="status" choices={[
+        { id: 'Current', name: 'Current' },
+        { id: 'Upcoming', name: 'Upcoming' },
+        { id: 'Past', name: 'Past' },
+      ]} />
       <DateInput source="startDate" label="Start Date"/>
       <DateInput source="finishDate" label="Finish Date"/>
       <NumberInput source="priceAdult" label="Price Adult"/>
@@ -63,9 +73,12 @@ export const ExhibitionList = (props: CreateProps) => {
         <TextField source="name" />
         <TextField source="description" />
         <TextField source="organiser" />
-        <NumberField source="priceAdult" label="Price Adult"/>
-        <NumberField source="priceConcession" label="Price Concession"/>
-        <NumberField source="priceChild" label="Price Child"/>
+        <ChipField source="status"/>
+        <NumberField source="priceAdult" label="Price Adult" options={{ style: 'currency', currency: 'AUD' }}/>
+        <NumberField source="priceConcession" label="Price Concession" options={{ style: 'currency', currency: 'AUD' }}/>
+        <NumberField source="priceChild" label="Price Child" options={{ style: 'currency', currency: 'AUD' }}/>
+        <DateField source="startDate" label="Start Date"/>
+        <DateField source="finishDate" label="Finish Date"/>
         <DateField source="createdAt" label="Created At"/>
         <DateField source="updatedAt" label="Updated At"/>
       </Datagrid>

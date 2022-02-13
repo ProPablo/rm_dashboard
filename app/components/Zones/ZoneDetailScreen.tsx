@@ -47,7 +47,7 @@ const ZoneArtefactsListView = ({ artefactId }: ArtefactProps) => {
         <View style={globalStyle.listItem}>
             <Card containerStyle={globalStyle.containerStyle} wrapperStyle={globalStyle.wrapperStyle}>
                 <Card.Title style={globalStyle.text}>{artefact?.name}</Card.Title>
-                <Text style={[globalStyle.text, styles.cardDescr]}>{artefact?.description}</Text>
+                <Text style={[globalStyle.text, globalStyle.cardDescr]}>{artefact?.description}</Text>
                 <Card.Image source={{
                     uri: artefact?.thumbnail,
                 }} />
@@ -171,10 +171,6 @@ const styles = StyleSheet.create({
         paddingBottom: 15,
         textAlign: 'center',
         fontFamily: 'Roboto',
-    },
-
-    cardDescr: {
-        paddingBottom: 10,
     },
 
     textName: {
