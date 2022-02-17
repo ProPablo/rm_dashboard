@@ -160,7 +160,7 @@ const Tour: React.FC = ({ children }) => {
       else {
         newList.push(serverBeacon);
       }
-      console.log({ serverBeacon, newList, oldList });
+      // console.log({ serverBeacon, newList, oldList });
       return newList;
     })
   }, [beacons, setBeacons])
