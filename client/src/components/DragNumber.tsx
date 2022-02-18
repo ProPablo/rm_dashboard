@@ -7,7 +7,9 @@ import { useField, Field } from 'react-final-form';
 import CompareArrowsSharpIcon from '@material-ui/icons/CompareArrows';
 
 export interface DragNumberProps {
-    name: string
+    name: string,
+    max?: number,
+    min?: number,
 }
 
 const useStyles = makeStyles(theme => ({
@@ -33,7 +35,11 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-export const DragNumber = ({ name }: DragNumberProps) => {
+function clamp(number: number, min: number, max: number) {
+    return Math.max(min, Math.min(number, max));
+}
+
+export const DragNumber = (props: DragNumberProps) => {
     const styles = useStyles();
     const form = useForm();
     
@@ -44,15 +50,18 @@ export const DragNumber = ({ name }: DragNumberProps) => {
 
     function onStart(e: React.MouseEvent) {
         setStartPoint(mouse.x);
-        setStartValue(formdata[name]);
+        setStartValue(formdata[props.name]);
         document.body.style.cursor = "ew-resize"
     }
 
     useEffect(() => {
         if (startPoint === null || startValue == null) return;
         console.log("mouseHold")
-        const newVal = (mouse.x - startPoint) + startValue;
-        form.change(name, newVal);
+        let newVal = (mouse.x - startPoint) + startValue;
+        if (props.min != null && props.max != null) {
+            newVal = clamp(newVal, props.min, props.max)
+        }
+        form.change(props.name, newVal);
     }, [startPoint, startValue, mouse])
 
     function onEnd(e: MouseEvent) {
@@ -62,7 +71,7 @@ export const DragNumber = ({ name }: DragNumberProps) => {
 
     function onTextChange(e: React.ChangeEvent<HTMLInputElement>) {
         console.log("text changed", e.target.value);
-        form.change(name, e.target.value);
+        form.change(props.name, e.target.value);
     }
 
     useEffect(() => {
@@ -79,10 +88,10 @@ export const DragNumber = ({ name }: DragNumberProps) => {
 
     return (
         <div className={styles.dragNumeric}>
-            <TextInput source={name} disabled className={styles.goodbye} />
+            <TextInput source={props.name} disabled className={styles.goodbye} />
             <CompareArrowsSharpIcon className={styles.dragNumericIcon} onMouseDown={onStart} />
             {/* <input type="number" value={form.getState().values[name]} onChange={onTextChange} ></input> */}
-            <Field name={name} component="input" type="number" placeholder="latitude" />
+            <Field name={props.name} component="input" type="number" placeholder="latitude" />
             {/* <MuiTextField className={styles.dragNumericInput} type="number" id={`dragnum-${name}`} label={name} value={formdata[name]} onChange={onTextChange} /> */}
         </div>
     )

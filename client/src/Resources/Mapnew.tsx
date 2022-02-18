@@ -1,7 +1,7 @@
 import { makeStyles, Typography, Button, Box, TextField as MuiTextField, Grid } from '@material-ui/core';
 import CompareArrowsSharpIcon from '@material-ui/icons/CompareArrows';
 import { useForm, useField } from 'react-final-form';
-import React, { useEffect, useRef, useState, MouseEvent as ReactMouseEvent, useContext, createContext } from 'react'
+import React, { useEffect, useRef, useState, MouseEvent as ReactMouseEvent, useContext, createContext, useMemo } from 'react'
 import {
   Title, List, Datagrid, TextField, Edit, SimpleForm, TextInput, NumberInput, TopToolbar, ShowButton, EditProps, FormDataConsumer,
   useNotify,
@@ -190,7 +190,7 @@ export const Map = (props: MapProps) => {
           {/* https://stackoverflow.com/questions/68170423/is-it-possible-to-allow-only-one-expanded-row-in-a-datagrid */}
           <List pagination={false} resource="zones" basePath="/zones" sort={{ field: "priority", order: "DESC" }} actions={<div />} bulkActionButtons={false}>
             {/* <Datagrid isRowSelectable={() => false} expand={<EditRow onClickPlace={onClickPlace} />} rowClick="expand" > */}
-            <Datagrid  isRowSelectable={() => false} >
+            <Datagrid isRowSelectable={() => false} >
               <FunctionField
                 label="Edit"
                 render={(zone: any) => <Button onClick={() => onEditMode(zone.id)}>EDIT</Button>} />
@@ -228,26 +228,28 @@ export const SinglePoint = ({ data }: any) => {
     a: 0.7,
   }
   const hslString = `hsl(${hsla.h * 360}, ${Math.floor(hsla.s * 100)}%, ${Math.floor(hsla.l * 100)}%, ${hsla.a})`
-  
 
-  // console.log({data, rand, hslString});
+
+  //@ts-ignore
+  const styleObj = useMemo(() => {
+      if (!imageEl) return {}
+      const imageOff = imageEl.getBoundingClientRect();
+      const xScale = imageOff.width / imageEl.naturalWidth;
+      const yScale = imageOff.height / imageEl.naturalHeight;    
+      
+      return {
+        // creating closure so that math operations are done at once
+        // left: clamp(data.coordX * xScale + imageOff.left, imageOff.left, imageEl?.naturalWidth + imageOff.left),
+        left: data.coordX * xScale + imageOff.left,
+        top: data.coordY * yScale + imageOff.top,
+        width: data.width * xScale,
+        height: data.height * yScale,
+        backgroundColor: hslString
+      }
+    }
+  )
+
   if (!imageEl) return (<div className={styles.goodbye} />);
-  const imageOff = imageEl.getBoundingClientRect();
-  // console.log(imageEl.naturalWidth, imageEl.naturalHeight);
-  const xScale = imageOff.width / imageEl.naturalWidth;
-  const yScale = imageOff.height / imageEl.naturalHeight;
-  let leftCoord = data.coordX * xScale + imageOff.left;
-  leftCoord = Math.min(Math.max(leftCoord, 0), imageEl.naturalWidth)
-  // console.log(imageEl.naturalWidth);
-
-  const styleObj = {
-    left: leftCoord,
-    top: data.coordY * yScale + imageOff.top,
-    width: data.width * xScale,
-    height: data.height * yScale,
-    backgroundColor: hslString
-  }
-  
   return (
     <div className={styles.dragItem} style={styleObj} > {data.name}</div>
   )
@@ -280,6 +282,8 @@ export interface EditRowProps extends EditProps {
 }
 
 const EditRow = (props: EditRowProps) => {
+  const imageEl = useContext(ImageContext);
+
   const notify = useNotify();
   const styles = useStyles();
   return (
@@ -293,8 +297,8 @@ const EditRow = (props: EditRowProps) => {
       <SimpleForm>
         <TextInput disabled source="id" label="ID" />
         <TextInput source="name" />
-        <DragNumber name="coordX" />
-        <DragNumber name="coordY" />
+        <DragNumber min={0} max={imageEl?.naturalWidth} name="coordX" />
+        <DragNumber min={0} max={imageEl?.naturalHeight} name="coordY" />
         <DragNumber name="width" />
         <DragNumber name="height" />
         <FormDataConsumer>
@@ -305,7 +309,6 @@ const EditRow = (props: EditRowProps) => {
         {/* <Button variant='contained' title="Place" onClick={props.onClickPlace} >Place</Button> */}
       </SimpleForm>
     </Edit>
-
   )
 }
 
