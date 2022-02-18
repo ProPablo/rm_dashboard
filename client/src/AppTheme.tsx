@@ -157,6 +157,9 @@ export const redlandTheme: any = ({
 
         // Main screen
         RaList: {
+            main: {
+                margin: "0 0 0 4vw" // margin for data resource tables 
+            },
             content: {
                 backgroundColor: '#F2F3F8',
             },
@@ -178,7 +181,6 @@ export const redlandTheme: any = ({
                 alignItems: "center",
                 padding: "100px 100px 100px 100px",
                 textAlign: 'center',
-
             },
         },
         MuiPaper: {

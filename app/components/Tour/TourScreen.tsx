@@ -24,13 +24,16 @@ import { useMemo } from 'react';
 import { useCallback } from 'react';
 // import Animated, {useSharedValue, useAnimatedStyle, withRepeat, withTiming} from 'react-native-reanimated';
 import Carousel, { } from 'react-native-snap-carousel';
-import { ZoneMediaRender, PureZoneMediaRender } from '../Zones/ZoneDetailScreen';
+// import { TourMediaRender, PureZoneMediaRender } from '../Zones/ZoneDetailScreen';
 import { NativeViewGestureHandler } from 'react-native-gesture-handler';
 import { Easing } from 'react-native-reanimated';
 
 
 type NavigationProp = StackNavigationProp<TourStackParams>;
-
+type TourMediaRenderProps = {
+    item: Artefact,
+    index: number
+}
 type CarouselRenderItemProps = {
     item: Artefact,
     index: number
@@ -104,7 +107,57 @@ export const TourGuide = ({ navigation }: TourGuideProps) => {
         if (!currentTourZone) return;
         navigation.push("ZoneDetails", {zoneId: currentTourZone.id})
     }
-
+    const TourMediaRender = ({ item, index }: TourMediaRenderProps) => {
+        // This crashes the app (maybe cuz carousel is class)
+        // const memo = useContext(MemoizedContext);
+    
+        if (!item.Media) return (<></>);
+        // delete mainArtefact.thumbnail;
+    
+        function handleVideoEnd() {
+            console.log("videoEnd");
+            if (!(tourState.currGuideZoneIndex < tourState.maxZoneIndex)) return; // flick map down
+            tourDispatch({ type: TourActionName.FORWARD })
+    
+        }
+        if (item.Media.type === 1) {
+            return (
+                <View style={styles.video}>
+                    <VideoPlayer
+                    // TODO: fullscreen toggle mode customizable
+                        source={{ uri: `${MEDIA_URL}/${item.Media.src}` }}
+                        disableFullScreen={false}
+                        disableBack={true}
+                        disableVolume={true}
+                        tapAnywhereToPause={true}
+                        paused={false} //use only for initial pause state
+                        // onPause={handlePause}
+                        // onPlay={handlePlay}
+                        onEnd={handleVideoEnd}
+                        fullscreen={true}
+                        toggleResizeModeOnFullscreen={false}
+                        resizeMode="cover"
+                        disableFullscreen
+                    />
+                    {/* <Video
+                        source={{ uri: `${MEDIA_URL}/${item.Media.src}` }}
+                        style={{flex: 1}}
+                        controls={true}
+                    /> */}
+                </View>
+            )
+        }
+        else return (
+            <View style={styles.video}>
+                <Image
+                    style={styles.image}
+                    source={{
+                        uri: `${MEDIA_URL}/${item.Media.src}`,
+                    }} />
+                <Text style={styles.textDescr}>{item.description}</Text>
+            </View>   
+        )
+    }
     return (
         <View style={styles.bottomSheetContainer}>
             <View style={styles.carouselContainer}>
@@ -112,7 +165,7 @@ export const TourGuide = ({ navigation }: TourGuideProps) => {
 
                 <Carousel
                     data={mediaArtefactList}
-                    renderItem={ZoneMediaRender}
+                    renderItem={TourMediaRender}
                     sliderWidth={320}
                     itemWidth={320}
                     scrollEnabled={false}
@@ -233,7 +286,7 @@ const Map = (props: MapProps) => {
     const zones = useContext(ZonesContext);
     const [tourState, tourDispatch] = useContext(TourStateContext);
     const canVisitNext = tourState.maxZoneIndex + 1 < zones.length;
-    console.log({ canVisitNext, tourState });
+    // console.log({ canVisitNext, tourState });
 
     return (
         <View>
@@ -390,7 +443,36 @@ const styles = StyleSheet.create({
     currentZoneIndicator: {
         borderColor: "blue",
 
-    }
+    },
+
+    viewDescr: {
+        backgroundColor: '#F7EECA',
+        borderRadius: 5,
+        padding: 10,
+        alignItems: 'center',
+    },
+
+    textDescr: {
+        fontSize: 15,
+        paddingBottom: 15,
+        textAlign: 'center',
+        fontFamily: 'Roboto',
+    },
+
+    image: {
+        flex: 1,
+        height: 450,
+        alignItems: 'center',
+        borderRadius: 10,
+        borderWidth: 10,
+    },
+
+    video: {
+        flex: 1,
+        borderRadius: 10,
+        borderWidth: 10,
+        borderColor: 'black',
+    },
 
 });
 

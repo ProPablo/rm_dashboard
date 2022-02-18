@@ -42,7 +42,7 @@ export class Exhibition extends BaseEntity {
   @Column()
   name: string;
 
-  @Column({ nullable: true })
+  @Column("longtext", { nullable: true })
   description: string;
 
   @Column({ nullable: true })

@@ -1,7 +1,7 @@
 import { makeStyles, Typography, Button, Box, TextField as MuiTextField, Grid } from '@material-ui/core';
 import CompareArrowsSharpIcon from '@material-ui/icons/CompareArrows';
 import { useForm, useField } from 'react-final-form';
-import React, { useEffect, useRef, useState, MouseEvent as ReactMouseEvent, useContext, createContext } from 'react'
+import React, { useEffect, useRef, useState, MouseEvent as ReactMouseEvent, useContext, createContext, useMemo } from 'react'
 import {
   Title, List, Datagrid, TextField, Edit, SimpleForm, TextInput, NumberInput, TopToolbar, ShowButton, EditProps, FormDataConsumer,
   useNotify,
@@ -60,14 +60,12 @@ const useStyles = makeStyles(theme => ({
     userSelect: "none"
   },
   mapImage: {
-    border: "1px solid blue",
     // width: "90%",
     // height: "680px",
     userSelect: "none",
     objectFit: "contain"
   },
   dragContainer: {
-    backgroundColor: "green",
     width: "10%",
     height: "100%",
     display: "flex",
@@ -94,18 +92,18 @@ const useStyles = makeStyles(theme => ({
     alignItems: "center",
     justifyContent: "center",
     // textAlign: "center",
-    color: "white",
+    color: "black",
     verticalAlign: "middle",
     display: "flex",
     // lineHeight: "-50%",
-    opacity: "35%"
+    // opacity: "35%"
   },
   placedItem: {
     position: "absolute",
   },
   selectionArea: {
     flexGrow: 1,
-    backgroundColor: "green",
+    backgroundColor: "white",
     height: "100%",
     overflow: 'scroll'
   },
@@ -141,10 +139,10 @@ export const Map = (props: MapProps) => {
     setMapState({ ...mapState, editId: id })
   }
 
-  function onClickPlace() {
-    console.log("bruh");
-    setMapState({ ...mapState, mapPinMode: true });
-  }
+  // function onClickPlace() {
+  //   console.log("bruh");
+  //   setMapState({ ...mapState, mapPinMode: true });
+  // }
 
   useEffect(() => {
     if (mapState.mapPinMode) {
@@ -155,14 +153,14 @@ export const Map = (props: MapProps) => {
     }
   }, [mouse, mapState]);
 
-  useEffect(() => {
-    const testInt = setInterval(() => {
-      console.log(imageRef.current?.getBoundingClientRect())
-    }, 1000);
-    return () => {
-      clearInterval(testInt);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const testInt = setInterval(() => {
+  //     console.log(imageRef.current?.getBoundingClientRect())
+  //   }, 1000);
+  //   return () => {
+  //     clearInterval(testInt);
+  //   }
+  // }, []);
 
   return (
     <ImageContext.Provider value={imageRef.current}>
@@ -186,11 +184,11 @@ export const Map = (props: MapProps) => {
         </img>
         <div className={styles.selectionArea}>
           {
-            !!mapState.editId ? <EditRow imageOff={imageRef.current?.getBoundingClientRect()} resource="zones" basePath="/zones" onClickPlace={onClickPlace} id={mapState.editId.toString()} /> : <div>nothing</div>
+            !!mapState.editId ? <EditRow imageOff={imageRef.current?.getBoundingClientRect()} resource="zones" basePath="/zones" id={mapState.editId.toString()} /> : <div></div>
           }
 
           {/* https://stackoverflow.com/questions/68170423/is-it-possible-to-allow-only-one-expanded-row-in-a-datagrid */}
-          <List resource="zones" basePath="/zones" sort={{ field: "priority", order: "DESC" }} actions={<div />} bulkActionButtons={false}>
+          <List pagination={false} resource="zones" basePath="/zones" sort={{ field: "priority", order: "DESC" }} actions={<div />} bulkActionButtons={false}>
             {/* <Datagrid isRowSelectable={() => false} expand={<EditRow onClickPlace={onClickPlace} />} rowClick="expand" > */}
             <Datagrid isRowSelectable={() => false} >
               <FunctionField
@@ -223,27 +221,37 @@ export const SinglePoint = ({ data }: any) => {
   const imageEl = useContext(ImageContext);
   const styles = useStyles();
   const rand = randomHash(data.name);
-  const hsl = {
+  const hsla = {
     h: rand,
     s: 0.4,
-    l: 0.6
+    l: 0.8,
+    a: 0.7,
   }
-  const hslString = `hsl(${hsl.h * 360}, ${Math.floor(hsl.s * 100)}%, ${Math.floor(hsl.l * 100)}%)`
-  // console.log({data, rand, hslString});
+  const hslString = `hsl(${hsla.h * 360}, ${Math.floor(hsla.s * 100)}%, ${Math.floor(hsla.l * 100)}%, ${hsla.a})`
+
+
+  //@ts-ignore
+  const styleObj = useMemo(() => {
+      if (!imageEl) return {}
+      const imageOff = imageEl.getBoundingClientRect();
+      const xScale = imageOff.width / imageEl.naturalWidth;
+      const yScale = imageOff.height / imageEl.naturalHeight;    
+      
+      return {
+        // creating closure so that math operations are done at once
+        // left: clamp(data.coordX * xScale + imageOff.left, imageOff.left, imageEl?.naturalWidth + imageOff.left),
+        left: data.coordX * xScale + imageOff.left,
+        top: data.coordY * yScale + imageOff.top,
+        width: data.width * xScale,
+        height: data.height * yScale,
+        backgroundColor: hslString
+      }
+    }
+  )
+
   if (!imageEl) return (<div className={styles.goodbye} />);
-  const imageOff = imageEl.getBoundingClientRect();
-  console.log(imageEl.naturalWidth, imageEl.naturalHeight);
-  const xScale = imageOff.width / imageEl.naturalWidth;
-  const yScale = imageOff.height / imageEl.naturalHeight;
-  const styleObj = {
-    left: data.coordX * xScale + imageOff.left,
-    top: data.coordY * yScale + imageOff.top,
-    width: data.width * xScale,
-    height: data.height * yScale,
-    backgroundColor: hslString
-  }
   return (
-    <div className={styles.dragItem} style={styleObj} > {data.id}</div>
+    <div className={styles.dragItem} style={styleObj} > {data.name}</div>
   )
 }
 
@@ -269,11 +277,13 @@ export const AllPoints = ({ currentID }: { currentID: number | null }) => {
 
 
 export interface EditRowProps extends EditProps {
-  onClickPlace: () => void,
+  // onClickPlace: () => void,
   imageOff: DOMRect | undefined
 }
 
 const EditRow = (props: EditRowProps) => {
+  const imageEl = useContext(ImageContext);
+
   const notify = useNotify();
   const styles = useStyles();
   return (
@@ -287,8 +297,8 @@ const EditRow = (props: EditRowProps) => {
       <SimpleForm>
         <TextInput disabled source="id" label="ID" />
         <TextInput source="name" />
-        <DragNumber name="coordX" />
-        <DragNumber name="coordY" />
+        <DragNumber min={0} max={imageEl?.naturalWidth} name="coordX" />
+        <DragNumber min={0} max={imageEl?.naturalHeight} name="coordY" />
         <DragNumber name="width" />
         <DragNumber name="height" />
         <FormDataConsumer>
@@ -296,10 +306,9 @@ const EditRow = (props: EditRowProps) => {
             <SinglePoint data={formData} />
           )}
         </FormDataConsumer>
-        <Button variant='contained' title="Place" onClick={props.onClickPlace} >Place</Button>
+        {/* <Button variant='contained' title="Place" onClick={props.onClickPlace} >Place</Button> */}
       </SimpleForm>
     </Edit>
-
   )
 }
 

@@ -31,7 +31,7 @@ export class Zone extends BaseEntity {
   @Column()
   name: string;
 
-  @Column({ nullable: true })
+  @Column("longtext", { nullable: true })
   description: string;
 
   @Column( {type: "double", default: "0.0"} )

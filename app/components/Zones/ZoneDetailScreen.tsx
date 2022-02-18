@@ -16,6 +16,7 @@ import { ZoneStackParams } from './ZoneStack';
 import VideoPlayer from 'react-native-video-controls';
 import { MEDIA_URL } from '../../lib/controllers';
 import Video from 'react-native-video';
+import { TourActionName, TourStateContext } from '../Tour';
 
 type ZoneStackRoute = RouteProp<ZoneStackParams, 'ZoneDetails'>
 type NavigationProp = StackNavigationProp<ZoneStackParams>
@@ -29,10 +30,7 @@ interface ArtefactProps {
     artefactId: number,
 }
 
-type ZoneMediaRenderProps = {
-    item: Artefact,
-    index: number
-}
+
 
 
 const ZoneArtefactsListView = ({ artefactId }: ArtefactProps) => {
@@ -56,58 +54,58 @@ const ZoneArtefactsListView = ({ artefactId }: ArtefactProps) => {
     )
 }
 
-export const ZoneMediaRender = ({ item, index }: ZoneMediaRenderProps) => {
-    // This crashes the app (maybe cuz carousel is class)
-    // const memo = useContext(MemoizedContext);
+// export const TourMediaRender = ({ item, index }: TourMediaRenderProps) => {
+//     // This crashes the app (maybe cuz carousel is class)
+//     // const memo = useContext(MemoizedContext);
+//     const [tourState, tourDispatch] = useContext(TourStateContext);
 
-    if (!item.Media) return (<></>);
-    // delete mainArtefact.thumbnail;
+//     if (!item.Media) return (<></>);
+//     // delete mainArtefact.thumbnail;
 
-    function handleVideoEnd() {
-        console.log("videoEnd");
-    }
-    if (item.Media.type === 1) {
-        return (
-            <View style={styles.video}>
-                <VideoPlayer
-                // TODO: fullscreen toggle mode customizable
-                    source={{ uri: `${MEDIA_URL}/${item.Media.src}` }}
-                    disableFullScreen={false}
-                    disableBack={true}
-                    disableVolume={true}
-                    tapAnywhereToPause={true}
-                    paused={false} //use only for initial pause state
-                    // onPause={handlePause}
-                    // onPlay={handlePlay}
-                    onEnd={handleVideoEnd}
-                    fullscreen={true}
-                    toggleResizeModeOnFullscreen={false}
-                    resizeMode="cover"
-                    disableFullscreen
-                />
-                {/* <Video
-                    source={{ uri: `${MEDIA_URL}/${item.Media.src}` }}
-                    style={{flex: 1}}
-                    controls={true}
-                /> */}
+//     function handleVideoEnd() {
+//         console.log("videoEnd");
+//         tourDispatch({ type: TourActionName.FORWARD })
 
-            </View>
-        )
-    }
-    else return (
-        <View style={styles.video}>
-            <Image
-                style={styles.image}
-                source={{
-                    uri: `${MEDIA_URL}/${item.Media.src}`,
-                }} />
-            <Text style={styles.textDescr}>{item.description}</Text>
-        </View>
-
-        
-    )
-}
-export const PureZoneMediaRender = React.memo(ZoneMediaRender);
+//     }
+//     if (item.Media.type === 1) {
+//         return (
+//             <View style={styles.video}>
+//                 <VideoPlayer
+//                 // TODO: fullscreen toggle mode customizable
+//                     source={{ uri: `${MEDIA_URL}/${item.Media.src}` }}
+//                     disableFullScreen={false}
+//                     disableBack={true}
+//                     disableVolume={true}
+//                     tapAnywhereToPause={true}
+//                     paused={false} //use only for initial pause state
+//                     // onPause={handlePause}
+//                     // onPlay={handlePlay}
+//                     onEnd={handleVideoEnd}
+//                     fullscreen={true}
+//                     toggleResizeModeOnFullscreen={false}
+//                     resizeMode="cover"
+//                     disableFullscreen
+//                 />
+//                 {/* <Video
+//                     source={{ uri: `${MEDIA_URL}/${item.Media.src}` }}
+//                     style={{flex: 1}}
+//                     controls={true}
+//                 /> */}
+//             </View>
+//         )
+//     }
+//     else return (
+//         <View style={styles.video}>
+//             <Image
+//                 style={styles.image}
+//                 source={{
+//                     uri: `${MEDIA_URL}/${item.Media.src}`,
+//                 }} />
+//             <Text style={styles.textDescr}>{item.description}</Text>
+//         </View>   
+//     )
+// }
+// export const PureZoneMediaRender = React.memo(TourMediaRender);
 
 export const ZoneDetailScreen: React.FC<Props> = ({ route, navigation }) => {
     const { zoneId } = route.params;
