@@ -158,7 +158,7 @@ export const redlandTheme: any = ({
         // Main screen
         RaList: {
             main: {
-                margin: "0 0 0 4vw" // margin for data resource tables 
+                margin: "0 10px 0 10px" // margin for data resource tables 
             },
             content: {
                 backgroundColor: '#F2F3F8',
