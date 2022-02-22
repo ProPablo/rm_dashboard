@@ -69,11 +69,7 @@ export default class Transform extends React.Component<Props> {
 
     componentDidMount() {
         this.resetTransform();
-        if (this.props.initialPos) this.panOffset.setValue(this.props.initialPos);
-        if (this.props.initialZoom) {
-            this.baseScale.setValue(this.props.initialZoom);
-            this.lastScale = this.props.initialZoom;
-        }
+        this.goToInitial();
     }
 
     resetTransform() {
@@ -82,6 +78,15 @@ export default class Transform extends React.Component<Props> {
         this.pinchScale.setValue(1);
         this.panOffset.setValue({ y: 0, x: 0 });
         this.panOffset.setOffset({ x: 0, y: 0 });
+    }
+
+    goToInitial() {
+        if (this.props.initialPos) this.panOffset.setValue(this.props.initialPos);
+        if (this.props.initialZoom) {
+            this.baseScale.setValue(this.props.initialZoom);
+            this.lastScale = this.props.initialZoom;
+        }
+
     }
 
     onPinchHandlerStateChange = (event: any) => {
@@ -97,10 +102,13 @@ export default class Transform extends React.Component<Props> {
 
     onPanHandlerStateChange = () => {
         this.panOffset.extractOffset();
+        // @ts-ignore
+        // OFFSET: ${this.panOffset.x.__getValue()}, ${this.panOffset.y.__getValue()}
+        // console.log(`SCALE: ${this.lastScale}`);
     }
 
     render() {
-
+        
         return (
             <View style={this.props.style}>
                 <PanGestureHandler onGestureEvent={this.onPanGestureEvent} onHandlerStateChange={this.onPanHandlerStateChange} ref={this.panRef} maxPointers={2} avgTouches>
