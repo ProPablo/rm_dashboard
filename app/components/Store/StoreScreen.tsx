@@ -16,7 +16,7 @@ import {
 import { StoreStackParams } from './StoreStack';
 import StoreListView from './StoreListView';
 import { StoreItemsContext } from '../../store';
-import { Card, Icon } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 type NavigationProp = StackNavigationProp<StoreStackParams>
@@ -35,21 +35,17 @@ const StoreScreen: React.FC<Props> = ({ navigation }) => {
   const storeItems = useContext(StoreItemsContext);
   const [filtered, setfiltered] = useState(storeItems);
 
-  
+
 
   function actionOnRow(item: number) {
     navigation.navigate("StoreDetailScreen", {
       storeId: item
     })
   };
-
-  function filterData() {
-    const reg = RegExp(searchTerm, 'gi' );
-    setfiltered(storeItems?.filter((item)=> (item.name + item.description + item.cost).match(reg)));
-  }
-
-  useEffect(()=> {
-    filterData();
+  
+  useEffect(() => {
+    const reg = RegExp(searchTerm, 'gi');
+    setfiltered(storeItems?.filter((item) => (item.name + item.description + item.cost).match(reg)));
   }, [storeItems, searchTerm]);
 
   return (
@@ -58,11 +54,15 @@ const StoreScreen: React.FC<Props> = ({ navigation }) => {
         <View style={styles.searchInputs}>
           <TextInput
             style={styles.search}
+            value={searchTerm}
             placeholder={`Search ${storeItems?.length} Store Items`}
             placeholderTextColor={"#000000"}
-            
+
             onChangeText={searchTerm => setsearchTerm(searchTerm)}
           />
+          <Pressable style={styles.clear} onPress={() => setsearchTerm("")}>
+            <Icon name="ban" size={30} color="#7A0600" />
+          </Pressable>
         </View>
 
         <FlatList
@@ -84,45 +84,52 @@ const StoreScreen: React.FC<Props> = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   pageContainer: {
-      padding: 10,
-      flex: 1,
-      backgroundColor: '#F7EECA',
+    padding: 10,
+    flex: 1,
+    backgroundColor: '#F7EECA',
   },
   searchInputs: {
-      flexDirection: "row"
+    flexDirection: "row"
   },
   search: {
-      flex: 8,
-      color: "#000000",
-      marginBottom: 20,
-      borderColor: "#ffa616",
-      borderBottomWidth: 3,
-      padding: 10
+    flex: 8,
+    color: "#000000",
+    marginBottom: 20,
+    borderColor: "#ffa616",
+    borderBottomWidth: 3,
+    padding: 10
   },
   switch: {
-      flex: 2
+    flex: 2
   },
   info: {
-      padding: 10,
-      marginTop: 20,
-      borderColor: "#f4cfce",
-      borderWidth: 1
+    padding: 10,
+    marginTop: 20,
+    borderColor: "#f4cfce",
+    borderWidth: 1
   },
   row: {
-      flexDirection: "row",
-      backgroundColor: "#f4cfce"
+    flexDirection: "row",
+    backgroundColor: "#f4cfce"
   },
   row1: {
-      flexDirection: "row"
+    flexDirection: "row"
   },
   prop: {
-      flex: 1,
-      padding: 10
+    flex: 1,
+    padding: 10
   },
   val: {
-      alignSelf: "center",
-      flex: 1
-  }
+    alignSelf: "center",
+    flex: 1
+  },
+  clear: {
+    color: "#000000",
+    marginBottom: 20,
+    borderColor: "#ffa616",
+    borderBottomWidth: 3,
+    padding: 10,
+  },
 });
 
 export default StoreScreen;

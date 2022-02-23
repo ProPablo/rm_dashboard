@@ -19,5 +19,4 @@ const ZoneListView = ({ zone }: Props) => {
     )
 }
 
-
 export default ZoneListView;
