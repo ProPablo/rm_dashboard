@@ -93,9 +93,9 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
         }
     }, [currentZone, zones])
 
-    const snapMapSheet = ()=> {
+    const snapMapSheet = () => {
         sheetRef?.current?.snapTo(1);
-        transfromRef?.current?.goToInitial();
+        transfromRef?.current?.resetTransform();
     }
 
     const renderContent = () => (
@@ -124,7 +124,7 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
 
             <BottomSheet
                 ref={sheetRef}
-                snapPoints={[675, 470, 0]}
+                snapPoints={[675, 450, 0]}
                 borderRadius={20}
                 // @ts-ignore
                 renderContent={renderContent}
@@ -213,12 +213,16 @@ export class ZoneIndicator extends React.Component<ZoneIndicatorProps> {
 
     componentDidMount() {
         if (this.props.toBeVisited)
-            this.animationComposite?.start()
+            this.animationComposite.start()
     }
 
-    componentDidUpdate() {
-        if (this.props.toBeVisited)
+    componentDidUpdate(prevProps: ZoneIndicatorProps) {
+        if (prevProps.toBeVisited === this.props.toBeVisited) return;
+
+        if (this.props.toBeVisited) {
             this.animationComposite.start();
+            console.log("starting tobevisitanim");
+        }
         else
             this.animationComposite.stop();
     }

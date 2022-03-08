@@ -8,13 +8,15 @@ import {
   ListBase,
   useListContext,
   FunctionField,
-  NumberField
+  NumberField,
+  Create,
+  CreateProps
 } from 'react-admin'
 
 // import { useDrag, useGesture } from 'react-use-gesture'
 import floorPlan from '../floorplan2.jpg';
 import clsx from 'clsx';
-import { v2 } from "../../../shared/types";
+import { v2, ZoneConsumable } from "../../../shared/types";
 import { useMouseMove } from '../components/useMouseMove';
 import { DragNumber } from '../components/DragNumber';
 
@@ -113,20 +115,30 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
+export enum ListMode {
+  EditMode,
+  CreateMode,
+  None
+}
 
 const initialMapState: MapState = {
   currentSelection: PinType.Artfact,
   mapPinMode: false,
   editId: null,
+  currentMode: ListMode.None
 }
+
 
 interface MapState {
   mapPinMode: boolean,
   editId: number | null,
+  currentMode: ListMode,
   currentSelection: PinType
 }
 
 const ImageContext = createContext<null | HTMLImageElement>(null);
+
+
 
 export const Map = (props: MapProps) => {
   const styles = useStyles();
@@ -136,7 +148,11 @@ export const Map = (props: MapProps) => {
   const [pinPos, setPinPos] = useState<v2>({ x: 0, y: 0 });
 
   function onEditMode(id: number) {
-    setMapState({ ...mapState, editId: id })
+    setMapState({ ...mapState, editId: id, currentMode: ListMode.EditMode })
+  }
+
+  function onCreateMode() {
+    setMapState({ ...mapState, currentMode: ListMode.CreateMode })
   }
 
   // function onClickPlace() {
@@ -183,12 +199,24 @@ export const Map = (props: MapProps) => {
           className={styles.mapImage} >
         </img>
         <div className={styles.selectionArea}>
+          {mapState.currentMode == ListMode.EditMode &&
+            <EditRow resource="zones" basePath="/zones" id={mapState.editId?.toString()} />
+            // imageOff={imageRef.current?.getBoundingClientRect()}
+          }
           {
-            !!mapState.editId ? <EditRow imageOff={imageRef.current?.getBoundingClientRect()} resource="zones" basePath="/zones" id={mapState.editId.toString()} /> : <div></div>
+            mapState.currentMode == ListMode.CreateMode &&
+            <CreateRow resource="zones" basePath="/zones" onEditMode={onEditMode} />
           }
 
           {/* https://stackoverflow.com/questions/68170423/is-it-possible-to-allow-only-one-expanded-row-in-a-datagrid */}
-          <List pagination={false} resource="zones" basePath="/zones" sort={{ field: "priority", order: "DESC" }} actions={<div />} bulkActionButtons={false}>
+          <List
+            pagination={false}
+            resource="zones"
+            basePath="/zones"
+            sort={{ field: "priority", order: "DESC" }}
+            actions={<Button onClick={onCreateMode}>Create</Button>}
+
+            bulkActionButtons={false}>
             {/* <Datagrid isRowSelectable={() => false} expand={<EditRow onClickPlace={onClickPlace} />} rowClick="expand" > */}
             <Datagrid isRowSelectable={() => false} >
               <FunctionField
@@ -232,21 +260,21 @@ export const SinglePoint = ({ data }: any) => {
 
   //@ts-ignore
   const styleObj = useMemo(() => {
-      if (!imageEl) return {}
-      const imageOff = imageEl.getBoundingClientRect();
-      const xScale = imageOff.width / imageEl.naturalWidth;
-      const yScale = imageOff.height / imageEl.naturalHeight;    
-      
-      return {
-        // creating closure so that math operations are done at once
-        // left: clamp(data.coordX * xScale + imageOff.left, imageOff.left, imageEl?.naturalWidth + imageOff.left),
-        left: data.coordX * xScale + imageOff.left,
-        top: data.coordY * yScale + imageOff.top,
-        width: data.width * xScale,
-        height: data.height * yScale,
-        backgroundColor: hslString
-      }
+    if (!imageEl) return {}
+    const imageOff = imageEl.getBoundingClientRect();
+    const xScale = imageOff.width / imageEl.naturalWidth;
+    const yScale = imageOff.height / imageEl.naturalHeight;
+
+    return {
+      // creating closure so that math operations are done at once
+      // left: clamp(data.coordX * xScale + imageOff.left, imageOff.left, imageEl?.naturalWidth + imageOff.left),
+      left: data.coordX * xScale + imageOff.left,
+      top: data.coordY * yScale + imageOff.top,
+      width: data.width * xScale,
+      height: data.height * yScale,
+      backgroundColor: hslString
     }
+  }
   )
 
   if (!imageEl) return (<div className={styles.goodbye} />);
@@ -278,7 +306,7 @@ export const AllPoints = ({ currentID }: { currentID: number | null }) => {
 
 export interface EditRowProps extends EditProps {
   // onClickPlace: () => void,
-  imageOff: DOMRect | undefined
+  // imageOff: DOMRect | undefined
 }
 
 const EditRow = (props: EditRowProps) => {
@@ -297,6 +325,7 @@ const EditRow = (props: EditRowProps) => {
       <SimpleForm>
         <TextInput disabled source="id" label="ID" />
         <TextInput source="name" />
+        <TextInput multiline source="description" />
         <DragNumber min={0} max={imageEl?.naturalWidth} name="coordX" />
         <DragNumber min={0} max={imageEl?.naturalHeight} name="coordY" />
         <DragNumber name="width" />
@@ -312,6 +341,29 @@ const EditRow = (props: EditRowProps) => {
   )
 }
 
+interface ZoneCreateResponse {
+  data: ZoneConsumable,
+}
+
+interface CreateRowProps extends CreateProps {
+  onEditMode: (id: number) => void
+}
+
+const CreateRow = (props: CreateRowProps) => {
+  return (
+    <Create {...props}
+      title=""
+      onSuccess={(response: ZoneCreateResponse) => {
+        props.onEditMode(response.data.id);
+      }}
+    >
+      <SimpleForm>
+        <TextInput source="name" />
+        <TextInput multiline source="description" />
+      </SimpleForm>
+    </Create>
+  )
+}
 
 export const PickupItem = ({ color, type, click }: PickupProps) => {
   const styles = useStyles();

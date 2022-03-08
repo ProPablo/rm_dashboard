@@ -94,7 +94,7 @@ export const TourGuide = ({ navigation, snapMapSheet }: TourGuideProps) => {
             console.log("videoEnd");
             if (!(tourState.currGuideZoneIndex < tourState.maxZoneIndex)) {
                 snapMapSheet();
-                return
+                return;
             }
             tourDispatch({ type: TourActionName.FORWARD })
         }
