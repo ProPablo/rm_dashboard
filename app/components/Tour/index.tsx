@@ -126,13 +126,10 @@ export const isLocationEnabled = () => {
 
 export const manager = new BleManager();
 
-const BEACON_TIMEOUT = 15 * 1000; //TEN SECONDS
-const BEACON_AUTO_EXPIRE = 25 * 1000; 
-
 const Tour: React.FC = ({ children }) => {
   const [nearbyBeacons, setBeacons] = useState<Beacon[]>([]);
   const beacons = useContext(BeaconsContext);
-  const { setBLEnabled } = useContext(GlobalActionContext);
+  const { setBLEnabled, globalSettings } = useContext(GlobalActionContext);
   const reducerVal = useReducer(TourReducer, initialTourState);
 
   const onBeacon = useCallback((error: BleError | null, device: Device | null) => {
@@ -152,7 +149,7 @@ const Tour: React.FC = ({ children }) => {
     serverBeacon.lastVisited = currentDate;
 
     setBeacons((oldList) => {
-      const newList = oldList.filter(b => b.lastVisited! + BEACON_TIMEOUT < currentDate);
+      const newList = oldList.filter(b => b.lastVisited! + globalSettings.beaconTimeout < currentDate);
       const existing = newList.findIndex(b => b.id === serverBeacon.id);
       if (existing != -1) {
         newList.splice(existing, 1, serverBeacon);
@@ -176,11 +173,11 @@ const Tour: React.FC = ({ children }) => {
     }
     initProcess();
 
-    const beaconTimeoutTimer = setInterval(() => {
-      const currentDate = (new Date()).getTime();
-      console.log("autoTimeout");
-      setBeacons(prevList => prevList.filter(b => b.lastVisited! + BEACON_TIMEOUT < currentDate));
-    }, BEACON_AUTO_EXPIRE)
+    // const beaconTimeoutTimer = setInterval(() => {
+    //   const currentDate = (new Date()).getTime();
+    //   console.log("autoTimeout");
+    //   setBeacons(prevList => prevList.filter(b => b.lastVisited! + BEACON_TIMEOUT < currentDate));
+    // }, BEACON_AUTO_EXPIRE)
 
     //TODO; fix subscriber
     const subscription = manager.onStateChange((state => {
@@ -199,7 +196,7 @@ const Tour: React.FC = ({ children }) => {
     return () => {
       manager.stopDeviceScan();
       // manager.destroy();
-      clearInterval(beaconTimeoutTimer);
+      // clearInterval(beaconTimeoutTimer);
     }
   }, [beacons])
 

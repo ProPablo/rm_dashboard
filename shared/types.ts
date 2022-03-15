@@ -106,5 +106,5 @@ export interface Memo {
 
 export interface GlobalSettings {
   beaconTimeout: number,
-  beaconThreshold: number
+  beaconThreshold?: number
 }

@@ -12,7 +12,7 @@ export interface ActionContextValue {
   cacheImages?: null,
   isLoading: boolean,
   isBLEnabled: boolean,
-  globalSettings?: GlobalSettings,
+  globalSettings: GlobalSettings,
   setBLEnabled: Dispatch<SetStateAction<boolean>>
 }
 
@@ -39,6 +39,9 @@ ExhibitionsContext.displayName = "ExhibitionsContext";
 const MemoizedContext = createContext<Memo>();
 MemoizedContext.displayName = "ExhibitionsContext";
 
+const BEACON_TIMEOUT = 15 * 1000; // TEN SECONDS
+const BEACON_AUTO_EXPIRE = 25 * 1000; 
+
 export const GlobalStore: React.FC = ({ children }) => {
   // TODO: Possibly memoize into dictionary
   const [artefacts, setArtefacts] = useState<Artefact[]>([]);
@@ -48,6 +51,7 @@ export const GlobalStore: React.FC = ({ children }) => {
   const [beacons, setBeacons] = useState<Beacon[]>([]);
   const [isBLEnabled, setBLEnabled] = useState(false);
   const [isLoading, setisLoading] = useState(false);
+  const [settings, setSettings] = useState<GlobalSettings>({beaconTimeout: BEACON_TIMEOUT});
 
   // console.log("rerender store");
   const globalValue: ActionContextValue = useMemo(() => ({
@@ -62,8 +66,7 @@ export const GlobalStore: React.FC = ({ children }) => {
         const zoneResults = await request<ZoneConsumable[]>(`${baseURL}/zones/app`);
         zoneResults.sort((a, b) => b.priority - a.priority); //descending
         const beaconResults = await request<Beacon[]>(`${baseURL}/beacons`);
-
-        // const globalSettings = await request<GlobalSettings>(`${baseURL}/about`)
+        const globalSettings = await request<GlobalSettings>(`${baseURL}/about`)
 
         // if production / logger
         // console.log(artefactResults);
@@ -71,11 +74,13 @@ export const GlobalStore: React.FC = ({ children }) => {
         // console.log(exhibitionResults);
         // console.log(beaconResults);
         // console.log(zoneResults);
+        
         setArtefacts(artefactResults);
         setStoreItems(storeItemResults);
         setExhibitions(exhibitionResults);
         setZones(zoneResults)
         setBeacons(beaconResults);
+        setSettings(globalSettings);
 
       } catch (e: any) {
         console.log(e.message);
@@ -95,7 +100,8 @@ export const GlobalStore: React.FC = ({ children }) => {
     },
     isLoading,
     isBLEnabled,
-    setBLEnabled
+    setBLEnabled,
+    globalSettings: settings
   }), []);
 
   const memoValue: Memo = useMemo(() => ({
