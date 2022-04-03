@@ -100,6 +100,7 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
 
     const renderContent = () => (
         <TourGuide
+            bottomSheetRef={sheetRef}
             snapMapSheet={snapMapSheet}
             {...props}
         />
@@ -128,6 +129,7 @@ const TourScreen = (props: { navigation: NavigationProp }) => {
                 borderRadius={20}
                 // @ts-ignore
                 renderContent={renderContent}
+                
             />
             <Transform initialZoom={0.2} initialPos={{ x: 0, y: -240 }} style={styles.transformView} ref={transfromRef}><Map currentZone={currentZone} /></Transform>
             {/* <Transform initialZoom={0.3} initialPos={{ x: -150, y: 0 }} style={styles.transformView} ref={transfromRef}><Image source={require('./floorplan.jpg')} /></Transform> */}

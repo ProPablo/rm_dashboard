@@ -28,17 +28,28 @@ import Carousel, { } from 'react-native-snap-carousel';
 import { NativeViewGestureHandler } from 'react-native-gesture-handler';
 import { Easing } from 'react-native-reanimated';
 import { NavigationProp } from './TourScreen';
+import Video from 'react-native-video';
+// import VideoEmbedFullscreen from './VideoEmbedFullscreen'
 
 interface TourGuideProps {
     navigation: NavigationProp,
     zone?: ZoneConsumable,
     snapMapSheet: () => void,
+    bottomSheetRef: React.RefObject<BottomSheet>
 }
 type TourMediaRenderProps = {
     item: Artefact,
     index: number
 }
-export const TourGuide = ({ navigation, snapMapSheet }: TourGuideProps) => {
+
+// (property) resizeMode?: "contain" | "stretch" | "none" | "cover" | undefined
+enum ResizeMode {
+    contain = "contain",
+    stretch = "stretch",
+    none = "none",
+    cover = "cover"
+}
+export const TourGuide = ({ navigation, snapMapSheet, bottomSheetRef }: TourGuideProps) => {
     const memo = useContext(MemoizedContext);
     const zones = useContext(ZonesContext);
     const [tourState, tourDispatch] = useContext(TourStateContext);
@@ -58,6 +69,7 @@ export const TourGuide = ({ navigation, snapMapSheet }: TourGuideProps) => {
         if (zones.length == 0) return [];
         return zones.filter(z => z.Artefacts.length > 0).map(z => memo.artefacts[z.Artefacts[0]]);
     }, [memo, zones])
+
 
     useEffect(() => {
         carouselRef.current?.snapToItem(tourState.currGuideZoneIndex);
@@ -83,6 +95,12 @@ export const TourGuide = ({ navigation, snapMapSheet }: TourGuideProps) => {
         if (!currentTourZone) return;
         navigation.push("ZoneDetails", { zoneId: currentTourZone.id })
     }
+    const [resize, setResize] = useState<string | undefined>(ResizeMode.cover.toString());
+        
+    function toggleFullscreen() { 
+        const resizeMode: ResizeMode = (resize == ResizeMode.cover.toString() ? ResizeMode.contain : ResizeMode.cover);
+        setResize(resizeMode.toString());
+    }
     const TourMediaRender = ({ item, index }: TourMediaRenderProps) => {
         // This crashes the app (maybe cuz carousel is class)
         // const memo = useContext(MemoizedContext);
@@ -98,10 +116,13 @@ export const TourGuide = ({ navigation, snapMapSheet }: TourGuideProps) => {
             }
             tourDispatch({ type: TourActionName.FORWARD })
         }
+
+
+
         if (item.Media.type === 1) {
             return (
                 <View style={styles.video}>
-                    <VideoPlayer
+                    {/* <VideoPlayer
                         // TODO: fullscreen toggle mode customizable
                         source={{ uri: `${MEDIA_URL}/${item.Media.src}` }}
                         disableFullScreen={false}
@@ -116,12 +137,17 @@ export const TourGuide = ({ navigation, snapMapSheet }: TourGuideProps) => {
                         toggleResizeModeOnFullscreen={false}
                         resizeMode="cover"
                         disableFullscreen
-                    />
-                    {/* <Video
+                    /> */}
+                    <Video
                         source={{ uri: `${MEDIA_URL}/${item.Media.src}` }}
                         style={{flex: 1}}
-                        controls={true}
-                    /> */}
+                        controls={tourState.currGuideZoneIndex == index}
+                        paused={tourState.currGuideZoneIndex != index}
+                        // @ts-ignore
+                        resizeMode={resize}
+                        fullscreen={false}
+                        onEnd={handleVideoEnd}
+                    />
                 </View>
             )
         }
@@ -136,14 +162,27 @@ export const TourGuide = ({ navigation, snapMapSheet }: TourGuideProps) => {
             </View>
         )
     }
+    // const PureZoneMediaRender = React.memo(TourMediaRender);
+
+
     return (
         <View style={styles.bottomSheetContainer}>
+            <Button 
+                buttonStyle={{ flex: 1, backgroundColor: "#7A0600", marginRight: 10, padding: 10 }}
+                icon={<Icon
+                    name="chevron-left"
+                    size={20}
+                    color="white" />}
+                onPress={toggleFullscreen}
+            />
             <View style={styles.carouselContainer}>
                 {/* <PureZoneMediaRender item={currentArtefactList[0]} index={0} /> */}
 
                 <Carousel
                     data={mediaArtefactList}
                     renderItem={TourMediaRender}
+                    // renderItem={ (props: TourMediaRenderProps) => <PureZoneMediaRender {...props}/>}
+                    // renderItem={ (props: TourMediaRenderProps) => <><TourMediaRender {...props}/></> }
                     sliderWidth={320}
                     itemWidth={320}
                     scrollEnabled={false}
@@ -159,7 +198,6 @@ export const TourGuide = ({ navigation, snapMapSheet }: TourGuideProps) => {
                         name="chevron-left"
                         size={20}
                         color="white" />}
-
                     onPress={handleBack}
                     disabled={!(tourState.currGuideZoneIndex > 0)}
                 />
@@ -238,6 +276,6 @@ const styles = StyleSheet.create({
         flex: 1,
         borderRadius: 10,
         borderWidth: 10,
-        borderColor: 'black',
+        // borderColor: '',
     },
 })
