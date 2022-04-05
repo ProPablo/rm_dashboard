@@ -16,7 +16,7 @@ import {
 import { ExhibitionStackParams } from './ExhibitionStack';
 import ExhibitionListView from './ExhibitionListView';
 import { ExhibitionsContext } from '../../store';
-import { Card, Icon } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 
 type NavigationProp = StackNavigationProp<ExhibitionStackParams>
@@ -41,14 +41,10 @@ const ExhibitionsScreen: React.FC<Props> = ({ navigation }) => {
       exhibitionId: item
     })
   };
-
-  function filterData() {
-    const reg = RegExp(searchTerm, 'gi' );
-    setfiltered(exhibitions?.filter((item)=> (item.name + item.organiser + item.description).match(reg)));
-  }
-
-  useEffect(()=> {
-    filterData();
+  
+  useEffect(() => {
+    const reg = RegExp(searchTerm, 'gi');
+    setfiltered(exhibitions?.filter((item) => (item.name + item.organiser + item.description).match(reg)));
   }, [exhibitions, searchTerm]);
 
 
@@ -58,10 +54,14 @@ const ExhibitionsScreen: React.FC<Props> = ({ navigation }) => {
         <View style={styles.searchInputs}>
           <TextInput
             style={styles.search}
+            value={searchTerm}
             placeholder={`Search ${exhibitions?.length} Exhibitions`}
             placeholderTextColor={"#000000"}
             onChangeText={searchTerm => setsearchTerm(searchTerm)}
           />
+          <Pressable style={styles.clear} onPress={() => setsearchTerm("")}>
+            <Icon name="ban" size={30} color="#7A0600" />
+          </Pressable>
         </View>
 
         <FlatList
@@ -86,19 +86,26 @@ export default ExhibitionsScreen;
 
 const styles = StyleSheet.create({
   pageContainer: {
-      padding: 10,
-      flex: 1,
-      backgroundColor: '#F7EECA',
+    padding: 10,
+    flex: 1,
+    backgroundColor: '#F7EECA',
   },
   searchInputs: {
-      flexDirection: "row"
+    flexDirection: "row"
   },
   search: {
-      flex: 8,
-      color: "#000000",
-      marginBottom: 20,
-      borderColor: "#ffa616",
-      borderBottomWidth: 3,
-      padding: 10
+    flex: 8,
+    color: "#000000",
+    marginBottom: 20,
+    borderColor: "#ffa616",
+    borderBottomWidth: 3,
+    padding: 10
+  },
+  clear: {
+    color: "#000000",
+    marginBottom: 20,
+    borderColor: "#ffa616",
+    borderBottomWidth: 3,
+    padding: 10,
   },
 });

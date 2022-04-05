@@ -1,9 +1,10 @@
 import { StackNavigationProp } from '@react-navigation/stack';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import {
     FlatList, Pressable, StyleSheet, TextInput, View
 } from 'react-native';
-import { ZonesContext } from '../../store';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import { MemoizedContext, ZonesContext } from '../../store';
 import { ZoneStackParams } from './ZoneStack';
 import ZoneListView from './ZoneListView';
 
@@ -16,9 +17,10 @@ interface Props {
 }
 
 const ZonesScreen: React.FC<Props> = ({ navigation }) => {
-
     const [searchTerm, setsearchTerm] = useState("");
     const zones = useContext(ZonesContext);
+    const { artefacts } = useContext(MemoizedContext);
+    
     const [filtered, setfiltered] = useState(zones);
 
     function actionOnRow(item: number) {
@@ -27,25 +29,28 @@ const ZonesScreen: React.FC<Props> = ({ navigation }) => {
         })
     };
 
-    function filterData() {
-        const reg = RegExp(searchTerm, 'gi');
-        setfiltered(zones?.filter((item) => (item.name || "" + item.description).match(reg)));
-    }
-
+    
     useEffect(() => {
-        filterData();
-    }, [zones, searchTerm]);
+        const reg = RegExp(searchTerm, 'gi');
+        // setfiltered(zones?.filter((z) => (z.name || "" + z.description).match(reg)));
+        setfiltered(zones?.filter((z) => (z.name + z.description + z.Artefacts.map((a) => artefacts[a].name + artefacts[a].description).join()).match(reg)));
+    }, [artefacts, zones, searchTerm]);
 
     return (
+        
         <View style={{ flex: 1 }}>
             <View style={styles.pageContainer}>
                 <View style={styles.searchInputs}>
                     <TextInput
                         style={styles.search}
+                        value={searchTerm}
                         placeholder={`Search ${zones?.length} Zones`}
                         placeholderTextColor={"#000000"}
                         onChangeText={searchTerm => setsearchTerm(searchTerm)}
                     />
+                    <Pressable style={styles.clear} onPress={() => setsearchTerm("")}>
+                        <Icon name="ban" size={30} color="#7A0600" />
+                    </Pressable>
                 </View>
 
                 <FlatList
@@ -81,6 +86,14 @@ const styles = StyleSheet.create({
         borderColor: "#ffa616",
         borderBottomWidth: 3,
         padding: 10
+    },
+
+    clear: {
+        color: "#000000",
+        marginBottom: 20,
+        borderColor: "#ffa616",
+        borderBottomWidth: 3,
+        padding: 10,
     },
 });
 
