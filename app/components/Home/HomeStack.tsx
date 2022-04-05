@@ -6,15 +6,16 @@ import { HeaderIcon } from '../../lib/styles';
 import { FAB } from 'react-native-elements/dist/buttons/FAB';
 import { Icon } from 'react-native-elements';
 import SettingsScreen from './SettingsScreen';
+import BeaconDebugScreen from './BeaconDebugScreen';
 
 export type HomeStackParams = {
     Tour: {screen: string},
     Settings: {screen: string},
     HomeScreen: undefined,
+    BeaconDebug: {screen: string},
 }
 
 type NavigationProp = StackNavigationProp<HomeStackParams>
-
 
 interface Props {
     navigation: NavigationProp,
@@ -41,6 +42,8 @@ export const HomeStack: React.FC<Props> = (props) => {
                     ) 
                 }} />
             <Stack.Screen name="Settings" component={SettingsScreen}/>
+            <Stack.Screen name="BeaconDebug" component={BeaconDebugScreen}/>
+
 
         </Stack.Navigator>
     )

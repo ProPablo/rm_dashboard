@@ -14,15 +14,22 @@ interface Props {
     navigation: NavigationProp
 }
 
-const HomeScreen: React.FC<Props> = ({ navigation }) => {
+const SettingsScreen: React.FC<Props> = ({ navigation }) => {
+    const global = useContext(GlobalActionContext);
+    const onRefresh = React.useCallback(() => {
+        global.reload();
+    }, []);
     function handleTourEnable() {
         console.log("Enabling tour functionality, starting bluetooth");
+    }
+    function beaconActionOnPress() {
+        navigation.navigate('BeaconDebug', { screen: 'BeaconScreen' });
     }
     return (
         <ScrollView
             style={styles.pageContainer}>
             <View>
-                <Card.Title style={styles.cardTitleText}>{"Settings"}</Card.Title>
+                <Card.Title style={styles.cardTitleText}>Settings</Card.Title>
                 <View style={styles.settingsContainer}>
                     <Text style={styles.titleText}>Toggle Zone Autoplay</Text>
                     <Switch style={styles.switch}></Switch>
@@ -31,7 +38,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                     <Text style={styles.titleText}>Enable Touring Permissions Access</Text>
                     <Switch style={styles.switch}></Switch>
                 </View>
-                <Pressable onPress={handleTourEnable}>
+                <Pressable onPress={onRefresh}>
                     <View style={globalStyle.pressableContainer}>
                         <Text style={styles.settingsText}>Refresh</Text>
                     </View>
@@ -41,17 +48,23 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                         <Text style={styles.settingsText}>Restart Tour</Text>
                     </View>
                 </Pressable>
+                <Pressable onPress={beaconActionOnPress}>
+                    <View style={globalStyle.pressableContainer}>
+                        <Text style={styles.settingsText}>Beacon Debug</Text>
+                    </View>
+                </Pressable>
 
             </View>
             <Card containerStyle={styles.aboutContainer}>
                 <Card.Title style={styles.cardTitleText}>{"About"}</Card.Title>
+                <Card.Divider style={{backgroundColor: '#870000', padding: 1.5, borderRadius: 10}}/>
                 <Text style={styles.titleText}>Developer Contact Details</Text>
                 <View style={styles.textContainer}>
-                    <Text style={styles.subTitleText}>Anhad Ahuja</Text>
+                    <Text style={styles.subtitleText}>Anhad Ahuja</Text>
                     <Text style={styles.bodyText}>anhadrs@gmail.com</Text>
                 </View>
                 <View style={styles.textContainer}>
-                    <Text style={styles.subTitleText}>Tyrone Nolasco</Text>
+                    <Text style={styles.subtitleText}>Tyrone Nolasco</Text>
                     <Text style={styles.bodyText}>tyronewessnolasco@gmail.com</Text>
                 </View>
             </Card>
@@ -94,19 +107,18 @@ const styles = StyleSheet.create({
         fontSize: 27,
         color: '#000',
         textAlign: 'center',
-        fontFamily: 'Roboto'
+        fontFamily: 'Roboto',
     },
 
     titleText: {
         fontSize: 20,
         fontWeight: 'bold',
-        // fontStyle: 'italic',
         color: '#000',
         textAlign: 'center',
         fontFamily: 'Roboto'
     },
 
-    subTitleText: {
+    subtitleText: {
         fontSize: 18,
         color: '#000',
         textAlign: 'center',
@@ -121,10 +133,11 @@ const styles = StyleSheet.create({
     },
 
     aboutContainer: {
-        alignItems: "center",
+        alignItems: 'center',
         borderRadius: 10,
         backgroundColor: '#D5B986',
+        borderColor: '#D5B986',
     },
 });
 
-export default HomeScreen;
+export default SettingsScreen;

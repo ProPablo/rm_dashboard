@@ -129,8 +129,20 @@ export const manager = new BleManager();
 const BEACON_TIMEOUT = 15 * 1000; //TEN SECONDS
 const BEACON_AUTO_EXPIRE = 25 * 1000; 
 
+
+const seed = {
+  id: 0,
+  name: "Seed",
+  macAddress: "AA:AA:AA:AA:AA:AA",
+  coordX: 1, 
+  coordY: 2,
+  activation: true,
+  zoneId: 1,
+  lastVisited: Number.MAX_SAFE_INTEGER,
+}
+
 const Tour: React.FC = ({ children }) => {
-  const [nearbyBeacons, setBeacons] = useState<Beacon[]>([]);
+  const [nearbyBeacons, setBeacons] = useState<Beacon[]>([seed]);
   const beacons = useContext(BeaconsContext);
   const { setBLEnabled } = useContext(GlobalActionContext);
   const reducerVal = useReducer(TourReducer, initialTourState);
@@ -144,21 +156,21 @@ const Tour: React.FC = ({ children }) => {
       return;
     }
     if (!device) return;
-    const serverBeacon = beacons.find((b) => b.macAddress === device.id);
-    if (!serverBeacon) return;
-    serverBeacon.rssi = device.rssi!;
+    const foundBeacon = beacons.find((b) => b.macAddress === device.id);
+    if (!foundBeacon) return;
+    foundBeacon.rssi = device.rssi!;
 
     const currentDate = (new Date()).getTime();
-    serverBeacon.lastVisited = currentDate;
+    foundBeacon.lastVisited = currentDate;
 
     setBeacons((oldList) => {
       const newList = oldList.filter(b => b.lastVisited! + BEACON_TIMEOUT < currentDate);
-      const existing = newList.findIndex(b => b.id === serverBeacon.id);
+      const existing = newList.findIndex(b => b.id === foundBeacon.id);
       if (existing != -1) {
-        newList.splice(existing, 1, serverBeacon);
+        newList.splice(existing, 1, foundBeacon);
       }
       else {
-        newList.push(serverBeacon);
+        newList.push(foundBeacon);
       }
       // console.log({ serverBeacon, newList, oldList });
       return newList;
